@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID Assist - Plans & Pricing</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans Pro', 'Trebuchet MS', -apple-system, sans-serif;
+    color: #4B3F34;
+    line-height: 1.6;
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h6, p { font-family: 'Source Sans Pro', sans-serif; }
+  h3, h4, h5 { font-family: 'Trebuchet MS', sans-serif; }
+
+  /* NAV */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 48px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { text-decoration: none; color: #4B3F34; font-size: 16px; font-weight: 600; }
+  .nav-links a:hover { color: #E8292F; }
+  .nav-cta {
+    background: #FAAF42; color: #212529; padding: 10px 22px; border-radius: 6px;
+    font-size: 16px; font-weight: 700; text-decoration: none; border: none; cursor: pointer;
+  }
+  .nav-cta:hover { background: #e89e2e; }
+  .nav-login {
+    background: none; border: 2px solid #FAAF42; color: #212529; padding: 8px 20px;
+    border-radius: 6px; font-size: 16px; font-weight: 600; text-decoration: none; cursor: pointer;
+  }
+  .nav-login:hover { background: #fef8eb; }
+  .hamburger {
+    display: none; flex-direction: column; justify-content: center; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 4px;
+  }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #212529; border-radius: 2px; transition: all 0.25s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-menu {
+    display: none; flex-direction: column; gap: 0;
+    background: #fff; border-top: 1px solid #eee;
+    position: absolute; top: 100%; left: 0; right: 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 99;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { padding: 16px 24px; font-size: 18px; font-weight: 600; color: #4B3F34; text-decoration: none; border-bottom: 1px solid #f0f0f0; }
+  .mobile-menu a:hover { background: #fef8eb; color: #E8292F; }
+  .mobile-menu .mob-cta { margin: 16px 24px 20px; padding: 12px 24px; text-align: center; background: #FAAF42; border-radius: 8px; font-weight: 700; color: #212529; border-bottom: none; }
+  .mobile-menu .mob-cta:hover { background: #e89e2e; color: #212529; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: #F2F2F2;
+    padding: 60px 48px 52px;
+    text-align: center;
+  }
+  .page-header h1 {
+    font-size: 36px; font-weight: 800; color: #212529; margin-bottom: 12px; line-height: 1.3;
+  }
+  .page-header h1 span { color: #E8292F; }
+  .page-header .social-nudge {
+    font-size: 20px; color: #4B3F34; margin-bottom: 0;
+  }
+  .page-header .social-nudge strong { color: #212529; }
+
+  /* PLANS SECTION */
+  .plans-section {
+    padding: 60px 48px 80px;
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* PLAN CARD */
+  .plan-card {
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .plan-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
+  .plan-card.featured {
+    border-color: #FAAF42;
+    box-shadow: 0 8px 32px rgba(250,175,66,0.20);
+    transform: translateY(-6px);
+  }
+  .plan-card.featured:hover { box-shadow: 0 12px 40px rgba(250,175,66,0.28); }
+
+  .plan-badge {
+    background: #E8292F;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 7px 0;
+  }
+
+  .plan-header {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    min-height: 220px;
+  }
+  .plan-name {
+    font-size: 18px; font-weight: 800; letter-spacing: 1px;
+    text-transform: uppercase; color: #888; margin-bottom: 8px;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+  .plan-price {
+    display: flex; align-items: flex-end; gap: 4px; margin-bottom: 12px;
+  }
+  .plan-price .amount {
+    font-size: 44px; font-weight: 800; color: #212529; line-height: 1;
+  }
+  .plan-price .period {
+    font-size: 18px; color: #888; font-weight: 600; padding-bottom: 6px;
+  }
+  .plan-tagline {
+    font-size: 18px; color: #4B3F34; line-height: 1.5;
+  }
+
+  .plan-cta {
+    padding: 20px 28px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .btn-plan {
+    display: block; width: 100%; text-align: center;
+    padding: 13px 20px; border-radius: 8px;
+    font-size: 18px; font-weight: 700; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    border: 2px solid transparent;
+  }
+  .btn-plan-featured { background: #FAAF42; color: #212529; }
+  .btn-plan-featured:hover { background: #e89e2e; }
+  .btn-plan-outline { background: #fff; color: #212529; border-color: #FAAF42; }
+  .btn-plan-outline:hover { background: #fef8eb; }
+
+  .trial-note {
+    text-align: center; font-size: 18px; color: #888; margin-top: 10px;
+  }
+
+  /* FEATURES LIST */
+  .plan-features { padding: 24px 28px 28px; }
+  .plan-features ul { list-style: none; }
+  .plan-features ul li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 18px; color: #4B3F34; padding: 7px 0;
+    border-bottom: 1px solid #f5f5f5; line-height: 1.5;
+  }
+  .plan-features ul li:last-child { border-bottom: none; }
+  .check { color: #2a9d4e; font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+  .feature-highlight { color: #212529; font-weight: 700; }
+  .feature-dim { color: #aaa; }
+  .feature-dim .check { color: #ccc; }
+
+  /* BUREAU CALLOUT */
+  .bureau-callout {
+    background: #fef8eb;
+    border: 1px solid #FAAF42;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-top: 8px;
+  }
+  .bureau-callout p {
+    font-size: 18px; color: #4B3F34; line-height: 1.5; margin: 0;
+  }
+  .bureau-callout strong { color: #212529; }
+
+  /* FAQ */
+  .faq-section {
+    padding: 72px 48px;
+    max-width: 800px; margin: 0 auto;
+  }
+  .faq-section h2 {
+    font-size: 28px; font-weight: 700; color: #212529;
+    text-align: center; margin-bottom: 40px;
+  }
+  .faq-item { border-bottom: 1px solid #e8e8e8; padding: 20px 0; }
+  .faq-q {
+    font-size: 18px; font-weight: 700; color: #212529;
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    background: none; border: none; width: 100%; text-align: left; padding: 0;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+  .faq-q:hover { color: #E8292F; }
+  .faq-chevron { font-size: 22px; flex-shrink: 0; transition: transform 0.2s; color: #FAAF42; }
+  .faq-q.open .faq-chevron { transform: rotate(180deg); }
+  .faq-a {
+    display: none; font-size: 18px; color: #4B3F34; line-height: 1.7; padding-top: 12px;
+  }
+  .faq-a.open { display: block; }
+
+  /* FINAL CTA */
+  .final-section {
+    padding: 80px 48px; background: #495057; color: #fff; text-align: center;
+  }
+  .final-inner { max-width: 640px; margin: 0 auto; }
+  .final-inner h2 { font-size: 30px; font-weight: 700; margin-bottom: 14px; line-height: 1.4; }
+  .final-inner p { font-size: 20px; color: rgba(255,255,255,0.80); margin-bottom: 32px; line-height: 1.6; }
+  .btn-white {
+    background: #FAAF42; color: #212529; padding: 16px 40px; border-radius: 8px;
+    font-size: 18px; font-weight: 700; border: none; cursor: pointer;
+    display: inline-block; text-decoration: none; transition: background 0.2s, transform 0.15s;
+  }
+  .btn-white:hover { background: #e89e2e; transform: translateY(-1px); }
+  .cancel-note { font-size: 18px; color: rgba(255,255,255,0.50); margin-top: 14px; }
+
+  /* FOOTER */
+  footer { background: #000; color: #ccc; font-size: 15px; line-height: 1.7; }
+  .footer-main {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    padding: 56px 48px 48px;
+  }
+  .footer-contact h4 {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+  .footer-contact table { border-collapse: collapse; margin-bottom: 12px; }
+  .footer-contact td { padding: 2px 24px 2px 0; color: #ccc; font-size: 15px; }
+  .footer-contact td:last-child { color: #fff; font-weight: 600; padding-right: 0; }
+  .footer-contact a { color: #ccc; text-decoration: none; }
+  .footer-contact a:hover { color: #FAAF42; }
+  .footer-maple { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px; }
+  .footer-maple p { font-size: 15px; color: #ccc; margin: 0; line-height: 1.5; }
+  .footer-maple strong { color: #fff; }
+  .footer-hours { font-size: 15px; }
+  .footer-hours strong { color: #fff; display: block; margin-bottom: 2px; }
+  .footer-nav { padding-top: 4px; }
+  .footer-nav ul { list-style: none; }
+  .footer-nav ul li { margin-bottom: 14px; text-align: right; }
+  .footer-nav ul li a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; }
+  .footer-nav ul li a:hover { color: #FAAF42; }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding: 28px 48px 36px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .footer-bottom p { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 8px; }
+  .footer-bottom p:first-child { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 12px 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .page-header { padding: 48px 24px 40px; }
+    .page-header h1 { font-size: 28px; }
+    .plans-section { padding: 40px 20px 60px; }
+    .plans-grid { grid-template-columns: 1fr; gap: 20px; }
+    .plan-card.featured { transform: none; }
+    .plan-header { min-height: 0; }
+    .compare-band { padding: 48px 20px; overflow-x: auto; }
+    .compare-table { min-width: 560px; }
+    .faq-section { padding: 48px 24px; }
+    .final-section { padding: 56px 24px; }
+    .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
+    .footer-nav ul li { text-align: left; }
+    .footer-bottom { padding: 24px 24px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/">
+      <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist" style="height:50px;">
+    </a>
+  </div>
+  <div class="nav-links">
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/identity">Identity Theft & Recovery</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/plans">Plans & Pricing</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/blog">Blog</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/help">Help</a>
+    <a class="nav-login" href="https://www.idassist.com/en/login">Log In</a>
+    <a class="nav-cta" href="https://www.idassist.com/en/registration/account">Try it free</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="mobile-menu" id="mobile-menu">
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/identity">Identity Theft & Recovery</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/plans">Plans & Pricing</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/blog">Blog</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/help">Help</a>
+    <a href="https://www.idassist.com/en/login">Log In</a>
+    <a class="mob-cta" href="https://www.idassist.com/en/registration/account">Try it free</a>
+  </nav>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>Choose the plan that's <span>right for you</span></h1>
+  <p class="social-nudge">Most of our members choose <strong>Platinum</strong> for complete protection at both credit bureaus — so nothing gets missed.</p>
+</div>
+
+<!-- PLANS -->
+<section class="plans-section">
+  <div class="plans-grid">
+
+    <!-- GOLD -->
+    <div class="plan-card">
+      <div class="plan-badge" style="visibility:hidden;">placeholder</div>
+      <div class="plan-header">
+        <div class="plan-name">Gold</div>
+        <div class="plan-price">
+          <span class="amount">$14.99</span>
+          <span class="period">/month</span>
+        </div>
+        <p class="plan-tagline">Essential protection – with monitoring at one credit bureau.</p>
+      </div>
+      <div class="plan-cta">
+        <a class="btn-plan btn-plan-outline" href="https://www.idassist.com/en/registration/account">Start free trial</a>
+        <p class="trial-note">30 days free, then $14.99/mo</p>
+      </div>
+      <div class="plan-features">
+        <ul>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Scan & Score</strong> – AI scam detection for emails, texts &amp; links</span></li>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Dark web monitoring</strong> – up to 50 items</span></li>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Identity theft restoration</strong> – full-service with Limited Power of Attorney</span></li>
+          <li><span class="check">✓</span> <span>Identity Theft Risk Assessment Tool</span></li>
+          <li><span class="check">✓</span> <span>Monthly credit score (Equifax)</span></li>
+          <li><span class="check">✓</span> <span>Quarterly credit report (Equifax)</span></li>
+          <li><span class="check" style="color:#ccc;">✓</span> <span class="feature-dim"><strong>One bureau monitored</strong> – Equifax only</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PLATINUM -->
+    <div class="plan-card featured">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-header">
+        <div class="plan-name">Platinum</div>
+        <div class="plan-price">
+          <span class="amount">$19.99</span>
+          <span class="period">/month</span>
+        </div>
+        <p class="plan-tagline">Complete protection – monitoring <em>both</em> credit bureaus so nothing gets missed.</p>
+      </div>
+      <div class="plan-cta">
+        <a class="btn-plan btn-plan-featured" href="https://www.idassist.com/en/registration/account">Start free trial</a>
+        <p class="trial-note">30 days free, then $19.99/mo</p>
+      </div>
+      <div class="plan-features">
+        <ul>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Scan & Score</strong> – AI scam detection for emails, texts &amp; links</span></li>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Dark web monitoring</strong> – up to 50 items</span></li>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Identity theft restoration</strong> – full-service with Limited Power of Attorney</span></li>
+          <li><span class="check">✓</span> <span>Identity Theft Risk Assessment Tool</span></li>
+          <li><span class="check">✓</span> <span>Monthly credit score (Equifax)</span></li>
+          <li><span class="check">✓</span> <span>Quarterly credit report (Equifax)</span></li>
+          <li>
+            <span class="check">✓</span>
+            <span>
+              <strong class="feature-highlight">Two bureaus monitored</strong> – Equifax &amp; TransUnion, every day
+              <div class="bureau-callout">
+                <p>Lenders report to different bureaus at different times. Watching only one means fraud can slip through undetected. <strong>Platinum watches both.</strong></p>
+              </div>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ULTIMATE -->
+    <div class="plan-card">
+      <div class="plan-badge" style="visibility:hidden;">placeholder</div>
+      <div class="plan-header">
+        <div class="plan-name">Ultimate</div>
+        <div class="plan-price">
+          <span class="amount">$24.99</span>
+          <span class="period">/month</span>
+        </div>
+        <p class="plan-tagline">Everything in Platinum, plus a password manager to lock down your accounts.</p>
+      </div>
+      <div class="plan-cta">
+        <a class="btn-plan btn-plan-outline" href="https://www.idassist.com/en/registration/account">Start free trial</a>
+        <p class="trial-note">30 days free, then $24.99/mo</p>
+      </div>
+      <div class="plan-features">
+        <ul>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Scan & Score</strong> – AI scam detection for emails, texts &amp; links</span></li>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Dark web monitoring</strong> – up to 50 items</span></li>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Identity theft restoration</strong> – full-service with Limited Power of Attorney</span></li>
+          <li><span class="check">✓</span> <span>Identity Theft Risk Assessment Tool</span></li>
+          <li><span class="check">✓</span> <span>Monthly credit score (Equifax)</span></li>
+          <li><span class="check">✓</span> <span>Quarterly credit report (Equifax)</span></li>
+          <li><span class="check">✓</span> <span><strong class="feature-highlight">Two bureaus monitored</strong> – Equifax &amp; TransUnion, every day</span></li>
+          <li><span class="check" style="color:#FAAF42;">✓</span> <span><strong class="feature-highlight">Password Manager</strong> – secure storage for all your login credentials</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <h2>Common questions</h2>
+
+  <div class="faq-item">
+    <button class="faq-q" data-faq="1">
+      Why does it matter which credit bureaus are monitored?
+      <span class="faq-chevron">&#8964;</span>
+    </button>
+    <div class="faq-a" id="faq-1">
+      Canada has two major credit bureaus — Equifax and TransUnion. Lenders don't always report to the same one, and some report to both at different times. If a fraudster tries to open credit in your name, that activity might only show up at one bureau. Monitoring just one means you could miss the early warning signs entirely. Platinum and Ultimate watch both, every day.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" data-faq="2">
+      What is Scan & Score and how does it work?
+      <span class="faq-chevron">&#8964;</span>
+    </button>
+    <div class="faq-a" id="faq-2">
+      Scan & Score is an AI-powered tool that analyzes suspicious emails, text messages, images, and links in seconds. Submit anything that seems off — just copy, paste, or upload a screenshot — and our technology instantly assesses the risk level and tells you exactly what to do next. It's available on all plans, including our 30-day free trial.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" data-faq="3">
+      Will signing up affect my credit score?
+      <span class="faq-chevron">&#8964;</span>
+    </button>
+    <div class="faq-a" id="faq-3">
+      No. ID Assist uses a soft inquiry when monitoring your credit — the same kind made when you check your own score. Soft inquiries have no impact on your credit rating. Only hard inquiries (made by lenders when you apply for credit) can affect your score.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" data-faq="4">
+      Can I cancel anytime?
+      <span class="faq-chevron">&#8964;</span>
+    </button>
+    <div class="faq-a" id="faq-4">
+      Yes. You can cancel at any time with no penalties. If you cancel, all future charges stop and you can continue using your subscription until 30 days from your last billing date. There's no commitment and no hassle.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" data-faq="5">
+      What happens during the 30-day free trial?
+      <span class="faq-chevron">&#8964;</span>
+    </button>
+    <div class="faq-a" id="faq-5">
+      You get full access to every feature in your chosen plan from day one. That means you can use Scan & Score on any suspicious messages you receive, set up your dark web monitoring, check your credit score and report, and connect your email for AutoScan. After 30 days, your plan renews at the regular monthly rate unless you cancel first.
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-section">
+  <div class="final-inner">
+    <h2>Start protecting yourself today</h2>
+    <p>Try any plan free for 30 days — no credit card required upfront. Cancel anytime.</p>
+    <a class="btn-white" href="https://www.idassist.com/en/registration/account">Try ID Assist free for 30 days</a>
+    <div class="cancel-note">Cancel anytime – no penalties, no hassles.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4>
+        <img src="https://www.idassist.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">
+        24/7 Emergency Assistance
+      </h4>
+      <table>
+        <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
+        <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
+      </table>
+      <p><a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
+      <div class="footer-maple">
+        <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
+        <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
+      </div>
+      <div class="footer-hours">
+        <strong>Our regular hours of operation are</strong>
+        9:00am – 9:00pm EST, Monday to Friday
+      </div>
+    </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/identity">Identity Theft &amp; Recovery</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/plans">Plans &amp; Pricing</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/blog">Blog</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/help">Help</a></li>
+        <li><a href="https://www.idassist.com/en/terms-conditions">Terms &amp; Conditions</a></li>
+        <li><a href="https://www.idassist.com/en/privacy-policy">Privacy Policy</a></li>
+        <li><a href="https://www.idassist.com/en/cancellation-policy">Cancellation Policy</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/plans">FR</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>ID Assist is an early warning system that helps you look after your identity.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. All rights reserved. ID Assist®, Sigma Loyalty Group Inc. and all associated marks and logos are trademarks owned or used under license. ID Assist® is provided by Sigma Loyalty Group Inc.</p>
+    <p>iPhone and App Store are trademarks of Apple Inc., registered in the U.S. and other countries. Android, Google Play and Play Store are trademarks of Google Inc., registered in the U.S. and other countries.</p>
+    <p>All product names, logos, and brands are property of their respective owners. All company, product, and service names used on this website are for identification purposes only. Use of these names, logos, and brands does not imply endorsement.</p>
+  </div>
+</footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
+  document.addEventListener('click', e => { if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); } });
+
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.faq;
+      const answer = document.getElementById('faq-' + id);
+      const isOpen = btn.classList.contains('open');
+      document.querySelectorAll('.faq-q').forEach(b => b.classList.remove('open'));
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      if (!isOpen) { btn.classList.add('open'); answer.classList.add('open'); }
+    });
+  });
+</script>
+</body>
+</html>
