@@ -999,4 +999,16 @@
     }, 400);
 
     setTimeout(() => {
-      badgeDarkweb.classLi
+      badgeDarkweb.classList.add('badge-visible');
+    }, 750);
+  }
+
+  // Trigger on page load (after a brief settle)
+  if (document.readyState === 'complete') {
+    animateBadges();
+  } else {
+    window.addEventListener('load', animateBadges);
+  }
+</script>
+</body>
+</html>
