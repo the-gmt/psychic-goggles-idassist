@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assist Identité - Aide</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+
+  html { scroll-behavior: smooth; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans Pro', 'Trebuchet MS', -apple-system, sans-serif;
+    color: #4B3F34; line-height: 1.6; background: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h6, p { font-family: 'Source Sans Pro', sans-serif; }
+  h3, h4, h5 { font-family: 'Trebuchet MS', sans-serif; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 48px; background: #fff; border-bottom: 1px solid #eee;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { text-decoration: none; color: #4B3F34; font-size: 16px; font-weight: 600; }
+  .nav-links a:hover { color: #E8292F; }
+  .nav-cta { background: #FAAF42; color: #212529; padding: 10px 22px; border-radius: 6px; font-size: 16px; font-weight: 700; text-decoration: none; }
+  .nav-cta:hover { background: #e89e2e; }
+  .nav-login { background: none; border: 2px solid #FAAF42; color: #212529; padding: 8px 20px; border-radius: 6px; font-size: 16px; font-weight: 600; text-decoration: none; }
+  .nav-login:hover { background: #fef8eb; }
+  .hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #212529; border-radius: 2px; transition: all 0.25s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-menu { display: none; flex-direction: column; background: #fff; border-top: 1px solid #eee; position: absolute; top: 100%; left: 0; right: 0; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 99; }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { padding: 16px 24px; font-size: 16px; font-weight: 600; color: #4B3F34; text-decoration: none; border-bottom: 1px solid #f0f0f0; }
+  .mobile-menu a:hover { background: #fef8eb; color: #E8292F; }
+  .mobile-menu .mob-cta { margin: 16px 24px 20px; padding: 12px 24px; text-align: center; background: #FAAF42; border-radius: 8px; font-weight: 700; color: #212529; border-bottom: none; }
+
+  .page-header { background: #F2F2F2; padding: 60px 48px 52px; text-align: center; }
+  .page-header h1 { font-size: 36px; font-weight: 800; color: #212529; margin-bottom: 12px; line-height: 1.3; }
+  .page-header h1 span { color: #E8292F; }
+  .page-header p { font-size: 20px; color: #4B3F34; max-width: 580px; margin: 0 auto; line-height: 1.6; }
+
+  .contact-bar {
+    background: #495057; padding: 20px 48px;
+    display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;
+  }
+  .contact-bar-item { display: flex; align-items: center; gap: 10px; font-size: 18px; color: rgba(255,255,255,0.85); font-weight: 600; }
+  .contact-bar-item a { color: #FAAF42; text-decoration: none; font-weight: 700; font-size: 18px; }
+  .contact-bar-item a:hover { color: #e89e2e; }
+  .contact-bar-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
+
+  .help-layout {
+    max-width: 1200px; margin: 0 auto;
+    padding: 64px 48px 80px;
+    display: grid; grid-template-columns: 260px 1fr; gap: 60px; align-items: start;
+  }
+
+  .cat-nav { position: sticky; top: 88px; }
+  .cat-nav h4 { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 16px; }
+  .cat-nav ul { list-style: none; }
+  .cat-nav ul li { margin-bottom: 4px; }
+  .cat-nav ul li a {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px;
+    font-size: 18px; font-weight: 600; color: #4B3F34; text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .cat-nav ul li a:hover { background: #fef8eb; color: #E8292F; }
+  .cat-nav ul li a.active { background: #fef8eb; color: #E8292F; }
+  .cat-nav ul li a .cat-icon { flex-shrink: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+  .cat-nav ul li a .cat-icon img { width: 30px; height: 30px; object-fit: contain; }
+
+  .cat-nav-support { margin-top: 28px; padding: 20px; background: #F2F2F2; border-radius: 12px; }
+  .cat-nav-support p { font-size: 18px; color: #4B3F34; margin-bottom: 10px; line-height: 1.5; }
+  .cat-nav-support a {
+    display: block; text-align: center; background: #FAAF42; color: #212529;
+    padding: 10px 16px; border-radius: 8px; font-size: 18px; font-weight: 700;
+    text-decoration: none; margin-bottom: 8px;
+  }
+  .cat-nav-support a:hover { background: #e89e2e; }
+  .cat-nav-support a.ghost { background: none; border: 2px solid #FAAF42; color: #212529; }
+  .cat-nav-support a.ghost:hover { background: #fef8eb; }
+
+  .cat-select-wrap { display: none; margin-bottom: 28px; }
+  .cat-select-wrap.sticky {
+    position: fixed; top: var(--nav-height, 57px); left: 0; right: 0; z-index: 90;
+    background: #fff; padding: 10px 24px; margin-bottom: 0;
+    border-bottom: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .cat-select-wrap.sticky + .faq-section { margin-top: var(--select-height, 64px); }
+  .cat-select {
+    width: 100%; padding: 12px 16px; font-size: 18px; border: 2px solid #e0e0e0;
+    border-radius: 8px; background: #fff; font-family: 'Source Sans Pro', sans-serif;
+    color: #212529; font-weight: 600; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+
+  .faq-main { min-width: 0; }
+  .faq-section { margin-bottom: 56px; scroll-margin-top: 120px; }
+  .faq-section-head {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    padding-bottom: 16px; border-bottom: 2px solid #F2F2F2;
+  }
+  .faq-section-icon { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .faq-section-icon img { width: 30px; height: 30px; object-fit: contain; }
+  .faq-section-head h2 { font-size: 22px; font-weight: 800; color: #212529; line-height: 1.3; font-family: 'Source Sans Pro', sans-serif; }
+
+  .faq-item { border-bottom: 1px solid #ebebeb; }
+  .faq-q {
+    width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: 18px 0; font-size: 18px; font-weight: 700; color: #212529;
+    font-family: 'Trebuchet MS', sans-serif; transition: color 0.15s;
+  }
+  .faq-q:hover { color: #E8292F; }
+  .faq-chevron { font-size: 20px; flex-shrink: 0; color: #FAAF42; transition: transform 0.2s; }
+  .faq-q.open .faq-chevron { transform: rotate(180deg); }
+  .faq-a { display: none; font-size: 18px; color: #4B3F34; line-height: 1.75; padding-bottom: 20px; }
+  .faq-a.open { display: block; }
+  .faq-a p { margin-bottom: 12px; }
+  .faq-a p:last-child { margin-bottom: 0; }
+  .faq-a ul { padding-left: 20px; margin: 8px 0 12px; }
+  .faq-a ul li { margin-bottom: 6px; font-size: 18px; }
+  .faq-a strong { color: #212529; }
+
+  .ida-box {
+    background: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid #287292;
+    border-radius: 10px; padding: 14px 18px; margin-top: 12px;
+  }
+  .ida-box .tag { font-size: 18px; font-weight: 700; color: #287292; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .ida-box p { font-size: 18px; color: #4B3F34; margin: 0 !important; line-height: 1.65; }
+
+  .contact-steps { background: #F2F2F2; border-radius: 10px; padding: 16px 20px; margin-top: 12px; }
+  .contact-steps p { font-size: 18px; color: #4B3F34; margin-bottom: 4px !important; }
+  .contact-steps a { color: #287292; font-weight: 700; text-decoration: none; }
+  .contact-steps a:hover { color: #E8292F; }
+
+  .browser-steps { margin-top: 16px; }
+  .browser-steps h5 { font-size: 17px; font-weight: 700; color: #212529; margin: 14px 0 6px; font-family: 'Trebuchet MS', sans-serif; }
+  .browser-steps h5:first-child { margin-top: 0; }
+  .browser-steps ol { padding-left: 20px; margin: 0; }
+  .browser-steps ol li { font-size: 17px; color: #4B3F34; margin-bottom: 4px; line-height: 1.6; }
+
+  .footnote { font-size: 14px; color: #777; line-height: 1.6; margin-top: 6px !important; }
+  .footnote sup { font-size: 11px; }
+
+  .toolkit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
+  .toolkit-card {
+    background: #F2F2F2; border-radius: 12px; padding: 20px; text-align: center;
+    text-decoration: none; color: #4B3F34; transition: box-shadow 0.2s, transform 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .toolkit-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
+  .toolkit-card .tk-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .toolkit-card h3 { font-size: 18px; font-weight: 700; color: #212529; line-height: 1.3; }
+  .toolkit-card p { font-size: 18px; color: #4B3F34; line-height: 1.5; }
+  .toolkit-card .tk-cta { font-size: 18px; font-weight: 700; color: #287292; margin-top: auto; }
+
+  .help-banner {
+    background: #495057; border-radius: 16px; padding: 36px 40px;
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    color: #fff; margin-top: 8px;
+  }
+  .help-banner h3 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; font-family: 'Source Sans Pro', sans-serif; }
+  .help-banner p { font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .help-banner-actions { display: flex; gap: 12px; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
+  .btn-gold { background: #FAAF42; color: #212529; padding: 12px 24px; border-radius: 8px; font-size: 18px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .btn-gold:hover { background: #e89e2e; }
+  .btn-ghost-light { background: none; border: 2px solid rgba(255,255,255,0.35); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 18px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .btn-ghost-light:hover { background: rgba(255,255,255,0.08); }
+
+  footer { background: #000; color: #ccc; font-size: 15px; line-height: 1.7; }
+  .footer-main { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 56px 48px 48px; }
+  .footer-contact h4 { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; font-family: 'Trebuchet MS', sans-serif; }
+  .footer-contact table { border-collapse: collapse; margin-bottom: 12px; }
+  .footer-contact td { padding: 2px 24px 2px 0; color: #ccc; font-size: 15px; }
+  .footer-contact td:last-child { color: #fff; font-weight: 600; padding-right: 0; }
+  .footer-contact a { color: #ccc; text-decoration: none; }
+  .footer-contact a:hover { color: #FAAF42; }
+  .footer-maple { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px; }
+  .footer-maple p { font-size: 15px; color: #ccc; margin: 0; line-height: 1.5; }
+  .footer-maple strong { color: #fff; }
+  .footer-hours { font-size: 15px; }
+  .footer-hours strong { color: #fff; display: block; margin-bottom: 2px; }
+  .footer-nav { padding-top: 4px; }
+  .footer-nav ul { list-style: none; }
+  .footer-nav ul li { margin-bottom: 14px; text-align: right; }
+  .footer-nav ul li a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; }
+  .footer-nav ul li a:hover { color: #FAAF42; }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.12); padding: 28px 48px 36px; max-width: 1200px; margin: 0 auto; }
+  .footer-bottom p { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 8px; }
+  .footer-bottom p:first-child { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 12px; }
+
+  @media (max-width: 900px) {
+    nav { padding: 12px 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .page-header { padding: 48px 24px 40px; }
+    .page-header h1 { font-size: 28px; }
+    .contact-bar { padding: 16px 24px; gap: 12px; flex-direction: column; align-items: center; text-align: center; }
+    .contact-bar-divider { display: none; }
+    .contact-bar-item { justify-content: center; flex-direction: column; gap: 4px; }
+    .help-layout { grid-template-columns: 1fr; padding: 40px 24px 60px; gap: 0; }
+    .cat-nav { display: none; }
+    .cat-select-wrap { display: block; }
+    .toolkit-grid { grid-template-columns: 1fr; }
+    .help-banner { flex-direction: column; }
+    .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
+    .footer-nav ul li { text-align: left; }
+    .footer-bottom { padding: 24px 24px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/">
+      <img src="https://www.idassist.com/assets/images/id-assist-fr.svg" alt="Assist Identité" style="height:50px;">
+    </a>
+  </div>
+  <div class="nav-links">
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/identity">Vol d'identité et rétablissement</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/plans">Plans et prix</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/blog">Blogue</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/help">Aide</a>
+    <a class="nav-login" href="https://www.assistidentite.com/fr/login">Se connecter</a>
+    <a class="nav-cta" href="https://www.assistidentite.com/fr/registration/account">Essai gratuit</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="mobile-menu" id="mobile-menu">
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/identity">Vol d'identité et rétablissement</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/plans">Plans et prix</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/blog">Blogue</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/help">Aide</a>
+    <a href="https://www.assistidentite.com/fr/login">Se connecter</a>
+    <a class="mob-cta" href="https://www.assistidentite.com/fr/registration/account">Essai gratuit</a>
+  </nav>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>Comment pouvons-nous vous <span>aider&nbsp;?</span></h1>
+  <p>Trouvez des réponses aux questions fréquentes sur votre abonnement Assist Identité, ses fonctionnalités et votre compte.</p>
+</div>
+
+<!-- CONTACT BAR -->
+<div class="contact-bar">
+  <div class="contact-bar-item">
+    Appelez-nous : <a href="tel:18779001837">1 877 900-1837</a>
+  </div>
+  <div class="contact-bar-divider"></div>
+  <div class="contact-bar-item">
+    Courriel : <a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a>
+  </div>
+  <div class="contact-bar-divider"></div>
+  <div class="contact-bar-item">
+    Lun. – ven., 9 h – 21 h HE
+  </div>
+  <div class="contact-bar-divider"></div>
+  <div class="contact-bar-item">
+    <strong style="color:#FAAF42;">Soutien de restauration d'urgence 24/7</strong>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="help-layout">
+
+  <!-- SIDEBAR -->
+  <div class="cat-nav">
+    <h4>Sujets</h4>
+    <ul>
+      <li><a href="#protection-arnaques" class="active">
+        <span class="cat-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Scam-Protection.svg" alt=""></span>
+        Protection contre les arnaques
+      </a></li>
+      <li><a href="#credit">
+        <span class="cat-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Credit-Monitoring.svg" alt=""></span>
+        Surveillance du crédit
+      </a></li>
+      <li><a href="#web-clandestin">
+        <span class="cat-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Dark-Web.svg" alt=""></span>
+        Surveillance du Web clandestin
+      </a></li>
+      <li><a href="#vol-identite">
+        <span class="cat-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Identity-Theft.svg" alt=""></span>
+        Vol d'identité et rétablissement
+      </a></li>
+      <li><a href="#gestion-compte">
+        <span class="cat-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Account-Management.svg" alt=""></span>
+        Gestion de compte
+      </a></li>
+      <li><a href="#gestionnaire-mdp">
+        <span class="cat-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Password-Manager.svg" alt=""></span>
+        Gestionnaire de mots de passe
+      </a></li>
+      <li><a href="#ressources">
+        <span class="cat-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Resources.svg" alt=""></span>
+        Ressources et guides
+      </a></li>
+    </ul>
+    <div class="cat-nav-support">
+      <p>Vous ne trouvez pas ce que vous cherchez&nbsp;? Notre équipe est là pour vous aider.</p>
+      <a href="tel:18779001837">1 877 900-1837</a>
+      <a href="mailto:servicealaclientele@assistidentite.com" class="ghost">Nous envoyer un courriel</a>
+    </div>
+  </div>
+
+  <!-- FAQ CONTENT -->
+  <div class="faq-main">
+
+    <!-- MOBILE SELECT -->
+    <div class="cat-select-wrap">
+      <select class="cat-select" onchange="document.querySelector(this.value).scrollIntoView({behavior:'smooth'})">
+        <option value="#protection-arnaques">Protection contre les arnaques</option>
+        <option value="#credit">Surveillance du crédit</option>
+        <option value="#web-clandestin">Surveillance du Web clandestin</option>
+        <option value="#vol-identite">Vol d'identité et rétablissement</option>
+        <option value="#gestion-compte">Gestion de compte</option>
+        <option value="#gestionnaire-mdp">Gestionnaire de mots de passe</option>
+        <option value="#ressources">Ressources et guides</option>
+      </select>
+    </div>
+
+    <!-- PROTECTION CONTRE LES ARNAQUES -->
+    <div class="faq-section" id="protection-arnaques">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Scam-Protection.svg" alt=""></div>
+        <h2>Protection contre les arnaques</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q open" data-faq="s1">Qu'est-ce qu'Assist Identité Analyse &amp; Évaluation&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a open" id="faq-s1">
+          <p>Assist Identité Analyse &amp; Évaluation est un outil avancé optimisé par l'IA qui vous aide à identifier les arnaques avant qu'elles ne causent des dommages. Soumettez tout courriel, message texte, image ou lien de site Web suspect et notre technologie l'analyse instantanément, puis vous fournit un Score d'arnaque qui indique le niveau de risque. Chaque résultat s'accompagne d'étapes concrètes et spécifiques pour vous aider à vous protéger.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s2">Qu'est-ce qu'Auto-Analyse et comment fonctionne-t-elle&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s2">
+          <p>Auto-Analyse surveille en continu votre boîte de réception principale Gmail ou Outlook personnel 24/7, en utilisant la même technologie d'IA qui alimente l'Analyse &amp; Évaluation manuelle. Lorsqu'une menace potentielle est détectée, vous recevrez une alerte immédiate avec le Score d'arnaque et les étapes recommandées – avant même d'avoir ouvert le courriel.</p>
+          <p>Les courriels reçus dans des boîtes de réception secondaires, des dossiers ou des catégories en dehors de votre boîte de réception principale doivent être soumis manuellement pour analyse.</p>
+          <div class="ida-box">
+            <p class="tag">Pour activer Auto-Analyse</p>
+            <p>Connectez-vous à votre compte et accédez à <strong>Analyse &amp; Évaluation Auto-Analyse</strong> dans votre menu de profil. Suivez les instructions pour connecter votre compte Gmail ou Outlook personnel.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s3">Pourquoi ne puis-je pas connecter mon compte Outlook professionnel ou organisationnel&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s3">
+          <p>Pour des raisons de sécurité et de confidentialité, Auto-Analyse prend actuellement en charge uniquement les comptes Gmail personnels et les comptes Outlook personnels. Les comptes professionnels et organisationnels ont souvent des restrictions de sécurité et des contrôles administratifs qui empêchent les services tiers de se connecter.</p>
+          <p>Vous pouvez toujours analyser les courriels de travail suspects à l'aide de la fonction manuelle d'Analyse &amp; Évaluation – copiez et collez simplement le contenu du message pour obtenir la même analyse optimisée par l'IA.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s4">Quels types de communications puis-je analyser&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s4">
+          <p>Vous pouvez soumettre quatre types de contenu pour analyse :</p>
+          <ul>
+            <li><strong>Courriels</strong> – copiez et collez le message complet, y compris le nom et l'adresse courriel de l'expéditeur</li>
+            <li><strong>Messages texte</strong> – collez le contenu du message ainsi que le numéro de téléphone de l'expéditeur</li>
+            <li><strong>Images et captures d'écran</strong> – téléversez une photo ou une capture d'écran de toute communication suspecte</li>
+            <li><strong>URL</strong> – soumettez toute adresse de site Web que vous souhaitez vérifier avant de la visiter</li>
+          </ul>
+          <p>Notez que les images ou photos qui ne contiennent pas de texte lisible ou un code QR ne peuvent pas être analysées pour le moment.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s5">Comment fonctionne le Score d'arnaque&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s5">
+          <p>Chaque soumission se voit attribuer l'un des trois niveaux de risque possibles :</p>
+          <ul>
+            <li><strong>Risque faible</strong> – La communication semble provenir d'une source légitime et contient les caractéristiques typiques des communications authentiques.</li>
+            <li><strong>Risque élevé</strong> – Plusieurs indicateurs d'intention trompeuse ont été détectés. La communication présente un risque important de fraude ou de vol d'identité.</li>
+            <li><strong>Niveau de risque non concluant</strong> – Le contenu soumis peut être incomplet ou ne contient pas suffisamment d'information pour une analyse complète. Essayez de soumettre à nouveau avec le contenu complet du message.</li>
+          </ul>
+          <p>Chaque résultat inclut des facteurs contributifs qui expliquent pourquoi le score a été attribué, ainsi que des prochaines étapes recommandées.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s6">Comment obtenir le résultat le plus précis possible&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s6">
+          <p>Plus vous incluez d'information, plus l'analyse sera précise. Pour de meilleurs résultats :</p>
+          <ul>
+            <li><strong>Courriels et textos :</strong> Inclure le message complet, les détails de l'expéditeur et tous les liens ou URL</li>
+            <li><strong>Images :</strong> Assurez-vous que le message complet est visible, y compris tout texte, codes QR, nom de l'expéditeur et dates</li>
+            <li><strong>URL :</strong> Soumettez l'adresse complète du site Web – une capture d'écran d'une URL ne peut pas être analysée</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s7">Est-ce qu'une personne lit les messages que je soumets&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s7">
+          <p>Non. Analyse &amp; Évaluation utilise une technologie d'IA avancée pour analyser vos soumissions – aucun humain ne lit les messages que vous analysez. Le système vérifie automatiquement les détails de l'expéditeur, le contenu du message et les modèles numériques associés aux arnaques pour générer votre Score d'arnaque et vos recommandations.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s8">J'ai reçu un Score d'arnaque élevé pour quelque chose à quoi j'ai déjà répondu. Que dois-je faire&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s8">
+          <p>Ne paniquez pas – vous n'êtes pas seul(e), et de l'aide est disponible. Consultez les prochaines étapes recommandées fournies avec votre résultat d'analyse et suivez-les attentivement. Si vous avez partagé des renseignements personnels ou financiers, communiquez immédiatement avec le Centre de contact Assist Identité.</p>
+          <div class="contact-steps">
+            <p><a href="tel:18779001837">1 877 900-1837</a></p>
+            <p><a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a></p>
+            <p>Lun. – ven., 9 h – 21 h HE &nbsp;|&nbsp; 24/7 pour les urgences</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s9">Pourquoi ne puis-je pas téléverser des images depuis mon téléphone&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s9">
+          <p>Vous devrez peut-être accorder à Assist Identité la permission d'accéder aux photos et à la caméra de votre appareil. Pour mettre à jour ces autorisations :</p>
+          <ul>
+            <li>Ouvrez <strong>Réglages</strong> sur votre appareil</li>
+            <li>Appuyez sur <strong>Applications</strong></li>
+            <li>Trouvez et appuyez sur <strong>Assist Identité</strong></li>
+            <li>Activez les autorisations <strong>Photos</strong> et <strong>Caméra</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SURVEILLANCE DU CRÉDIT -->
+    <div class="faq-section" id="credit">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Credit-Monitoring.svg" alt=""></div>
+        <h2>Surveillance du crédit</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c1">Quelle surveillance du crédit Assist Identité fournit-elle&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c1">
+          <p>Selon votre forfait, Assist Identité surveille vos dossiers de crédit chez Equifax et TransUnion quotidiennement. Vous serez alerté(e) si des changements apparaissent pouvant être un signe de vol d'identité – comme une nouvelle demande de crédit ou un nouveau compte – afin que vous puissiez agir avant que des dommages ne soient causés.</p>
+          <p>Vous pouvez également demander un <strong>score de crédit</strong> Equifax mis à jour à tout moment, avec un nouveau score disponible <strong>tous les 30 jours</strong>. Un <strong>rapport de crédit</strong> mis à jour est disponible sur demande <strong>tous les trois mois</strong>, ce qui vous donne un aperçu détaillé de votre historique de crédit et de tout changement récent.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c2">Pourquoi est-il important que les deux bureaux de crédit soient surveillés&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c2">
+          <p>Le Canada compte deux principaux bureaux de crédit – Equifax et TransUnion. Les prêteurs ne déclarent pas toujours au même bureau, et un fraudeur qui fait une demande de crédit en votre nom pourrait ne déclencher une demande que dans un seul bureau. Si vous ne surveillez qu'un seul bureau, cette activité peut passer inaperçue jusqu'à ce que les dommages soient causés.</p>
+          <p>Assist Identité Platine et Ultime surveillent les deux bureaux chaque jour – vous êtes donc informé(e) le plus tôt possible au premier signe d'activité frauduleuse, quel que soit le bureau où elle apparaît en premier.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c3">L'inscription à Assist Identité affecte-t-elle mon score de crédit&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c3">
+          <p>Non. Assist Identité effectue une <strong>demande douce</strong> lors de la surveillance de votre dossier de crédit, ce qui n'a aucun impact sur votre score ou votre rapport de crédit. Les demandes douces comprennent vos propres demandes de rapport de crédit, les demandes promotionnelles des prêteurs et les demandes de vérification de vos créanciers existants.</p>
+          <p>Seules les <strong>demandes fermes</strong> – effectuées par les prêteurs lorsque vous soumettez une demande de nouveau crédit – peuvent affecter votre score.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c4">Comment puis-je consulter mon rapport et mon score de crédit&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c4">
+          <p>Connectez-vous à votre compte Assist Identité et accédez à <strong>Scores et rapports de crédit</strong> sur votre tableau de bord.</p>
+          <ul>
+            <li>Pour voir votre <strong>score de crédit</strong>, cliquez sur <strong>Demander le score de crédit</strong>. Un nouveau score est disponible sur demande toutes les 30 jours.</li>
+            <li>Pour voir votre <strong>rapport de crédit</strong>, cliquez sur <strong>Voir le rapport Equifax</strong>. Un rapport mis à jour est disponible sur demande tous les trois mois.</li>
+          </ul>
+          <p>Notez que vous devrez répondre aux questions d'authentification du bureau de crédit avant que votre rapport ou score puisse être affiché.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c5">Que dois-je faire si je trouve une erreur dans mon rapport de crédit&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c5">
+          <p>Communiquez directement avec les bureaux de crédit pour contester toute inexactitude :</p>
+          <div class="contact-steps">
+            <p><strong>Equifax Canada</strong> – <a href="https://www.equifax.ca/fr/personnel/contester-dossier-de-credit/options" target="_blank">Soumettre une contestation en ligne</a></p>
+            <p><strong>TransUnion Canada</strong> – <a href="https://secure-ocs.transunion.ca/secureocs/home.html?lang=fr" target="_blank">Soumettre une contestation en ligne</a></p>
+          </div>
+          <p>Equifax mènera une enquête et peut prendre jusqu'à 20 jours ouvrables pour répondre. Le site libre-service de TransUnion vous permet de consulter votre dossier de crédit et de soumettre des contestations directement.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c6">Qu'est-ce qu'un score de crédit et pourquoi est-il important&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c6">
+          <p>Un score de crédit est un nombre à trois chiffres (généralement entre 300 et 900) calculé à partir de votre rapport de crédit. Un score plus élevé signale une meilleure solvabilité aux prêteurs, ce qui peut améliorer votre admissibilité aux prêts, aux hypothèques et aux cartes de crédit – et réduire les taux d'intérêt qui vous sont offerts.</p>
+          <p>Une baisse inattendue de votre score ou une nouvelle demande que vous ne reconnaissez pas peut être l'un des premiers signes de fraude d'identité.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SURVEILLANCE DU WEB CLANDESTIN -->
+    <div class="faq-section" id="web-clandestin">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Dark-Web.svg" alt=""></div>
+        <h2>Surveillance du Web clandestin</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="d1">Qu'est-ce que le Web clandestin&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-d1">
+          <p>Le Web clandestin est composé de réseaux en ligne anonymes utilisés pour acheter et vendre des marchandises illicites – notamment des renseignements personnels volés, des numéros de carte de crédit, des numéros d'assurance sociale et d'autres identifiants que les criminels utilisent pour commettre des fraudes d'identité.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="d2">Comment fonctionne la surveillance du Web clandestin&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-d2">
+          <p>Assist Identité utilise plusieurs fournisseurs de données pour rechercher en continu dans les marchés criminels les renseignements personnels que vous avez enregistrés auprès de nous. Ces recherches utilisent à la fois des outils automatisés et des chercheurs humains pour trouver les informations exposées aussi rapidement que possible. Lorsque l'un de vos renseignements enregistrés est détecté, nous vous alertons immédiatement afin que vous puissiez agir – par exemple changer vos mots de passe ou annuler une carte compromise.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="d3">Quels types de renseignements puis-je enregistrer pour la surveillance&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-d3">
+          <p>Vous pouvez enregistrer jusqu'à 50 éléments dans 12 catégories, notamment :</p>
+          <ul>
+            <li>Jusqu'à 10 numéros de carte de crédit et de débit</li>
+            <li>Jusqu'à 10 numéros de compte bancaire</li>
+            <li>Jusqu'à 5 adresses courriel</li>
+            <li>Jusqu'à 5 numéros de téléphone</li>
+            <li>Jusqu'à 10 numéros de cartes de fidélité</li>
+            <li>Jusqu'à 5 numéros de régime d'avantages sociaux</li>
+            <li>Numéro d'assurance sociale (NAS)</li>
+            <li>Permis de conduire</li>
+            <li>Jusqu'à 2 passeports</li>
+            <li>Numéro de carte de résident permanent</li>
+          </ul>
+          <p>Plus vous enregistrez de renseignements, plus votre protection est étendue. Nous recommandons d'enregistrer tous les éléments qui vous concernent.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="d4">Que dois-je faire si je reçois une alerte du Web clandestin&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-d4">
+          <p>Connectez-vous à votre compte pour consulter les détails complets de l'alerte. Selon ce qui a été trouvé, les étapes recommandées peuvent inclure le changement de mots de passe, la communication avec votre banque ou l'émetteur de votre carte, ou le placement d'une alerte à la fraude dans vos dossiers de crédit. Si vous avez besoin d'aide pour interpréter une alerte ou ne savez pas quoi faire, appelez notre Centre de contact – notre équipe peut vous guider dans la bonne marche à suivre.</p>
+          <div class="contact-steps">
+            <p><a href="tel:18779001837">1 877 900-1837</a> &nbsp;|&nbsp; Lun. – ven., 9 h – 21 h HE &nbsp;|&nbsp; 24/7 pour les urgences</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOL D'IDENTITÉ ET RÉTABLISSEMENT -->
+    <div class="faq-section" id="vol-identite">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Identity-Theft.svg" alt=""></div>
+        <h2>Vol d'identité et rétablissement</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="i1">Que dois-je faire si je pense que mon identité a été volée&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-i1">
+          <p>Communiquez avec nous immédiatement. Nos spécialistes en rétablissement sont disponibles 24/7 pour les urgences et prendront en charge le processus en votre nom – communiquer avec vos institutions financières, placer des alertes à la fraude dans les deux bureaux de crédit, contester les comptes frauduleux et gérer les communications avec les créanciers et les organismes gouvernementaux.</p>
+          <div class="contact-steps">
+            <p><a href="tel:18779001837">1 877 900-1837</a> &nbsp;|&nbsp; Disponible 24/7 pour les urgences</p>
+          </div>
+          <p style="margin-top:12px;">Pour un guide étape par étape du processus de rétablissement, visitez notre <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/identity" style="color:#287292; font-weight:700;">page Vol d'identité et rétablissement</a>.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="i2">Quels sont les signes avant-coureurs que mon identité pourrait avoir été volée&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-i2">
+          <p>Les signes avant-coureurs courants comprennent :</p>
+          <ul>
+            <li>Des comptes, demandes ou adresses que vous ne reconnaissez pas apparaissant sur votre rapport de crédit</li>
+            <li>Des factures ou des appels de recouvrement pour des comptes que vous n'avez pas ouverts</li>
+            <li>Des courriers ou relevés attendus qui cessent d'arriver</li>
+            <li>Un refus de crédit inattendu</li>
+            <li>Une activité inattendue dans votre compte Mon ARC (p. ex., des déclarations produites ou des informations de dépôt direct modifiées)</li>
+            <li>Une alerte de surveillance du Web clandestin d'Assist Identité</li>
+          </ul>
+          <p>Si vous remarquez l'un de ces signes, agissez rapidement – communiquez avec vos institutions financières et appelez notre équipe.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="i3">Quel soutien de rétablissement Assist Identité fournit-elle&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-i3">
+          <p>Assist Identité Platine et Ultime comprennent le <strong>Rétablissement complet</strong>, ce qui signifie que nos spécialistes vous accompagnent à chaque étape du processus de rétablissement. Cela comprend :</p>
+          <ul>
+            <li>Placement d'alertes à la fraude chez Equifax et TransUnion</li>
+            <li>Communication avec les banques, les créanciers et les bureaux de crédit</li>
+            <li>Rédaction et envoi de lettres de contestation</li>
+            <li>Suivi jusqu'à la résolution de chaque élément frauduleux</li>
+            <li>Remboursement de chèque si un chèque frauduleux est tiré sur votre compte<sup>1</sup></li>
+            <li>Avance de fonds d'urgence si votre compte est compromis pendant un voyage<sup>2</sup></li>
+          </ul>
+          <p class="footnote"><sup>1</sup> Si vous devez fermer votre compte en raison d'un vol, Assist Identité vous remboursera le coût de votre commande de chèques. Le montant du remboursement peut atteindre 50,00 $. Le reçu doit être soumis dans les 30 jours suivant l'ouverture du nouveau compte.</p>
+          <p class="footnote"><sup>2</sup> Si vous subissez un vol ou une perte pendant un voyage, Assist Identité prendra des dispositions pour que des fonds d'urgence vous soient disponibles, y compris des instructions pour le service de transfert d'argent le plus proche pour la collecte. Les fonds seront débités de votre carte de crédit jusqu'à concurrence de 2 500 $ et dépendent des limites de votre carte de crédit et de vos privilèges d'avance de fonds. Vous devez vous trouver à plus de 160 km de votre résidence. Voir les modalités complètes pour plus de détails.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="i4">Comment mes données sont-elles protégées&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-i4">
+          <p>La technologie d'Assist Identité est approuvée par plus de 500 000 Canadiens et la plupart des grandes banques canadiennes. Les principales mesures de sécurité comprennent :</p>
+          <ul>
+            <li>Des bases de données entièrement chiffrées selon les normes de sécurité industrielles les plus élevées</li>
+            <li>Environnement certifié PCI – audité de façon indépendante selon les normes de sécurité du secteur des cartes de paiement</li>
+            <li>Contrôles d'authentification multifacteurs pour tout le personnel ayant accès aux données</li>
+            <li>Protection des points d'accès, détection des menaces et pare-feu</li>
+            <li>Aucun partage de vos données avec des tiers à des fins de marketing ou de sollicitation de prêts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- GESTION DE COMPTE -->
+    <div class="faq-section" id="gestion-compte">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Account-Management.svg" alt=""></div>
+        <h2>Gestion de compte</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a0a">Qui est Sigma Loyalty Group&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a0a">
+          <p>Assist Identité est fournie par Sigma Loyalty Group Inc., une entreprise canadienne qui s'associe aux grandes banques et institutions financières pour offrir des services de protection de l'identité à leurs clients. Sigma Loyalty Group exploite Assist Identité et son équivalent anglais, ID Assist, au nom de ces partenaires bancaires.</p>
+          <p>Lorsque vous vous êtes inscrit(e) à Assist Identité, vous l'avez peut-être fait par l'intermédiaire de votre banque ou de votre fournisseur de carte de crédit. Sigma Loyalty Group est l'entreprise derrière le service, et toute la facturation, la surveillance et le soutien de rétablissement sont gérés par eux.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a0b">Comment Assist Identité utilise-t-elle les témoins, et comment puis-je les gérer&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a0b">
+          <p>Assist Identité utilise des témoins pour vous maintenir connecté(e) en toute sécurité, mémoriser vos préférences et comprendre comment notre site Web est utilisé afin de l'améliorer.</p>
+          <p>Si vous ne souhaitez pas accepter les témoins tiers, vous pouvez les bloquer dans les paramètres de votre navigateur. Notez que cela peut affecter le fonctionnement du site, y compris votre maintien de connexion à votre compte. Voici comment bloquer les témoins tiers dans les navigateurs les plus courants :</p>
+          <div class="browser-steps">
+            <h5>Chrome</h5>
+            <ol>
+              <li>Cliquez sur le bouton de menu (⋮) dans le coin supérieur droit de la fenêtre Chrome.</li>
+              <li>Cliquez sur <strong>Paramètres</strong>.</li>
+              <li>Cliquez sur <strong>Confidentialité et sécurité</strong>.</li>
+              <li>Cliquez sur <strong>Cookies et autres données des sites</strong>.</li>
+              <li>Cliquez sur <strong>Bloquer les cookies tiers</strong>.</li>
+            </ol>
+            <h5>Safari (Mac)</h5>
+            <ol>
+              <li>Cliquez sur le menu <strong>Safari</strong> dans la barre des menus.</li>
+              <li>Cliquez sur <strong>Préférences</strong>.</li>
+              <li>Cliquez sur l'onglet <strong>Confidentialité</strong>.</li>
+              <li>Sous « Cookies et données de sites Web », sélectionnez <strong>Autoriser depuis le site Web actuel seulement</strong>.</li>
+            </ol>
+            <h5>Safari (iPhone / iPad)</h5>
+            <ol>
+              <li>Ouvrez <strong>Réglages</strong>.</li>
+              <li>Appuyez sur <strong>Safari</strong>.</li>
+              <li>Faites défiler jusqu'à <strong>Confidentialité et sécurité</strong>.</li>
+              <li>Appuyez sur <strong>Bloquer tous les cookies</strong>.</li>
+            </ol>
+            <h5>Microsoft Edge</h5>
+            <ol>
+              <li>Cliquez sur le bouton de menu (⋯) dans le coin supérieur droit.</li>
+              <li>Cliquez sur <strong>Paramètres</strong>.</li>
+              <li>Cliquez sur <strong>Cookies et autorisations des sites</strong>.</li>
+              <li>Cliquez sur <strong>Gérer et supprimer les cookies et les données des sites</strong>.</li>
+              <li>Activez <strong>Bloquer les cookies tiers</strong>.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a1">Comment puis-je changer mon mot de passe&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a1">
+          <p>Connectez-vous à votre compte et accédez à <strong>Compte et sécurité</strong> dans votre profil. Cliquez sur le bouton <strong>Modifier</strong> à côté de votre mot de passe, apportez vos modifications et cliquez sur <strong>Enregistrer</strong> avant de quitter.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a2">Que faire si j'ai oublié mon mot de passe&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a2">
+          <p>Sur la page de connexion, cliquez sur <strong>J'ai oublié mon mot de passe</strong>. Entrez l'adresse courriel associée à votre compte et nous vous enverrons un lien de réinitialisation de mot de passe. Cliquez sur le lien dans le courriel et suivez les instructions pour définir un nouveau mot de passe.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a3">Comment puis-je configurer ou mettre à jour mes questions de sécurité&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a3">
+          <p>Vous serez invité(e) à configurer au moins deux questions de sécurité et leurs réponses lors de la création de votre compte. Vous pouvez en ajouter jusqu'à quatre au total. Pour mettre à jour vos questions ou réponses, connectez-vous et accédez à <strong>Compte et sécurité</strong> dans votre profil, cliquez sur <strong>Modifier</strong> et enregistrez vos modifications.</p>
+          <p>Nous utilisons les questions de sécurité pour vérifier votre identité si vous nous contactez concernant un problème de connexion oublié, ou lorsque nous détectons un accès depuis un appareil non reconnu.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a4">Puis-je annuler mon abonnement à tout moment&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a4">
+          <p>Oui. Vous pouvez annuler à tout moment, sans pénalités ni frais. Lorsque vous annulez, tous les frais futurs cessent et vous pouvez continuer à utiliser votre abonnement jusqu'à 30 jours après votre dernière date de facturation. Pour annuler, communiquez avec nous par téléphone ou courriel.</p>
+          <div class="contact-steps">
+            <p><a href="tel:18779001837">1 877 900-1837</a> &nbsp;|&nbsp; <a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a></p>
+            <p>Lun. – ven., 9 h – 21 h HE</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GESTIONNAIRE DE MOTS DE PASSE -->
+    <div class="faq-section" id="gestionnaire-mdp">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Password-Manager.svg" alt=""></div>
+        <h2>Gestionnaire de mots de passe</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="p1">Qu'est-ce que le Gestionnaire de mots de passe Assist Identité&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-p1">
+          <p>Le Gestionnaire de mots de passe Assist Identité est un outil sécurisé inclus avec le <strong>forfait Ultime</strong> qui vous aide à créer, stocker et gérer des mots de passe forts et uniques pour tous vos comptes en ligne. Grâce aux extensions de navigateur et à l'application mobile, vous pouvez vous connecter à n'importe quel site Web en quelques secondes, sans avoir à mémoriser chaque mot de passe.</p>
+          <p>Un chiffrement de pointe protège vos identifiants, et l'authentification à deux facteurs ajoute une couche de sécurité supplémentaire à votre compte Gestionnaire de mots de passe lui-même.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="p2">Pourquoi est-il important d'utiliser un gestionnaire de mots de passe&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-p2">
+          <p>Les mots de passe faibles ou réutilisés sont l'un des moyens les plus courants par lesquels les criminels accèdent aux comptes en ligne. Un gestionnaire de mots de passe facilite l'utilisation de mots de passe forts et uniques pour chaque compte – ainsi, si un compte est compromis, vos autres comptes restent en sécurité.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="p3">Où puis-je obtenir de l'aide avec le Gestionnaire de mots de passe&nbsp;? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-p3">
+          <p>Visitez notre centre d'aide dédié au Gestionnaire de mots de passe à <a href="https://landing.idassist.com/passwordhelp" target="_blank" style="color:#287292; font-weight:700;">landing.idassist.com/passwordhelp</a> pour des guides étape par étape sur la mise en route, la gestion de vos mots de passe et l'utilisation des extensions de navigateur. Vous pouvez également communiquer directement avec notre équipe pour obtenir une aide supplémentaire.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESSOURCES ET GUIDES -->
+    <div class="faq-section" id="ressources">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/eabde156bf7d953e29b09915df92a92d21e240a9/help-icons/Resources.svg" alt=""></div>
+        <h2>Ressources et guides</h2>
+      </div>
+
+      <p style="font-size:18px; color:#4B3F34; margin-bottom:20px; line-height:1.65;">Téléchargez nos guides gratuits pour vous aider à comprendre et à protéger votre identité.</p>
+
+      <div class="toolkit-grid">
+        <a class="toolkit-card" href="https://www.assistidentite.com/assets/docs/fr/Voldidentit%C3%A9-Bo%C3%AEte%C3%A0outils.pdf" target="_blank">
+          <span class="tk-icon" style="background: rgba(250,175,66,0.12);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FAAF42" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </span>
+          <h3>Vol d'identité&nbsp;: boîte à outils à l'intention des&nbsp;victimes</h3>
+          <p>Que faire si votre identité a été compromise, étape par étape.</p>
+          <span class="tk-cta">Consulter le guide →</span>
+        </a>
+        <a class="toolkit-card" href="https://www.assistidentite.com/assets/docs/fr/Guidedutilisation-Rapportdesolvabilit%C3%A9.pdf" target="_blank">
+          <span class="tk-icon" style="background: rgba(40,114,146,0.1);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <line x1="10" y1="9" x2="8" y2="9"/>
+            </svg>
+          </span>
+          <h3>Guide d'utilisation du rapport&nbsp;de&nbsp;solvabilité</h3>
+          <p>Ce que contient un rapport de solvabilité et pourquoi votre historique compte.</p>
+          <span class="tk-cta">Consulter le guide →</span>
+        </a>
+        <a class="toolkit-card" href="https://www.assistidentite.com/assets/docs/fr/Guidedutilisation-Cotedesolvabilit%C3%A9.pdf" target="_blank">
+          <span class="tk-icon" style="background: rgba(40,114,146,0.1);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </span>
+          <h3>Guide d'utilisation de la cote&nbsp;de&nbsp;solvabilité</h3>
+          <p>Comment votre cote de solvabilité est calculé et comment le protéger.</p>
+          <span class="tk-cta">Consulter le guide →</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- STILL NEED HELP -->
+    <div class="help-banner">
+      <div>
+        <h3>Vous avez encore besoin d'aide&nbsp;?</h3>
+        <p>Notre équipe est disponible du lundi au vendredi, de 9 h à 21 h HE. Des représentants canadiens sont disponibles 24/7 pour les urgences liées au vol d'identité.</p>
+      </div>
+      <div class="help-banner-actions">
+        <a class="btn-gold" href="tel:18779001837">1 877 900-1837</a>
+        <a class="btn-ghost-light" href="mailto:servicealaclientele@assistidentite.com">Nous écrire</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4>
+        <img src="https://www.idassist.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">
+        Assistance d'urgence 24/7
+      </h4>
+      <table>
+        <tr><td>Amérique du Nord</td><td><a href="tel:18779001837">1 877 900-1837</a></td></tr>
+        <tr><td>Toronto et à frais virés</td><td><a href="tel:16478375412">1 647 837-5412</a></td></tr>
+      </table>
+      <p><a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a></p>
+      <div class="footer-maple">
+        <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
+        <p><strong>Des représentants canadiens sont disponibles 24/7</strong><br>pour les services de rétablissement.</p>
+      </div>
+      <div class="footer-hours">
+        <strong>Nos heures d'ouverture régulières sont</strong>
+        9 h – 21 h HE, du lundi au vendredi
+      </div>
+    </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/identity">Vol d'identité et rétablissement</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/plans">Plans et prix</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/blog">Blogue</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/help">Aide</a></li>
+        <li><a href="https://www.assistidentite.com/fr/modalites">Modalités</a></li>
+        <li><a href="https://www.assistidentite.com/fr/politique-de-confidentialite">Politique de confidentialité</a></li>
+        <li><a href="https://www.assistidentite.com/fr/politique-annulation">Politique d'annulation</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/help">EN</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Assist Identité est un système d'alerte précoce qui vous aide à prendre soin de votre identité.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. Tous droits réservés. Assist Identité®, Sigma Loyalty Group Inc. et toutes les marques et logos associés sont des marques de commerce détenues ou utilisées sous licence. Assist Identité® est fournie par Sigma Loyalty Group Inc.</p>
+    <p>iPhone et App Store sont des marques de commerce d'Apple Inc., déposées aux États-Unis et dans d'autres pays. Android, Google Play et Play Store sont des marques de commerce de Google Inc., déposées aux États-Unis et dans d'autres pays.</p>
+    <p>Tous les noms de produits, logos et marques sont la propriété de leurs détenteurs respectifs. Tous les noms d'entreprises, de produits et de services utilisés sur ce site Web le sont à des fins d'identification uniquement. L'utilisation de ces noms, logos et marques n'implique aucune approbation.</p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
+  document.addEventListener('click', e => {
+    if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+      hamburger.classList.remove('open'); mobileMenu.classList.remove('open');
+    }
+  });
+
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.faq;
+      const answer = document.getElementById('faq-' + id);
+      const isOpen = btn.classList.contains('open');
+      btn.classList.toggle('open', !isOpen);
+      answer.classList.toggle('open', !isOpen);
+    });
+  });
+
+  document.querySelectorAll('.cat-nav a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        const navHeight = document.querySelector('nav').offsetHeight;
+        const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 24;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const selectWrap = document.querySelector('.cat-select-wrap');
+  if (selectWrap) {
+    const navEl = document.querySelector('nav');
+    let selectOffset = null;
+    function updateSelectOffset() {
+      selectWrap.classList.remove('sticky');
+      selectOffset = selectWrap.getBoundingClientRect().top + window.scrollY;
+    }
+    updateSelectOffset();
+    window.addEventListener('resize', updateSelectOffset);
+    window.addEventListener('scroll', () => {
+      const navH = navEl.offsetHeight;
+      document.documentElement.style.setProperty('--nav-height', navH + 'px');
+      if (window.scrollY >= selectOffset) {
+        selectWrap.classList.add('sticky');
+      } else {
+        selectWrap.classList.remove('sticky');
+      }
+    });
+  }
+</script>
+</body>
+</html>
