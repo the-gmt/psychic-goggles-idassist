@@ -260,7 +260,7 @@
   </div>
   <div class="contact-bar-divider"></div>
   <div class="contact-bar-item">
-    Courriel : <a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a>
+    Courriel : <a href="mailto:servicealaclientele&#64;assistidentite.com">servicealaclientele&#64;assistidentite.com</a>
   </div>
   <div class="contact-bar-divider"></div>
   <div class="contact-bar-item">
@@ -311,7 +311,7 @@
     <div class="cat-nav-support">
       <p>Vous ne trouvez pas ce que vous cherchez&nbsp;? Notre équipe est là pour vous aider.</p>
       <a href="tel:18779001837">1 877 900-1837</a>
-      <a href="mailto:servicealaclientele@assistidentite.com" class="ghost">Nous envoyer un courriel</a>
+      <a href="mailto:servicealaclientele&#64;assistidentite.com" class="ghost">Nous envoyer un courriel</a>
     </div>
   </div>
 
@@ -417,7 +417,7 @@
           <p>Ne paniquez pas – vous n'êtes pas seul(e), et de l'aide est disponible. Consultez les prochaines étapes recommandées fournies avec votre résultat d'analyse et suivez-les attentivement. Si vous avez partagé des renseignements personnels ou financiers, communiquez immédiatement avec le Centre de contact Assist Identité.</p>
           <div class="contact-steps">
             <p><a href="tel:18779001837">1 877 900-1837</a></p>
-            <p><a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a></p>
+            <p><a href="mailto:servicealaclientele&#64;assistidentite.com">servicealaclientele&#64;assistidentite.com</a></p>
             <p>Lun. – ven., 9 h – 21 h HE &nbsp;|&nbsp; 24/7 pour les urgences</p>
           </div>
         </div>
@@ -701,7 +701,7 @@
         <div class="faq-a" id="faq-a4">
           <p>Oui. Vous pouvez annuler à tout moment, sans pénalités ni frais. Lorsque vous annulez, tous les frais futurs cessent et vous pouvez continuer à utiliser votre abonnement jusqu'à 30 jours après votre dernière date de facturation. Pour annuler, communiquez avec nous par téléphone ou courriel.</p>
           <div class="contact-steps">
-            <p><a href="tel:18779001837">1 877 900-1837</a> &nbsp;|&nbsp; <a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a></p>
+            <p><a href="tel:18779001837">1 877 900-1837</a> &nbsp;|&nbsp; <a href="mailto:servicealaclientele&#64;assistidentite.com">servicealaclientele&#64;assistidentite.com</a></p>
             <p>Lun. – ven., 9 h – 21 h HE</p>
           </div>
         </div>
@@ -794,7 +794,7 @@
       </div>
       <div class="help-banner-actions">
         <a class="btn-gold" href="tel:18779001837">1 877 900-1837</a>
-        <a class="btn-ghost-light" href="mailto:servicealaclientele@assistidentite.com">Nous écrire</a>
+        <a class="btn-ghost-light" href="mailto:servicealaclientele&#64;assistidentite.com">Nous écrire</a>
       </div>
     </div>
 
@@ -813,7 +813,7 @@
         <tr><td>Amérique du Nord</td><td><a href="tel:18779001837">1 877 900-1837</a></td></tr>
         <tr><td>Toronto et à frais virés</td><td><a href="tel:16478375412">1 647 837-5412</a></td></tr>
       </table>
-      <p><a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a></p>
+      <p><a href="mailto:servicealaclientele&#64;assistidentite.com">servicealaclientele&#64;assistidentite.com</a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Des représentants canadiens sont disponibles 24/7</strong><br>pour les services de rétablissement.</p>
@@ -844,7 +844,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobile-menu');
   hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
@@ -876,26 +876,24 @@
     });
   });
 
-  const selectWrap = document.querySelector('.cat-select-wrap');
-  if (selectWrap) {
-    const navEl = document.querySelector('nav');
-    let selectOffset = null;
-    function updateSelectOffset() {
-      selectWrap.classList.remove('sticky');
-      selectOffset = selectWrap.getBoundingClientRect().top + window.scrollY;
-    }
-    updateSelectOffset();
-    window.addEventListener('resize', updateSelectOffset);
-    window.addEventListener('scroll', () => {
-      const navH = navEl.offsetHeight;
-      document.documentElement.style.setProperty('--nav-height', navH + 'px');
-      if (window.scrollY >= selectOffset) {
-        selectWrap.classList.add('sticky');
-      } else {
-        selectWrap.classList.remove('sticky');
-      }
+  // Scrollspy – update active nav link as user scrolls through sections
+  const sections = document.querySelectorAll('.faq-section[id]');
+  const navLinks = document.querySelectorAll('.cat-nav a[href^="#"]');
+
+  function setActive(id) {
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
     });
   }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-120px 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+
 </script>
 </body>
 </html>
