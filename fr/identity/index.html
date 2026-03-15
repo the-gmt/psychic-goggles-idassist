@@ -863,6 +863,11 @@
       if (!isOpen) block.classList.add('open');
     });
   });
+
+  // Checkboxes
+  document.querySelectorAll('.action-check').forEach(box => {
+    box.addEventListener('click', () => box.classList.toggle('checked'));
+  });
 </script>
 </body>
 </html>
