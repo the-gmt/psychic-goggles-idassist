@@ -856,7 +856,7 @@
         <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
         <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
       </table>
-      <p><a href="/cdn-cgi/l/email-protection#b3d0c6c0c7dcded6c1c0d6c1c5dad0d6f3dad7d2c0c0dac0c79dd0dcde"><span class="__cf_email__" data-cfemail="5734222423383a3225243225213e3432173e333624243e24237934383a">[email&#160;protected]</span></a></p>
+      <p><a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
@@ -906,6 +906,11 @@
       document.querySelectorAll('.step-block').forEach(b => b.classList.remove('open'));
       if (!isOpen) block.classList.add('open');
     });
+  });
+
+  // Checkboxes
+  document.querySelectorAll('.action-check').forEach(box => {
+    box.addEventListener('click', () => box.classList.toggle('checked'));
   });
 </script>
 </body>
