@@ -260,7 +260,7 @@
   </div>
   <div class="contact-bar-divider"></div>
   <div class="contact-bar-item">
-    Email: <a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a>
+    Email: <a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a>
   </div>
   <div class="contact-bar-divider"></div>
   <div class="contact-bar-item">
@@ -311,7 +311,7 @@
     <div class="cat-nav-support">
       <p>Can't find what you're looking for? Our team is here to help.</p>
       <a href="tel:18779001837">1-877-900-1837</a>
-      <a href="mailto:customerservice@idassist.com" class="ghost">Send us an email</a>
+      <a href="mailto:customerservice&#64;idassist.com" class="ghost">Send us an email</a>
     </div>
   </div>
 
@@ -417,7 +417,7 @@
           <p>Don't panic – you're not alone, and help is available. Review the recommended next steps provided with your scan result and follow them closely. If you've shared personal or financial information, contact the ID Assist Contact Centre right away.</p>
           <div class="contact-steps">
             <p><a href="tel:18779001837">1-877-900-1837</a></p>
-            <p><a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
+            <p><a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a></p>
             <p>Mon – Fri, 9 a.m. – 9 p.m. ET &nbsp;|&nbsp; 24/7 for emergencies</p>
           </div>
         </div>
@@ -701,7 +701,7 @@
         <div class="faq-a" id="faq-a4">
           <p>Yes. You can cancel at any time with no penalties or fees. When you cancel, all future charges stop and you can continue using your subscription until 30 days from your last billing date. To cancel, contact us by phone or email.</p>
           <div class="contact-steps">
-            <p><a href="tel:18779001837">1-877-900-1837</a> &nbsp;|&nbsp; <a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
+            <p><a href="tel:18779001837">1-877-900-1837</a> &nbsp;|&nbsp; <a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a></p>
             <p>Mon – Fri, 9 a.m. – 9 p.m. ET</p>
           </div>
         </div>
@@ -794,7 +794,7 @@
       </div>
       <div class="help-banner-actions">
         <a class="btn-gold" href="tel:18779001837">1-877-900-1837</a>
-        <a class="btn-ghost-light" href="mailto:customerservice@idassist.com">Email us</a>
+        <a class="btn-ghost-light" href="mailto:customerservice&#64;idassist.com">Email us</a>
       </div>
     </div>
 
@@ -813,7 +813,7 @@
         <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
         <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
       </table>
-      <p><a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
+      <p><a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
@@ -844,7 +844,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobile-menu');
   hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
@@ -876,26 +876,24 @@
     });
   });
 
-  const selectWrap = document.querySelector('.cat-select-wrap');
-  if (selectWrap) {
-    const navEl = document.querySelector('nav');
-    let selectOffset = null;
-    function updateSelectOffset() {
-      selectWrap.classList.remove('sticky');
-      selectOffset = selectWrap.getBoundingClientRect().top + window.scrollY;
-    }
-    updateSelectOffset();
-    window.addEventListener('resize', updateSelectOffset);
-    window.addEventListener('scroll', () => {
-      const navH = navEl.offsetHeight;
-      document.documentElement.style.setProperty('--nav-height', navH + 'px');
-      if (window.scrollY >= selectOffset) {
-        selectWrap.classList.add('sticky');
-      } else {
-        selectWrap.classList.remove('sticky');
-      }
+  // Scrollspy – update active nav link as user scrolls through sections
+  const sections = document.querySelectorAll('.faq-section[id]');
+  const navLinks = document.querySelectorAll('.cat-nav a[href^="#"]');
+
+  function setActive(id) {
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
     });
   }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-120px 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+
 </script>
 </body>
 </html>
