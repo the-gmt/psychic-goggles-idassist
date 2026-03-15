@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Page Title</title>
+</head>
+<body>
+
+
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assist Identité - Accueil</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans Pro', 'Trebuchet MS', -apple-system, sans-serif;
+    color: #4B3F34;
+    line-height: 1.6;
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h6, p { font-family: 'Source Sans Pro', sans-serif; }
+  h3, h4, h5 { font-family: 'Trebuchet MS', sans-serif; }
+
+  /* NAV */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 48px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { text-decoration: none; color: #4B3F34; font-size: 16px; font-weight: 600; }
+  .nav-links a:hover { color: #E8292F; }
+  .nav-cta {
+    background: #FAAF42; color: #212529; padding: 10px 22px; border-radius: 6px;
+    font-size: 16px; font-weight: 700; text-decoration: none; border: none; cursor: pointer;
+  }
+  .nav-cta:hover { background: #e89e2e; }
+  .nav-login {
+    background: none; border: 2px solid #FAAF42; color: #212529; padding: 8px 20px;
+    border-radius: 6px; font-size: 16px; font-weight: 600; text-decoration: none; cursor: pointer;
+  }
+  .nav-login:hover { background: #fef8eb; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 48px 60px;
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  }
+  .hero h1 {
+    font-size: 36px; font-weight: 800; line-height: 46.8px;
+    color: #212529; margin-bottom: 20px;
+  }
+  .hero h1 span { color: #E8292F; }
+  .hero p {
+    font-size: 20px; color: #4B3F34; margin-bottom: 32px; line-height: 26px;
+  }
+  .hero-ctas { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .btn-primary {
+    background: #FAAF42; color: #212529; padding: 14px 32px; border-radius: 8px;
+    font-size: 18px; font-weight: 700; text-decoration: none; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: #e89e2e; }
+  .btn-secondary {
+    background: #fff; color: #212529; padding: 14px 32px; border-radius: 8px;
+    font-size: 18px; font-weight: 700; text-decoration: none; border: 2px solid #FAAF42;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: #fef8eb; }
+
+  /* HERO VISUAL */
+  .hero-visual {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  .hero-image-wrap {
+    position: relative;
+    width: 510px;
+    height: 510px;
+    flex-shrink: 0;
+  }
+
+  .hero-image-wrap img.hero-main-img {
+    width: 510px;
+    height: 510px;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+  }
+
+  /* HERO BADGES */
+  .hero-badge {
+    position: absolute;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(0,0,0,0.06);
+    opacity: 0;
+    white-space: nowrap;
+    text-align: left;
+    transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .hero-badge.badge-bottom-left {
+    bottom: -16px;
+    left: -16px;
+    transform: translateY(16px);
+  }
+
+  .hero-badge.badge-top-right {
+    top: -16px;
+    right: -16px;
+    transform: translateY(-16px);
+  }
+
+  .hero-badge.badge-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .badge-icon {
+    width: 36px; height: 36px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .badge-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .badge-text p:first-child {
+    font-size: 13px; font-weight: 700; color: #1A1A2E; line-height: 1.2;
+    font-family: 'Source Sans Pro', sans-serif;
+    margin: 0;
+  }
+  .badge-text p:last-child {
+    font-size: 12px; font-weight: 600; color: #10B981; line-height: 1.2;
+    font-family: 'Source Sans Pro', sans-serif;
+    margin: 0;
+  }
+
+  .badge-text-sm {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .badge-text-sm p:first-child {
+    font-size: 12px; font-weight: 600; color: #6B7280; line-height: 1.2;
+    font-family: 'Source Sans Pro', sans-serif;
+    margin: 0;
+  }
+  .badge-text-sm p:last-child {
+    font-size: 13px; font-weight: 700; color: #10B981; line-height: 1.2;
+    font-family: 'Source Sans Pro', sans-serif;
+    margin: 0;
+  }
+
+  /* TRUST BAR */
+  .trust-bar {
+    background: #F2F2F2; padding: 28px 48px;
+    display: flex; justify-content: center; gap: 48px; align-items: center;
+    flex-wrap: wrap;
+  }
+  .trust-item {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-size: 18px; color: #4B3F34; font-weight: 600; text-align: center;
+  }
+  .trust-item .num { font-size: 28px; font-weight: 800; color: #212529; }
+
+  /* PROOF – top row stats */
+  .proof-top {
+    display: flex; justify-content: center; align-items: center;
+    gap: 0; margin-bottom: 40px; flex-wrap: wrap;
+  }
+  .proof-top-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 48px; flex: 1; min-width: 220px;
+    justify-content: center;
+  }
+  .proof-top-item:not(:last-child) {
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+  .proof-icon {
+    flex-shrink: 0; width: 64px; height: 64px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .proof-top-item .proof-label {
+    font-size: 22px; color: #fff; font-weight: 600; line-height: 1.4;
+  }
+  .proof-top-item .proof-label strong {
+    font-size: 26px; font-weight: 800; color: #FAAF42; display: block;
+  }
+
+  /* PROOF – scenario cards */
+  .proof-scenario-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-top: 36px;
+  }
+  .proof-scenario {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 24px;
+    text-align: left;
+  }
+  .proof-scenario-head {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  }
+  .proof-scenario-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .proof-scenario-type {
+    font-size: 18px; font-weight: 700; color: #FAAF42;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+  .proof-scenario p {
+    font-size: 18px; color: rgba(255,255,255,0.75); line-height: 1.65;
+  }
+
+  /* FEATURES OVERVIEW */
+  .features-section {
+    padding: 80px 48px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .features-section h2 {
+    font-size: 30px; font-weight: 700; margin-bottom: 16px; color: #212529; line-height: 40.8px;
+    text-align: center;
+  }
+  .features-section > p {
+    font-size: 20px; color: #4B3F34; margin-bottom: 48px; line-height: 26px;
+    text-align: center; max-width: 720px; margin-left: auto; margin-right: auto;
+  }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .feature-card {
+    background: #F2F2F2; border-radius: 14px; padding: 32px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+    text-align: left;
+  }
+  .feature-card:hover { border-color: #ddd; }
+  .feature-card-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-bottom: 20px;
+  }
+  .feature-card h3 {
+    font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #212529; line-height: 26px;
+  }
+  .feature-card p {
+    font-size: 18px; color: #4B3F34; line-height: 1.6;
+  }
+
+  .autoscan-banner {
+    background: #495057;
+    border-radius: 14px; padding: 32px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; color: #fff;
+  }
+  .autoscan-banner p { font-size: 18px; color: #d0d0d0; line-height: 1.6; }
+  .btn-light {
+    background: #FAAF42; color: #212529; padding: 12px 28px; border-radius: 8px;
+    font-size: 16px; font-weight: 700; text-decoration: none; border: none;
+    cursor: pointer; white-space: nowrap; transition: background 0.2s;
+  }
+  .btn-light:hover { background: #e89e2e; }
+
+  /* BREACH CAROUSEL */
+  .breach-section {
+    padding: 80px 48px;
+    background: #F2F2F2;
+  }
+  .breach-inner {
+    max-width: 1200px; margin: 0 auto;
+  }
+  .breach-inner h2 {
+    font-size: 30px; font-weight: 700; margin-bottom: 12px; text-align: center; color: #212529; line-height: 40.8px;
+  }
+  .breach-inner > p {
+    font-size: 20px; color: #4B3F34; text-align: center; max-width: 640px;
+    margin: 0 auto 40px; line-height: 26px;
+  }
+
+  .breach-carousel-wrap {
+    position: relative;
+  }
+
+  .breach-carousel {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    display: flex; gap: 24px;
+    padding-bottom: 8px; scrollbar-width: none;
+    padding-left: 52px; padding-right: 52px;
+  }
+  .breach-carousel::-webkit-scrollbar { display: none; }
+
+  .breach-card {
+    flex: 0 0 340px; scroll-snap-align: start;
+    background: #fff; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .breach-card img.card-image { width: 100%; height: 220px; object-fit: cover; display: block; }
+  .breach-card-body { padding: 24px 28px 28px; }
+  .breach-card-body h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: #212529; line-height: 1.3; }
+  .breach-card-body > p { font-size: 14px; color: #4B3F34; line-height: 1.6; margin-bottom: 16px; }
+  .intercept-card {
+    background: #F2F2F2; border-radius: 10px; padding: 16px 20px;
+    border-left: 4px solid #287292;
+  }
+  .intercept-card .tag {
+    font-size: 14px; font-weight: 700; color: #287292; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 6px;
+  }
+  .intercept-card p { font-size: 14px; color: #4B3F34; margin: 0; line-height: 1.6; }
+
+  .breach-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border: 3px solid #FAAF42;
+    color: #212529;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .breach-arrow:hover { background: #FAAF42; }
+  .breach-arrow:disabled { opacity: 0.3; cursor: default; }
+  .breach-arrow:disabled:hover { background: #fff; transform: translateY(-50%); }
+  #breach-prev { left: 0; }
+  #breach-next { right: 0; }
+
+  .breach-dots {
+    display: none;
+    justify-content: center; gap: 8px; margin-top: 16px;
+  }
+  .breach-dots span {
+    width: 8px; height: 8px; border-radius: 50%; background: #d0d0d0; display: block;
+  }
+  .breach-dots span.active { background: #FAAF42; }
+
+  @media (max-width: 900px) {
+    .breach-arrow { display: none; }
+    .breach-dots { display: flex; }
+    .breach-carousel { padding-left: 0; padding-right: 0; }
+  }
+
+  /* SOCIAL PROOF */
+  .proof-section {
+    padding: 80px 48px;
+    background: #495057; color: #fff;
+  }
+  .proof-inner { max-width: 1200px; margin: 0 auto; text-align: center; }
+  .proof-inner h2 { font-size: 30px; font-weight: 700; margin-bottom: 48px; line-height: 40.8px; }
+
+  /* GET STARTED */
+  .start-section {
+    padding: 80px 48px;
+    max-width: 1200px; margin: 0 auto; text-align: center;
+  }
+  .start-section h2 { font-size: 30px; font-weight: 700; margin-bottom: 48px; color: #212529; line-height: 40.8px; }
+  .start-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 48px; }
+  .start-step { text-align: center; }
+  .start-num {
+    width: 40px; height: 40px; border-radius: 50%; background: #FAAF42;
+    color: #212529; font-weight: 800; font-size: 18px;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+  }
+  .start-step h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #212529; line-height: 26px; }
+  .start-step p { font-size: 18px; color: #4B3F34; line-height: 1.6; }
+
+  /* FINAL CTA */
+  .final-section {
+    padding: 80px 48px; background: #495057; color: #fff; text-align: center;
+  }
+  .final-inner { max-width: 700px; margin: 0 auto; }
+  .final-inner h2 { font-size: 30px; font-weight: 700; margin-bottom: 16px; line-height: 40.8px; }
+  .final-inner p { font-size: 20px; color: rgba(255,255,255,0.85); margin-bottom: 32px; line-height: 26px; }
+  .btn-white {
+    background: #FAAF42; color: #212529; padding: 16px 40px; border-radius: 8px;
+    font-size: 18px; font-weight: 700; border: none; cursor: pointer;
+    display: inline-block; text-decoration: none; transition: transform 0.2s;
+  }
+  .btn-white:hover { transform: translateY(-1px); background: #e89e2e; }
+  .app-badges { margin-top: 32px; display: flex; gap: 16px; justify-content: center; }
+  .cancel-note { font-size: 18px; color: rgba(255,255,255,0.55); margin-top: 16px; }
+
+  /* LIGHTBOX */
+  .lightbox-overlay {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
+  }
+  .lightbox-overlay.active { display: flex; }
+  .lightbox-container {
+    position: relative; width: 90%; max-width: 900px;
+    aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+  }
+  .lightbox-container iframe { width: 100%; height: 100%; border: none; }
+  .lightbox-close {
+    position: absolute; top: -44px; right: 0;
+    background: none; border: none; color: #fff; font-size: 32px;
+    cursor: pointer; line-height: 1; opacity: 0.8;
+  }
+  .lightbox-close:hover { opacity: 1; }
+
+  /* FOOTER */
+  footer {
+    background: #000; color: #ccc; font-size: 15px; line-height: 1.7;
+  }
+  .footer-main {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    padding: 56px 48px 48px;
+  }
+  .footer-contact h4 {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+  .footer-contact table { border-collapse: collapse; margin-bottom: 12px; }
+  .footer-contact td { padding: 2px 24px 2px 0; color: #ccc; font-size: 15px; }
+  .footer-contact td:last-child { color: #fff; font-weight: 600; padding-right: 0; }
+  .footer-contact a { color: #ccc; text-decoration: none; }
+  .footer-contact a:hover { color: #FAAF42; }
+  .footer-maple {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin: 16px 0 20px;
+  }
+  .footer-maple p { font-size: 15px; color: #ccc; margin: 0; line-height: 1.5; }
+  .footer-maple strong { color: #fff; }
+  .footer-hours { font-size: 15px; }
+  .footer-hours strong { color: #fff; display: block; margin-bottom: 2px; }
+  .footer-nav { padding-top: 4px; }
+  .footer-nav ul { list-style: none; }
+  .footer-nav ul li { margin-bottom: 14px; text-align: right; }
+  .footer-nav ul li a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; }
+  .footer-nav ul li a:hover { color: #FAAF42; }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding: 28px 48px 36px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .footer-bottom p { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 8px; }
+  .footer-bottom p:first-child { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 12px; }
+  @media (max-width: 900px) {
+    .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
+    .footer-nav ul li { text-align: left; }
+    .footer-bottom { padding: 24px 24px 32px; }
+  }
+
+  /* HAMBURGER */
+  .hamburger {
+    display: none; flex-direction: column; justify-content: center; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 4px;
+  }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #212529; border-radius: 2px; transition: all 0.25s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none; flex-direction: column; gap: 0;
+    background: #fff; border-top: 1px solid #eee;
+    position: absolute; top: 100%; left: 0; right: 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 99;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { padding: 16px 24px; font-size: 16px; font-weight: 600; color: #4B3F34; text-decoration: none; border-bottom: 1px solid #f0f0f0; }
+  .mobile-menu a:hover { background: #fef8eb; color: #E8292F; }
+  .mobile-menu .mob-cta { margin: 16px 24px 20px; padding: 12px 24px; text-align: center; background: #FAAF42; border-radius: 8px; font-weight: 700; color: #212529; border-bottom: none; }
+  .mobile-menu .mob-cta:hover { background: #e89e2e; color: #212529; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 12px 20px; position: sticky; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero { grid-template-columns: 1fr; padding: 48px 24px 64px; text-align: center; }
+    .hero h1 { font-size: 28px; line-height: 36px; }
+    .hero-ctas { justify-content: center; flex-wrap: wrap; align-items: center; }
+    .hero-visual { display: flex; justify-content: center; margin-top: 8px; }
+    .trust-bar { padding: 36px 24px; }
+    .features-section, .start-section { padding: 56px 24px; }
+    .breach-section { padding: 56px 24px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .autoscan-banner { flex-direction: column; text-align: center; }
+    .start-steps { grid-template-columns: 1fr; }
+    .final-section, .proof-section { padding: 56px 24px; }
+    .breach-card { flex: 0 0 85%; }
+    .proof-top { flex-direction: column; gap: 0; }
+    .proof-top-item { border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 24px 0; width: 280px; flex: none; justify-content: flex-start; }
+    .proof-top-item:last-child { border-bottom: none; }
+    .proof-label { text-align: left; }
+    .proof-scenario-grid { grid-template-columns: 1fr; }
+
+    /* Hero image on mobile */
+    .hero-image-wrap {
+      width: 300px;
+      height: 300px;
+    }
+    .hero-image-wrap img.hero-main-img {
+      width: 300px;
+      height: 300px;
+    }
+    /* Badges on mobile */
+    .hero-badge {
+      padding: 8px 12px;
+      gap: 7px;
+      border-radius: 10px;
+    }
+    .badge-icon {
+      width: 26px; height: 26px;
+    }
+    .badge-text p:first-child { font-size: 11px; }
+    .badge-text p:last-child  { font-size: 10px; }
+    .badge-text-sm p:first-child { font-size: 10px; }
+    .badge-text-sm p:last-child  { font-size: 11px; }
+    .hero-badge.badge-bottom-left { bottom: -10px; left: -10px; }
+    .hero-badge.badge-top-right   { top: -10px; right: -10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/">  <img src="https://www.assistidentite.com/assets/images/id-assist-fr.svg" alt="Assist&nbsp;Identité" style="height: 50px;"></div>
+  <div class="nav-links">
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/identity/">Vol d'identité et rétablissement</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/plans/">Plans et prix</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/blog">Blogue</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/help/">Aide</a>
+    <a class="nav-login" href="https://www.assistidentite.com/fr/login">Se connecter</a>
+    <a class="nav-cta" href="https://www.assistidentite.com/fr/registration/account">Essai gratuit</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="mobile-menu" id="mobile-menu">
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/identity">Vol d'identité et rétablissement</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/plans/">Plans et prix</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/blog">Blogue</a>
+    <a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/help/">Aide</a>
+    <a href="https://www.assistidentite.com/fr/login">Se connecter</a>
+    <a class="mob-cta" href="https://www.assistidentite.com/fr/registration/account">Essai gratuit</a>
+  </nav>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <h1>Les fraudeurs sont de plus en plus sophistiqués.<br><span>Maintenant, vous l'êtes aussi.</span></h1>
+    <p>Assist&nbsp;Identité vous donne les outils pour détecter les arnaques instantanément, surveiller votre identité en tout temps et agir avec le soutien d'experts – le tout en un seul endroit.</p>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="https://www.assistidentite.com/fr/registration/account">Essayez Assist&nbsp;Identité gratuitement pendant 30 jours</a>
+      <a class="btn-secondary" href="#" id="open-video" style="display:inline-flex; align-items:center; gap:10px; padding: 14px 28px; white-space:nowrap;">Voir&nbsp;comment&nbsp;ça&nbsp;fonctionne <img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/Play_button_v2.gif" alt="lecture" width="28" height="28" style="display:inline-block; vertical-align:middle;"></a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-image-wrap">
+      <img
+        class="hero-main-img"
+        src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/refs/heads/main/relaxing_image_2.png"
+        alt="Rester en sécurité à la maison et partout"
+      >
+
+      <!-- Badge en bas à gauche : Identité protégée -->
+      <div class="hero-badge badge-bottom-left" id="badge-protected">
+        <div class="badge-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+          </svg>
+        </div>
+        <div class="badge-text">
+          <p>Identité protégée</p>
+          <p>Tout est en ordre ✓</p>
+        </div>
+      </div>
+
+      <!-- Badge en haut à droite : Analyse du Web clandestin -->
+      <div class="hero-badge badge-top-right" id="badge-darkweb">
+        <div class="badge-text-sm">
+          <p>Analyse du Web clandestin</p>
+          <p>Aucune menace détectée</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><span class="num">500K+</span> Canadiens protégés</div>
+  <div class="trust-item"><span class="num">10+</span> ans avec les grandes banques</div>
+  <div class="trust-item"><span><span class="num" style="display:inline; font-size:28px; font-weight:800; color:#212529;">2</span> agences de crédit surveillées quotidiennement</span></div>
+  <div class="trust-item"><span class="num">24/7</span> surveillance de l'identité</div>
+</div>
+
+<!-- FEATURES OVERVIEW -->
+<section class="features-section">
+  <h2>Tout ce dont vous avez besoin pour protéger votre identité</h2>
+  <p>Assist&nbsp;Identité réunit surveillance, détection et soutien expert – pour que les menaces soient détectées tôt et que vous sachiez toujours quoi faire.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-card-icon" style="background: rgba(40,114,146,0.1);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <path d="M13 3L9 13h4l-2 8 8-10h-5l3-8z" fill="#287292" stroke="none"/>
+        </svg>
+      </div>
+      <h3>Analyse &amp; Évaluation</h3>
+      <p>Détection d'arnaques par IA qui analyse les courriels, textos, images et liens suspects – vous donnant un score de risque instantanément pour savoir à quoi vous fier.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card-icon" style="background: rgba(250,175,66,0.12);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FAAF42" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <h3>Surveillance du Web clandestin</h3>
+      <p>Nous surveillons les marchés clandestins et les forums où les identités volées sont échangées, et nous vous alertons si vos renseignements sont trouvés.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card-icon" style="background: rgba(232,41,47,0.08);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8292F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </div>
+      <h3>Alertes en temps réel</h3>
+      <p>Soyez informé dès qu'une activité suspecte est détectée – avec des étapes concrètes pour vous protéger immédiatement.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card-icon" style="background: rgba(75,63,52,0.08);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B3F34" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <h3>Restauration d'identité</h3>
+      <p>Si votre identité est volée, nos experts vous accompagnent à chaque étape – pour vous aider à retrouver la normale le plus rapidement possible.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card-icon" style="background: rgba(40,114,146,0.1);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <h3>Surveillance du crédit à deux agences</h3>
+      <p>Surveillance quotidienne de vos dossiers de crédit chez Equifax et TransUnion – parce que les prêteurs rapportent à différentes agences à différents moments, et n'en surveiller qu'une seule permet à la fraude de passer inaperçue.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card-icon" style="background: rgba(250,175,66,0.12);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FAAF42" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <h3>Assistance d'urgence 24/7</h3>
+      <p>Soutien en restauration d'identité en tout temps. Si le pire arrive, nos spécialistes dévoués sont là pour vous – jour et nuit.</p>
+    </div>
+  </div>
+
+  <div class="autoscan-banner" style="margin-top: 32px; text-align: left;">
+    <div>
+      <img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/All_your_email_image_-_cropped.png" alt="Protection automatique pour tous vos courriels" style="width:150px; margin-bottom:10px;">
+      <h2 style="color: #fff; text-align: left;">Protection automatique pour tous vos courriels</h2>
+      <p>Connectez votre compte Gmail ou Outlook et l'Auto-Analyse d'Analyse &amp; Évaluation surveille votre boîte de réception en tout temps – en vous alertant des menaces avant même que vous ne les ouvriez.</p>
+    </div>
+    <a class="btn-light" href="#" id="open-autoscan-video" style="display:inline-flex; align-items:center; gap:10px; white-space:nowrap;">En&nbsp;savoir&nbsp;plus <img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/Play_button_v2.gif" alt="lecture" width="28" height="28" style="display:inline-block; vertical-align:middle;"></a>
+  </div>
+</section>
+
+<!-- BREACH CHAIN -->
+<section class="breach-section">
+  <div class="breach-inner">
+    <h2>Comment une atteinte aux données devient votre problème</h2>
+    <p>Chaque atteinte suit le même schéma. Voici comment Assist&nbsp;Identité intervient lorsque vos renseignements sont à risque.</p>
+
+    <div class="breach-carousel-wrap">
+      <button class="breach-arrow" id="breach-prev" aria-label="Précédent" disabled>&#8592;</button>
+      <button class="breach-arrow" id="breach-next" aria-label="Suivant">&#8594;</button>
+
+      <div class="breach-carousel" id="breach-carousel">
+        <div class="breach-card">
+          <img class="card-image" src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/refs/heads/main/security-system-is-compromised-is-falling-apart-corporate-data-leakage.jpg" alt="Une entreprise est victime d'une atteinte">
+          <div class="breach-card-body">
+            <h3>Une entreprise est victime d'une atteinte</h3>
+            <p>Des milliards de dossiers sont exposés chaque année lors d'atteintes chez des détaillants, des télécommunications, des plateformes de médias sociaux et des organismes gouvernementaux.</p>
+          </div>
+        </div>
+        <div class="breach-card">
+          <img class="card-image" src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/refs/heads/main/hacker-typing-computer-concept-cybercrime-cyberattack-dark-web.jpg" alt="Vos renseignements se retrouvent sur le Web clandestin">
+          <div class="breach-card-body">
+            <h3>Vos renseignements se retrouvent sur le Web clandestin</h3>
+            <p>Les courriels, mots de passe, numéros de carte de crédit et NAS volés sont échangés sur des marchés criminels cachés – souvent en quelques jours.</p>
+            <div class="intercept-card">
+              <div class="tag">Comment Assist&nbsp;Identité vous protège</div>
+              <p><strong>Surveillance du Web clandestin</strong> – Nous surveillons jusqu'à 50 éléments de vos renseignements personnels sur les marchés criminels et vous alertons rapidement lorsque quelque chose est détecté, afin que vous puissiez changer vos mots de passe ou annuler vos cartes bancaires compromises.</p>
+            </div>
+          </div>
+        </div>
+        <div class="breach-card">
+          <img class="card-image" src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/refs/heads/main/businessman-using-laptop-home-is-receiving-email-warning-alerts-about-spam-viruses-hackers-as-well-as-network-security-concept.jpg" alt="Les fraudeurs vous ciblent directement">
+          <div class="breach-card-body">
+            <h3>Les fraudeurs vous ciblent directement</h3>
+            <p>En utilisant vos renseignements personnels, les criminels envoient des courriels et textos convaincants conçus pour vous soutirer encore plus d'informations.</p>
+            <div class="intercept-card">
+              <div class="tag">Comment Assist&nbsp;Identité vous protège</div>
+              <p><strong>Analyse &amp; Évaluation</strong> – La détection d'arnaques par IA analyse tout message suspect et vous indique instantanément s'il représente une menace.</p>
+            </div>
+          </div>
+        </div>
+        <div class="breach-card">
+          <img class="card-image" src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/refs/heads/main/Credit_keyboard_fr.png" alt="Quelqu'un demande du crédit en votre nom">
+          <div class="breach-card-body">
+            <h3>Quelqu'un demande du crédit en votre nom</h3>
+            <p>Les voleurs d'identité utilisent les renseignements volés pour ouvrir des comptes ou contracter des prêts – vous laissant avec les conséquences.</p>
+            <div class="intercept-card">
+              <div class="tag">Comment Assist&nbsp;Identité vous protège</div>
+              <p><strong>Surveillance de crédit à deux agences</strong> – Nous surveillons Equifax et TransUnion quotidiennement. La plupart des services n'en surveillent qu'une – ce qui signifie que les premiers signes de fraude peuvent passer inaperçus.</p>
+            </div>
+          </div>
+        </div>
+        <div class="breach-card">
+          <img class="card-image" src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/refs/heads/main/247-support-services-customer-assistance-anytime-anywhere.jpg" alt="Restaurer votre identité">
+          <div class="breach-card-body">
+            <h3>Restaurer votre identité est complexe – mais ça ne devrait pas l'être</h3>
+            <p>Rétablir votre identité après un vol peut signifier traiter avec des banques, des agences de crédit, des organismes gouvernementaux et des créanciers – souvent tous en même temps.</p>
+            <div class="intercept-card">
+              <div class="tag">Comment Assist&nbsp;Identité vous protège</div>
+              <p><strong>Restauration complète de l'identité</strong> – Nos spécialistes vous guident à travers chaque étape du rétablissement, y compris le soutien par procuration limitée – pour que vous puissiez vous concentrer sur votre vie, pas sur la paperasse.</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- /breach-carousel -->
+
+      <div class="breach-dots" id="breach-dots">
+        <span class="active"></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div><!-- /breach-carousel-wrap -->
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="proof-section">
+  <div class="proof-inner">
+    <h2>La protection des Canadiens depuis 2015</h2>
+
+    <div class="proof-top">
+      <div class="proof-top-item">
+        <div class="proof-icon">
+          <img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/af84da373bee635ba6b8286368b70f0505558507/shield_icon.svg" alt="" width="70" height="70">
+        </div>
+        <div class="proof-label"><strong>500K+</strong> Canadiens protégés</div>
+      </div>
+      <div class="proof-top-item">
+        <div class="proof-icon">
+          <img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/af84da373bee635ba6b8286368b70f0505558507/handshake_icon.svg" alt="" width="70" height="70">
+        </div>
+        <div class="proof-label"><strong>10+ ans</strong> avec les grandes banques</div>
+      </div>
+      <div class="proof-top-item">
+        <div class="proof-icon">
+          <img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/SOC_2_Type_2_icon.svg" alt="" width="70" height="70">
+        </div>
+        <div class="proof-label"><strong>Sécurité des données</strong> de niveau bancaire</div>
+      </div>
+    </div>
+
+    <div class="proof-scenario-grid">
+      <div class="proof-scenario">
+        <div class="proof-scenario-head">
+          <div class="proof-scenario-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FAAF42" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <div class="proof-scenario-type">Alerte Web clandestin</div>
+        </div>
+        <p>Un numéro de carte de crédit exposé lors d'une atteinte chez un détaillant a été détecté sur un marché criminel – annulé avant que des achats frauduleux ne soient effectués.</p>
+      </div>
+
+      <div class="proof-scenario">
+        <div class="proof-scenario-head">
+          <div class="proof-scenario-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FAAF42" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <path d="M13 3L9 13h4l-2 8 8-10h-5l3-8z" fill="#FAAF42" stroke="none"/>
+            </svg>
+          </div>
+          <div class="proof-scenario-type">Analyse &amp; Évaluation</div>
+        </div>
+        <p>Un courriel d'hameçonnage imitant un important fournisseur de télécommunications a été signalé comme à risque élevé – empêchant un abonné de cliquer sur une fausse page de connexion.</p>
+      </div>
+
+      <div class="proof-scenario">
+        <div class="proof-scenario-head">
+          <div class="proof-scenario-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FAAF42" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <div class="proof-scenario-type">Surveillance du crédit</div>
+        </div>
+        <p>Une demande de crédit non autorisée a été détectée chez TransUnion – une alerte à la fraude a été émise en quelques heures, bloquant une demande de compte frauduleuse.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GET STARTED -->
+<section class="start-section">
+  <h2>Démarrer prend moins de 5 minutes</h2>
+  <div class="start-steps">
+    <div class="start-step">
+      <div class="start-num">1</div>
+      <h3>Commencez votre essai gratuit</h3>
+      <p>Accédez à toutes les fonctionnalités d'Assist&nbsp;Identité pendant 30 jours – sans engagement.</p>
+    </div>
+    <div class="start-step">
+      <div class="start-num">2</div>
+      <h3>Configurez votre protection</h3>
+      <p>Inscrivez vos renseignements pour la surveillance du Web clandestin, vérifiez votre cote de solvabilité et connectez votre courriel pour l'Auto-Analyse.</p>
+    </div>
+    <div class="start-step">
+      <div class="start-num">3</div>
+      <h3>Restez protégé, chaque jour</h3>
+      <p>Nous surveillons en tout temps et vous alertons dès qu'une menace est détectée – pour que vous puissiez agir avant que des dommages ne surviennent.</p>
+    </div>
+  </div>
+  <a class="btn-primary" href="https://www.assistidentite.com/fr/registration/account">Essayez Assist&nbsp;Identité gratuitement pendant 30 jours</a>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-section">
+  <div class="final-inner">
+    <h2>Une protection qui vous accompagne partout</h2>
+    <p>L'application mobile Assist&nbsp;Identité met toutes les fonctionnalités dans votre poche – analysez les messages suspects sur le champ, vérifiez votre cote de solvabilité, consultez vos alertes et gérez votre compte de n'importe où.</p>
+    <a class="btn-white" href="https://www.assistidentite.com/fr/registration/account">Essayez Assist&nbsp;Identité gratuitement pendant 30 jours</a>
+    <div class="app-badges">
+      <a href="https://apps.apple.com/ca/app/assist-identit%C3%A9-mobile/id540563542?l=fr-CA" target="_blank"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/8f4835de959e7d5569aa88dd021710ec04fff49b/Download_on_the_App_Store_Badge_FRCA_RGB_blk.svg" alt="Télécharger dans l'App Store" style="height:44px; width:auto;"></a>
+      <a href="https://play.google.com/store/apps/details?id=com.finastra.myidentityassist&hl=fr_CA" target="_blank"><img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/refs/heads/main/google-play-badge-fr.png" alt="L'obtenir sur Google Play" style="height:44px; width:auto;"></a>
+    </div>
+    <div class="cancel-note">Annulez en tout temps – sans pénalités ni tracas.</div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="video-lightbox">
+  <div class="lightbox-container">
+    <button class="lightbox-close" id="close-lightbox">&times;</button>
+    <iframe id="vimeo-iframe" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4>
+        <img src="https://www.assistidentite.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">
+        Assistance d'urgence 24/7
+      </h4>
+      <table>
+        <tr><td>Amérique du Nord</td><td><a href="tel:18779001837">1 877 900-1837</a></td></tr>
+        <tr><td>Toronto et frais virés</td><td><a href="tel:16478375412">1 647 837-5412</a></td></tr>
+      </table>
+      <p><a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a></p>
+      <div class="footer-maple">
+        <img src="https://www.assistidentite.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
+        <p><strong>Représentants canadiens disponibles 24/7</strong><br>pour les services de restauration.</p>
+      </div>
+      <div class="footer-hours">
+        <strong>Nos heures régulières d'opération sont</strong>
+        9 h – 21 h HE, du lundi au vendredi
+      </div>
+    </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/identity">Vol d'identité et rétablissement</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/plans/">Plans et prix</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/blog">Blogue</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/fr/help/">Aide</a></li>
+        <li><a href="https://www.assistidentite.com/fr/terms-conditions">Modalités et conditions</a></li>
+        <li><a href="https://www.assistidentite.com/fr/privacy-policy">Politique de confidentialité</a></li>
+        <li><a href="https://www.assistidentite.com/fr/cancellation-policy">Politique d'annulation</a></li>
+        <li><a href="https://the-gmt.github.io/expert-octo-garbanzo/">EN</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Assist&nbsp;Identité est un système d'alerte précoce qui vous aide à protéger votre identité.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. Tous droits réservés. Assist&nbsp;Identité®, Sigma Loyalty Group Inc. et toutes les marques et logos associés sont des marques de commerce appartenant à Sigma Loyalty Group Inc. ou utilisées sous licence. Assist&nbsp;Identité® est fourni par Sigma Loyalty Group Inc.</p>
+    <p>iPhone et App Store sont des marques de commerce d'Apple Inc., enregistrées aux États-Unis et dans d'autres pays. Android, Google Play et Play Store sont des marques de commerce de Google Inc., enregistrées aux États-Unis et dans d'autres pays.</p>
+    <p>Tous les noms de produits, logos et marques sont la propriété de leurs détenteurs respectifs. Tous les noms d'entreprises, de produits et de services utilisés sur ce site Web le sont à des fins d'identification uniquement. L'utilisation de ces noms, logos et marques n'implique aucun cautionnement.</p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
+  document.addEventListener('click', e => { if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); } });
+
+  // Breach carousel
+  const breachCarousel = document.getElementById('breach-carousel');
+  const breachDots = document.querySelectorAll('#breach-dots span');
+  const breachPrev = document.getElementById('breach-prev');
+  const breachNext = document.getElementById('breach-next');
+  const totalCards = breachDots.length;
+
+  function getCardWidth() {
+    const card = breachCarousel.querySelector('.breach-card');
+    return card ? card.offsetWidth + 24 : 0;
+  }
+
+  function updateBreachState(idx) {
+    breachDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    breachPrev.disabled = idx === 0;
+    breachNext.disabled = idx === totalCards - 1;
+  }
+
+  breachCarousel.addEventListener('scroll', () => {
+    const w = getCardWidth();
+    if (!w) return;
+    const idx = Math.min(Math.round(breachCarousel.scrollLeft / w), totalCards - 1);
+    updateBreachState(idx);
+  });
+
+  breachPrev.addEventListener('click', () => {
+    const w = getCardWidth();
+    const idx = Math.max(0, Math.round(breachCarousel.scrollLeft / w) - 1);
+    breachCarousel.scrollTo({ left: idx * w, behavior: 'smooth' });
+  });
+
+  breachNext.addEventListener('click', () => {
+    const w = getCardWidth();
+    const idx = Math.min(totalCards - 1, Math.round(breachCarousel.scrollLeft / w) + 1);
+    breachCarousel.scrollTo({ left: idx * w, behavior: 'smooth' });
+  });
+
+  // Lightbox
+  const overlay = document.getElementById('video-lightbox');
+  const iframe = document.getElementById('vimeo-iframe');
+  document.getElementById('open-video').addEventListener('click', e => { e.preventDefault(); iframe.src = 'https://player.vimeo.com/video/834565688?autoplay=1'; overlay.classList.add('active'); });
+  document.getElementById('open-autoscan-video').addEventListener('click', e => { e.preventDefault(); iframe.src = 'https://player.vimeo.com/video/1114051777?h=4f3b71abec&autoplay=1'; overlay.classList.add('active'); });
+  function closeLightbox() { overlay.classList.remove('active'); iframe.src = ''; }
+  document.getElementById('close-lightbox').addEventListener('click', closeLightbox);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeLightbox(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  // Hero badge entrance animation
+  function animateBadges() {
+    const badgeProtected = document.getElementById('badge-protected');
+    const badgeDarkweb   = document.getElementById('badge-darkweb');
+    setTimeout(() => { badgeProtected.classList.add('badge-visible'); }, 400);
+    setTimeout(() => { badgeDarkweb.classList.add('badge-visible'); }, 750);
+  }
+
+  // Trigger on page load (after a brief settle)
+  if (document.readyState === 'complete') {
+    animateBadges();
+  } else {
+    window.addEventListener('load', animateBadges);
+  }
+</script>
+</body>
+</html>
