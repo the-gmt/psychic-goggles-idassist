@@ -157,10 +157,10 @@
     display: flex; flex-direction: column; align-items: center; gap: 10px;
   }
   .toolkit-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
-  .toolkit-card .tk-icon { font-size: 28px; }
+  .toolkit-card .tk-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .toolkit-card h3 { font-size: 18px; font-weight: 700; color: #212529; line-height: 1.3; }
   .toolkit-card p { font-size: 18px; color: #4B3F34; line-height: 1.5; }
-  .toolkit-card .tk-cta { font-size: 18px; font-weight: 700; color: #287292; margin-top: 4px; }
+  .toolkit-card .tk-cta { font-size: 18px; font-weight: 700; color: #287292; margin-top: auto; }
 
   .help-banner {
     background: #495057; border-radius: 16px; padding: 36px 40px;
@@ -749,19 +749,36 @@
 
       <div class="toolkit-grid">
         <a class="toolkit-card" href="https://www.idassist.com/assets/docs/en/IDAssist-Toolkit.pdf" target="_blank">
-          <span class="tk-icon">🛡️</span>
+          <span class="tk-icon" style="background: rgba(250,175,66,0.12);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FAAF42" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </span>
           <h3>Identity Theft Toolkit</h3>
           <p>What to do if your identity has been compromised, step by step.</p>
           <span class="tk-cta">View guide →</span>
         </a>
         <a class="toolkit-card" href="https://www.idassist.com/assets/docs/en/CreditReport-UserGuide.pdf" target="_blank">
-          <span class="tk-icon">📋</span>
+          <span class="tk-icon" style="background: rgba(40,114,146,0.1);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <line x1="10" y1="9" x2="8" y2="9"/>
+            </svg>
+          </span>
           <h3>Credit Report: A User Guide</h3>
           <p>What a credit report includes and why your credit history matters.</p>
           <span class="tk-cta">View guide →</span>
         </a>
         <a class="toolkit-card" href="https://www.idassist.com/assets/docs/en/CreditScore-UserGuide.pdf" target="_blank">
-          <span class="tk-icon">📈</span>
+          <span class="tk-icon" style="background: rgba(40,114,146,0.1);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </span>
           <h3>Credit Score: A User Guide</h3>
           <p>How your credit score is calculated and how to protect it.</p>
           <span class="tk-cta">View guide →</span>
@@ -827,7 +844,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobile-menu');
   hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
@@ -872,26 +889,13 @@
     window.addEventListener('scroll', () => {
       const navH = navEl.offsetHeight;
       document.documentElement.style.setProperty('--nav-height', navH + 'px');
-      if (window.scrollY + navH >= selectOffset) {
+      if (window.scrollY >= selectOffset) {
         selectWrap.classList.add('sticky');
-        document.documentElement.style.setProperty('--select-height', selectWrap.offsetHeight + 'px');
       } else {
         selectWrap.classList.remove('sticky');
       }
-    }, { passive: true });
-  }
-
-  const sections = document.querySelectorAll('.faq-section');
-  const navLinks = document.querySelectorAll('.cat-nav ul li a');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = '#' + entry.target.id;
-        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
-      }
     });
-  }, { rootMargin: '-20% 0px -60% 0px' });
-  sections.forEach(s => observer.observe(s));
+  }
 </script>
 </body>
 </html>
