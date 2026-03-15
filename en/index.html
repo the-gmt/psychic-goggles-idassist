@@ -267,6 +267,15 @@
   .feature-card p {
     font-size: 18px; color: #4B3F34; line-height: 1.6;
   }
+  .features-dots {
+    display: none;
+    justify-content: center; gap: 8px; margin-top: 20px;
+  }
+  .features-dots span {
+    width: 8px; height: 8px; border-radius: 50%; background: #d0d0d0; display: block;
+  }
+  .features-dots span.active { background: #FAAF42; }
+  .features-grid::-webkit-scrollbar { display: none; }
   .autoscan-banner {
     background: #495057;
     border-radius: 14px; padding: 32px 40px;
@@ -506,7 +515,14 @@
     .trust-bar { padding: 36px 24px; }
     .features-section, .start-section { padding: 56px 24px; }
     .breach-section { padding: 56px 24px; }
-    .features-grid { grid-template-columns: 1fr; }
+    .features-grid {
+      display: flex; overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 16px; padding-bottom: 8px; scrollbar-width: none;
+    }
+    .feature-card { flex: 0 0 82%; scroll-snap-align: start; }
+    .features-dots { display: flex; }
     .autoscan-banner { flex-direction: column; text-align: center; }
     .start-steps { grid-template-columns: 1fr; }
     .final-section, .proof-section { padding: 56px 24px; }
@@ -694,6 +710,15 @@
       <h3>24/7 emergency assistance</h3>
       <p>Round-the-clock identity restoration support. If the worst happens, our dedicated specialists are here for you – day or night.</p>
     </div>
+  </div>
+
+  <div class="features-dots" id="features-dots">
+    <span class="active"></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
 
   <div class="autoscan-banner" style="margin-top: 32px; text-align: left;">
@@ -903,7 +928,7 @@
         <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
         <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
       </table>
-      <p><a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
+      <p><a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
@@ -934,7 +959,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // Hamburger
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobile-menu');
@@ -978,6 +1003,27 @@
     breachCarousel.scrollTo({ left: idx * w, behavior: 'smooth' });
   });
 
+  // Features carousel (mobile dots)
+  const featuresGrid = document.querySelector('.features-grid');
+  const featuresDots = document.querySelectorAll('#features-dots span');
+  const totalFeatures = featuresDots.length;
+
+  function getFeatureCardWidth() {
+    const card = featuresGrid.querySelector('.feature-card');
+    return card ? card.offsetWidth + 16 : 0;
+  }
+
+  function updateFeaturesState(idx) {
+    featuresDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  }
+
+  featuresGrid.addEventListener('scroll', () => {
+    const w = getFeatureCardWidth();
+    if (!w) return;
+    const idx = Math.min(Math.round(featuresGrid.scrollLeft / w), totalFeatures - 1);
+    updateFeaturesState(idx);
+  });
+
   // Lightbox
   const overlay = document.getElementById('video-lightbox');
   const iframe = document.getElementById('vimeo-iframe');
@@ -1000,15 +1046,10 @@
 
     setTimeout(() => {
       badgeDarkweb.classList.add('badge-visible');
-    }, 750);
+    }, 800);
   }
 
-  // Trigger on page load (after a brief settle)
-  if (document.readyState === 'complete') {
-    animateBadges();
-  } else {
-    window.addEventListener('load', animateBadges);
-  }
+  animateBadges();
 </script>
 </body>
 </html>
