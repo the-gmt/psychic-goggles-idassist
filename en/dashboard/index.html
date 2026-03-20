@@ -395,6 +395,7 @@
   .credit-bureaus {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     margin-top: 14px;
+    margin-bottom: 8px;
   }
   .bureau-chip {
     background: var(--light); border-radius: 10px; padding: 10px 12px;
@@ -571,6 +572,7 @@
     .slide-menu { width: 100%; }
     .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
     .footer-nav ul li { text-align: left; }
+    .credit-bureaus { padding: 0 4px; }
     .footer-bottom { padding: 24px 24px 32px; }
   }
 </style>
@@ -1094,39 +1096,61 @@
   hamburger.addEventListener('click', toggleMenu);
   menuOverlay.addEventListener('click', toggleMenu);
 
-  // Animated credit score gauge
-  const creditArc = document.getElementById('credit-arc');
-  const creditArcCap = document.getElementById('credit-arc-cap');
-  const creditNeedle = document.getElementById('credit-needle');
+  // ── Credit score gauge ──────────────────────────────────────────────────────
+  // Root cause of iOS failure: getTotalLength() and getPointAtLength() both
+  // return 0 on Safari/WebKit before the SVG has finished painting, so the
+  // dasharray is never set and the needle never moves.
+  //
+  // Fix: the arc path "M 15 95 A 80 80 0 0 1 175 95" is a static semicircle
+  // (centre 95,95 – radius 80).  We replace the broken DOM calls with exact
+  // trigonometry that works on every browser including iOS Safari.
+
+  const creditArc      = document.getElementById('credit-arc');
+  const creditArcCap   = document.getElementById('credit-arc-cap');
+  const creditNeedle   = document.getElementById('credit-needle');
   const creditScoreNum = document.getElementById('credit-score-num');
 
-  // Smooth ease-out curve
   function easeOutCubic(t) {
     return 1 - Math.pow(1 - t, 3);
   }
 
   if (creditArc) {
-    var totalLen = creditArc.getTotalLength();
-    var targetLen = totalLen * 0.93; // 93% for score 858
-    var duration = 1400;
-    var scoreShown = false;
+    var ARC_R    = 80;
+    var ARC_CX   = 95;
+    var ARC_CY   = 95;
+    var totalLen  = Math.PI * ARC_R;   // exact semicircle length ≈ 251.33 px
+    var targetLen = totalLen * 0.93;   // 93% fill → score 858 (Excellent)
+    var duration  = 1400;
+    var scoreShown       = false;
+    var animationStarted = false;
+
+    // Returns {x, y} at arc-distance `len` from the left endpoint.
+    // The arc sweeps from angle π (left) to 0 (right) along the top half.
+    function getPointOnArc(len) {
+      var t     = len / totalLen;       // 0 → 1
+      var angle = Math.PI * (1 - t);   // π → 0
+      return {
+        x: ARC_CX + ARC_R * Math.cos(angle),
+        y: ARC_CY - ARC_R * Math.sin(angle)
+      };
+    }
 
     function animateGauge(startTime) {
-      var now = performance.now();
-      var elapsed = now - startTime;
-      var progress = Math.min(elapsed / duration, 1);
-      var eased = easeOutCubic(progress);
+      var now        = performance.now();
+      var elapsed    = now - startTime;
+      var progress   = Math.min(elapsed / duration, 1);
+      var eased      = easeOutCubic(progress);
       var currentLen = Math.max(0.1, eased * targetLen);
 
-      // Update arc dasharray via style (overrides CSS)
+      // Drive the stroke-dasharray directly on the element style
       creditArc.style.strokeDasharray = currentLen + ' ' + (totalLen - currentLen);
 
-      // Position dot at the leading edge of the arc
-      var pt = creditArc.getPointAtLength(currentLen);
+      // Slide the needle dot to the arc's leading edge
+      var pt = getPointOnArc(currentLen);
       creditNeedle.setAttribute('cx', pt.x);
       creditNeedle.setAttribute('cy', pt.y);
 
-      // Show score number near the end
+      // Reveal the score number near the end of the animation
       if (!scoreShown && progress > 0.7) {
         creditScoreNum.classList.add('animate');
         scoreShown = true;
@@ -1137,17 +1161,30 @@
       }
     }
 
-    var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting) {
-          creditArcCap.classList.add('animate');
-          creditNeedle.classList.add('animate');
-          animateGauge(performance.now());
-          obs.disconnect();
-        }
-      });
-    }, { threshold: 0.3 });
-    obs.observe(creditArc);
+    function startAnimation() {
+      if (animationStarted) return;
+      animationStarted = true;
+      creditArcCap.classList.add('animate');
+      creditNeedle.classList.add('animate');
+      animateGauge(performance.now());
+    }
+
+    // Primary trigger: IntersectionObserver (fires when card scrolls into view)
+    if ('IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) { startAnimation(); obs.disconnect(); }
+        });
+      }, { threshold: 0.3 });
+      obs.observe(creditArc);
+    } else {
+      // Fallback for browsers without IntersectionObserver
+      window.addEventListener('load', startAnimation);
+    }
+
+    // Belt-and-suspenders: fire after 500 ms even if the observer never fires
+    // (handles edge cases where the card is already in view on load on iOS)
+    setTimeout(startAnimation, 500);
   }
 </script>
 </body>
