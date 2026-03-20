@@ -355,7 +355,7 @@
   .credit-gauge-svg { width: 100%; height: auto; }
   .credit-score-num {
     position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-    text-align: center; opacity: 0;
+    text-align: center; opacity: 1;
   }
   .credit-score-num.animate {
     animation: scoreFadeIn 0.4s ease forwards;
@@ -395,6 +395,7 @@
   .credit-bureaus {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     margin-top: 14px;
+    margin-bottom: 8px;
   }
   .bureau-chip {
     background: var(--light); border-radius: 10px; padding: 10px 12px;
@@ -571,6 +572,7 @@
     .slide-menu { width: 100%; }
     .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
     .footer-nav ul li { text-align: left; }
+    .credit-bureaus { padding: 0 4px; }
     .footer-bottom { padding: 24px 24px 32px; }
   }
 </style>
@@ -606,7 +608,7 @@
     <div class="menu-avatar">GT</div>
     <div>
       <div class="menu-user-name">Geoffrey Thomas</div>
-      <div class="menu-user-email">geoff.thomas@email.com</div>
+      <div class="menu-user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2d4a48424b4b03594542404c5e6d48404c4441034e4240">[email&#160;protected]</a></div>
     </div>
   </div>
   <div class="menu-section">
@@ -842,11 +844,11 @@
                 <!-- Background arc -->
                 <path d="M 15 95 A 80 80 0 0 1 175 95" fill="none" stroke="#F2F2F2" stroke-width="14" stroke-linecap="round" class="credit-arc-bg"/>
                 <!-- Gradient fill arc (animated) -->
-                <path d="M 15 95 A 80 80 0 0 1 175 95" fill="none" stroke="url(#creditGrad)" stroke-width="14" stroke-linecap="butt" class="credit-arc-fill" id="credit-arc"/>
+                <path d="M 15 95 A 80 80 0 0 1 175 95" fill="none" stroke="url(#creditGrad)" stroke-width="14" stroke-linecap="butt" class="credit-arc-fill" id="credit-arc" style="stroke-dasharray:233.73 17.59"/>
                 <!-- Round cap at start of arc -->
-                <circle cx="15" cy="95" r="7" fill="#E8292F" class="credit-arc-cap" id="credit-arc-cap"/>
+                <circle cx="15" cy="95" r="7" fill="#E8292F" class="credit-arc-cap" id="credit-arc-cap" style="opacity:1"/>
                 <!-- Needle dot — JS positions this at the arc's leading edge -->
-                <circle cx="15" cy="95" r="9" fill="white" stroke="#2E7D32" stroke-width="3" class="credit-needle" id="credit-needle"/>
+                <circle cx="173.07" cy="77.55" r="9" fill="white" stroke="#2E7D32" stroke-width="3" class="credit-needle" id="credit-needle" style="opacity:1"/>
               </svg>
               <div class="credit-score-num" id="credit-score-num">
                 <div class="score">858</div>
@@ -1049,7 +1051,7 @@
         <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
         <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
       </table>
-      <p><a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
+      <p><a href="/cdn-cgi/l/email-protection#5c3f292f283331392e2f392e2a353f391c35383d2f2f352f28723f3331"><span class="__cf_email__" data-cfemail="f4978187809b999186879186829d9791b49d909587879d8780da979b99">[email&#160;protected]</span></a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
@@ -1079,7 +1081,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Hamburger menu
   const hamburger = document.getElementById('hamburger');
   const slideMenu = document.getElementById('slide-menu');
@@ -1094,39 +1096,66 @@
   hamburger.addEventListener('click', toggleMenu);
   menuOverlay.addEventListener('click', toggleMenu);
 
-  // Animated credit score gauge
-  const creditArc = document.getElementById('credit-arc');
-  const creditArcCap = document.getElementById('credit-arc-cap');
-  const creditNeedle = document.getElementById('credit-needle');
+  // ── Credit score gauge ──────────────────────────────────────────────────────
+  // Root cause of iOS failure: getTotalLength() and getPointAtLength() both
+  // return 0 on Safari/WebKit before the SVG has finished painting, so the
+  // dasharray is never set and the needle never moves.
+  //
+  // Fix: the arc path "M 15 95 A 80 80 0 0 1 175 95" is a static semicircle
+  // (centre 95,95 – radius 80).  We replace the broken DOM calls with exact
+  // trigonometry that works on every browser including iOS Safari.
+
+  const creditArc      = document.getElementById('credit-arc');
+  const creditArcCap   = document.getElementById('credit-arc-cap');
+  const creditNeedle   = document.getElementById('credit-needle');
   const creditScoreNum = document.getElementById('credit-score-num');
 
-  // Smooth ease-out curve
   function easeOutCubic(t) {
     return 1 - Math.pow(1 - t, 3);
   }
 
   if (creditArc) {
-    var totalLen = creditArc.getTotalLength();
-    var targetLen = totalLen * 0.93; // 93% for score 858
-    var duration = 1400;
-    var scoreShown = false;
+    var ARC_R    = 80;
+    var ARC_CX   = 95;
+    var ARC_CY   = 95;
+    var totalLen  = Math.PI * ARC_R;   // exact semicircle length ≈ 251.33 px
+    var targetLen = totalLen * 0.93;   // 93% fill → score 858 (Excellent)
+    var duration  = 1400;
+    var scoreShown       = false;
+    var animationStarted = false;
+
+    // Returns {x, y} at arc-distance `len` from the left endpoint.
+    // The arc sweeps from angle π (left) to 0 (right) along the top half.
+    function getPointOnArc(len) {
+      var t     = len / totalLen;       // 0 → 1
+      var angle = Math.PI * (1 - t);   // π → 0
+      return {
+        x: ARC_CX + ARC_R * Math.cos(angle),
+        y: ARC_CY - ARC_R * Math.sin(angle)
+      };
+    }
 
     function animateGauge(startTime) {
-      var now = performance.now();
-      var elapsed = now - startTime;
-      var progress = Math.min(elapsed / duration, 1);
-      var eased = easeOutCubic(progress);
+      // Reset to start position before animating
+      creditArc.style.strokeDasharray = '0.1 ' + totalLen;
+      creditNeedle.setAttribute('cx', '15');
+      creditNeedle.setAttribute('cy', '95');
+
+      var now        = performance.now();
+      var elapsed    = now - startTime;
+      var progress   = Math.min(elapsed / duration, 1);
+      var eased      = easeOutCubic(progress);
       var currentLen = Math.max(0.1, eased * targetLen);
 
-      // Update arc dasharray via style (overrides CSS)
+      // Drive the stroke-dasharray directly on the element style
       creditArc.style.strokeDasharray = currentLen + ' ' + (totalLen - currentLen);
 
-      // Position dot at the leading edge of the arc
-      var pt = creditArc.getPointAtLength(currentLen);
+      // Slide the needle dot to the arc's leading edge
+      var pt = getPointOnArc(currentLen);
       creditNeedle.setAttribute('cx', pt.x);
       creditNeedle.setAttribute('cy', pt.y);
 
-      // Show score number near the end
+      // Reveal the score number near the end of the animation
       if (!scoreShown && progress > 0.7) {
         creditScoreNum.classList.add('animate');
         scoreShown = true;
@@ -1137,17 +1166,38 @@
       }
     }
 
-    var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting) {
-          creditArcCap.classList.add('animate');
-          creditNeedle.classList.add('animate');
-          animateGauge(performance.now());
-          obs.disconnect();
-        }
-      });
-    }, { threshold: 0.3 });
-    obs.observe(creditArc);
+    function startAnimation() {
+      if (animationStarted) return;
+      animationStarted = true;
+      creditArcCap.classList.add('animate');
+      creditNeedle.classList.add('animate');
+      animateGauge(performance.now());
+    }
+
+    // Primary trigger: IntersectionObserver (fires when card scrolls into view)
+    if ('IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) { startAnimation(); obs.disconnect(); }
+        });
+      }, { threshold: 0 });
+      obs.observe(creditArc);
+    } else {
+      // Fallback for browsers without IntersectionObserver
+      window.addEventListener('load', startAnimation);
+    }
+
+    // Safety net: only fires if the card is actually visible in the viewport.
+    // Without this guard the timeout would run the animation off-screen on mobile
+    // (card is below the fold on single-column layout), then animationStarted
+    // would block it from replaying when the user scrolls down to it.
+    setTimeout(function() {
+      if (animationStarted) return;
+      var rect = creditArc.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        startAnimation();
+      }
+    }, 600);
   }
 </script>
 </body>
