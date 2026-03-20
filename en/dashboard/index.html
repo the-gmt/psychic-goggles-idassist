@@ -608,7 +608,7 @@
     <div class="menu-avatar">GT</div>
     <div>
       <div class="menu-user-name">Geoffrey Thomas</div>
-      <div class="menu-user-email">geoff.thomas@email.com</div>
+      <div class="menu-user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2d4a48424b4b03594542404c5e6d48404c4441034e4240">[email&#160;protected]</a></div>
     </div>
   </div>
   <div class="menu-section">
@@ -1051,7 +1051,7 @@
         <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
         <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
       </table>
-      <p><a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
+      <p><a href="/cdn-cgi/l/email-protection#5c3f292f283331392e2f392e2a353f391c35383d2f2f352f28723f3331"><span class="__cf_email__" data-cfemail="f4978187809b999186879186829d9791b49d909587879d8780da979b99">[email&#160;protected]</span></a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
@@ -1081,7 +1081,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Hamburger menu
   const hamburger = document.getElementById('hamburger');
   const slideMenu = document.getElementById('slide-menu');
@@ -1175,16 +1175,24 @@
         entries.forEach(function(e) {
           if (e.isIntersecting) { startAnimation(); obs.disconnect(); }
         });
-      }, { threshold: 0.3 });
+      }, { threshold: 0 });
       obs.observe(creditArc);
     } else {
       // Fallback for browsers without IntersectionObserver
       window.addEventListener('load', startAnimation);
     }
 
-    // Belt-and-suspenders: fire after 500 ms even if the observer never fires
-    // (handles edge cases where the card is already in view on load on iOS)
-    setTimeout(startAnimation, 500);
+    // Safety net: only fires if the card is actually visible in the viewport.
+    // Without this guard the timeout would run the animation off-screen on mobile
+    // (card is below the fold on single-column layout), then animationStarted
+    // would block it from replaying when the user scrolls down to it.
+    setTimeout(function() {
+      if (animationStarted) return;
+      var rect = creditArc.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        startAnimation();
+      }
+    }, 600);
   }
 </script>
 </body>
