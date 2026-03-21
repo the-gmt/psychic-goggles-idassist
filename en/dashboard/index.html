@@ -850,9 +850,9 @@
                 <!-- Needle dot — JS positions this at the arc's leading edge -->
                 <circle cx="173.07" cy="77.55" r="9" fill="white" stroke="#2E7D32" stroke-width="3" class="credit-needle" id="credit-needle" style="opacity:1"/>
               </svg>
-              <div class="credit-score-num" id="credit-score-num">
-                <div class="score">858</div>
-                <div class="label">Excellent</div>
+              <div class="credit-score-num" id="credit-score-num" data-score="858">
+                <div class="score" id="credit-score-value"></div>
+                <div class="label" id="credit-score-label"></div>
               </div>
             </div>
             <div class="credit-updated">Updated Jan 1, 2026</div>
@@ -1097,123 +1097,144 @@
   menuOverlay.addEventListener('click', toggleMenu);
 
   // ── Credit score gauge ──────────────────────────────────────────────────────
-  // Root cause of iOS failure: getTotalLength() and getPointAtLength() both
-  // return 0 on Safari/WebKit before the SVG has finished painting, so the
-  // dasharray is never set and the needle never moves.
+  // Score is fed in via data-score on #credit-score-num (range 300–900).
+  // Fill ratio = (score - 300) / 600, so the arc always reflects the real value.
   //
-  // Fix: the arc path "M 15 95 A 80 80 0 0 1 175 95" is a static semicircle
-  // (centre 95,95 – radius 80).  We replace the broken DOM calls with exact
-  // trigonometry that works on every browser including iOS Safari.
+  // Mobile (≤900 px): animation is skipped entirely — the gauge is painted in
+  // its final state immediately so there are no timing/observer issues on iOS.
+  //
+  // Desktop: animated with IntersectionObserver triggering when the card enters
+  // the viewport.  The arc path "M 15 95 A 80 80 0 0 1 175 95" is a static
+  // semicircle (centre 95,95 – radius 80).  getTotalLength() / getPointAtLength()
+  // are replaced with exact trig so the code works on Safari/WebKit.
 
   const creditArc      = document.getElementById('credit-arc');
   const creditArcCap   = document.getElementById('credit-arc-cap');
   const creditNeedle   = document.getElementById('credit-needle');
   const creditScoreNum = document.getElementById('credit-score-num');
+  const creditScoreVal = document.getElementById('credit-score-value');
+  const creditScoreLbl = document.getElementById('credit-score-label');
 
-  function easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  // Map a score (300–900) to a plain-English label and CSS colour variable.
+  function scoreLabel(s) {
+    if (s >= 760) return { text: 'Excellent',  color: 'var(--green)' };
+    if (s >= 725) return { text: 'Very Good',  color: 'var(--green)' };
+    if (s >= 660) return { text: 'Good',       color: 'var(--teal)'  };
+    if (s >= 560) return { text: 'Fair',       color: 'var(--amber)' };
+    return              { text: 'Poor',        color: 'var(--red)'   };
   }
 
   if (creditArc) {
+    // ── Read score from data attribute ──────────────────────────────────────
+    var rawScore  = parseInt(creditScoreNum.getAttribute('data-score'), 10);
+    var score     = Math.min(900, Math.max(300, isNaN(rawScore) ? 300 : rawScore));
+    var fillRatio = (score - 300) / 600;   // 300 → 0.0, 900 → 1.0
+
+    // ── Populate score number and label ─────────────────────────────────────
+    var lbl = scoreLabel(score);
+    creditScoreVal.textContent        = score;
+    creditScoreLbl.textContent        = lbl.text;
+    creditScoreLbl.style.color        = lbl.color;
+
+    // ── Arc geometry ────────────────────────────────────────────────────────
     var ARC_R    = 80;
     var ARC_CX   = 95;
     var ARC_CY   = 95;
-    var totalLen  = Math.PI * ARC_R;   // exact semicircle length ≈ 251.33 px
-    var targetLen = totalLen * 0.93;   // 93% fill → score 858 (Excellent)
+    var totalLen  = Math.PI * ARC_R;          // exact semicircle ≈ 251.33 px
+    var targetLen = totalLen * fillRatio;
     var duration  = 1400;
-    var scoreShown       = false;
-    var animationStarted = false;
 
     // Returns {x, y} at arc-distance `len` from the left endpoint.
-    // The arc sweeps from angle π (left) to 0 (right) along the top half.
+    // Arc sweeps from angle π (left) → 0 (right) along the top half.
     function getPointOnArc(len) {
-      var t     = len / totalLen;       // 0 → 1
-      var angle = Math.PI * (1 - t);   // π → 0
+      var t     = len / totalLen;
+      var angle = Math.PI * (1 - t);
       return {
         x: ARC_CX + ARC_R * Math.cos(angle),
         y: ARC_CY - ARC_R * Math.sin(angle)
       };
     }
 
-    function animateGauge(startTime) {
-      // Reset to start position before animating
-      creditArc.style.strokeDasharray = '0.1 ' + totalLen;
-      creditNeedle.setAttribute('cx', '15');
-      creditNeedle.setAttribute('cy', '95');
-
-      var now        = performance.now();
-      var elapsed    = now - startTime;
-      var progress   = Math.min(elapsed / duration, 1);
-      var eased      = easeOutCubic(progress);
-      var currentLen = Math.max(0.1, eased * targetLen);
-
-      // Drive the stroke-dasharray directly on the element style
-      creditArc.style.strokeDasharray = currentLen + ' ' + (totalLen - currentLen);
-
-      // Slide the needle dot to the arc's leading edge
-      var pt = getPointOnArc(currentLen);
+    // ── Paint final state immediately (no animation) ────────────────────────
+    function paintFinal() {
+      var pt = getPointOnArc(targetLen);
+      creditArc.style.strokeDasharray = targetLen + ' ' + (totalLen - targetLen);
       creditNeedle.setAttribute('cx', pt.x);
       creditNeedle.setAttribute('cy', pt.y);
+      creditArcCap.style.opacity   = '1';
+      creditNeedle.style.opacity   = '1';
+      creditScoreNum.style.opacity = '1';
+    }
 
-      // Reveal the score number near the end of the animation
-      if (!scoreShown && progress > 0.7) {
-        creditScoreNum.classList.add('animate');
-        scoreShown = true;
-      }
+    // ── Mobile: static render, no animation ─────────────────────────────────
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      paintFinal();
 
-      if (progress < 1) {
-        requestAnimationFrame(function() { animateGauge(startTime); });
-      } else {
-        // End-of-animation safety net: show score if the 70% trigger was somehow missed
-        if (!scoreShown) {
+    // ── Desktop: animated render ─────────────────────────────────────────────
+    } else {
+      var scoreShown       = false;
+      var animationStarted = false;
+
+      function animateGauge(startTime) {
+        var elapsed    = performance.now() - startTime;
+        var progress   = Math.min(elapsed / duration, 1);
+        var eased      = easeOutCubic(progress);
+        var currentLen = Math.max(0.1, eased * targetLen);
+
+        creditArc.style.strokeDasharray = currentLen + ' ' + (totalLen - currentLen);
+
+        var pt = getPointOnArc(currentLen);
+        creditNeedle.setAttribute('cx', pt.x);
+        creditNeedle.setAttribute('cy', pt.y);
+
+        // Reveal score number at 70% through the animation
+        if (!scoreShown && progress > 0.7) {
           creditScoreNum.classList.add('animate');
           scoreShown = true;
         }
+
+        if (progress < 1) {
+          requestAnimationFrame(function() { animateGauge(startTime); });
+        } else {
+          // End-of-animation safety net
+          if (!scoreShown) {
+            creditScoreNum.classList.add('animate');
+            scoreShown = true;
+          }
+        }
       }
-    }
 
-    function startAnimation() {
-      if (animationStarted) return;
-      animationStarted = true;
-      creditArcCap.classList.add('animate');
-      creditNeedle.classList.add('animate');
-      animateGauge(performance.now());
-    }
-
-    // Primary trigger: IntersectionObserver (fires when card scrolls into view)
-    if ('IntersectionObserver' in window) {
-      var obs = new IntersectionObserver(function(entries) {
-        entries.forEach(function(e) {
-          if (e.isIntersecting) { startAnimation(); obs.disconnect(); }
-        });
-      }, { threshold: 0 });
-      obs.observe(creditArc);
-    } else {
-      // Fallback for browsers without IntersectionObserver
-      window.addEventListener('load', startAnimation);
-    }
-
-    // Safety net: only fires if the card is actually visible in the viewport.
-    // Without this guard the timeout would run the animation off-screen on mobile
-    // (card is below the fold on single-column layout), then animationStarted
-    // would block it from replaying when the user scrolls down to it.
-    setTimeout(function() {
-      if (animationStarted) return;
-      var rect = creditArc.getBoundingClientRect();
-      if (rect.top < window.innerHeight && rect.bottom > 0) {
-        startAnimation();
+      function startAnimation() {
+        if (animationStarted) return;
+        animationStarted = true;
+        creditArcCap.classList.add('animate');
+        creditNeedle.classList.add('animate');
+        animateGauge(performance.now());
       }
-    }, 600);
 
-    // Long-stop fallback for mobile: if the score never became visible
-    // (e.g. iOS Safari didn't fire IntersectionObserver before user scrolled past),
-    // reveal it directly after a generous delay so it's never stuck hidden.
-    setTimeout(function() {
-      if (!scoreShown) {
-        creditScoreNum.style.opacity = '1';
-        scoreShown = true;
+      // Trigger when the card scrolls into view
+      if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) { startAnimation(); obs.disconnect(); }
+          });
+        }, { threshold: 0 });
+        obs.observe(creditArc);
+      } else {
+        window.addEventListener('load', startAnimation);
       }
-    }, 5000);
+
+      // Safety net: if the card is already in the viewport on load
+      setTimeout(function() {
+        if (animationStarted) return;
+        var rect = creditArc.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          startAnimation();
+        }
+      }, 600);
+    }
   }
 </script>
 </body>
