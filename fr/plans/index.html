@@ -547,7 +547,7 @@
         <tr><td>Amérique du Nord</td><td><a href="tel:18779001837">1&nbsp;877&nbsp;900-1837</a></td></tr>
         <tr><td>Toronto et appels à frais virés</td><td><a href="tel:16478375412">1&nbsp;647&nbsp;837-5412</a></td></tr>
       </table>
-      <p><a href="/cdn-cgi/l/email-protection#6b180e191d02080e0a070a0807020e051f0e070e2b0a181802181f020f0e051f021f0e45080406"><span class="__cf_email__" data-cfemail="15667067637c767074797476797c707b61707970557466667c66617c71707b617c61703b767a78">[email&#160;protected]</span></a></p>
+      <p><a href="/cdn-cgi/l/email-protection#b6c5d3c4c0dfd5d3d7dad7d5dadfd3d8c2d3dad3f6d7c5c5dfc5c2dfd2d3d8c2dfc2d398d5d9db"><span class="__cf_email__" data-cfemail="f4879186829d979195989597989d919a80919891b49587879d87809d90919a809d8091da979b99">[email&#160;protected]</span></a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Des représentants canadiens disponibles 24/7</strong><br>pour les services de rétablissement.</p>
@@ -557,10 +557,7 @@
         9 h – 21 h HE, du lundi au vendredi
       </div>
     </div>
-    <div class="footer-nav">
-      <ul>
-        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/fr/identity">Vol d'identité et rétablissement</a></li>
-        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/fr/plans">Plans et prix</a></li>
+    <div classhref="https://the-gmt.github.io/psychic-goggles-idassist/fr/plans">Plans et prix</a></li>
         <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/fr/blog">Blogue</a></li>
         <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/fr/help">Aide</a></li>
         <li><a href="https://www.assistidentite.com/fr/terms-conditions">Conditions d'utilisation</a></li>
@@ -578,7 +575,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   const hamburger = document.getElementById('hamburger');
   const slideMenu = document.getElementById('slide-menu');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -597,4 +594,11 @@
       const id = btn.dataset.faq;
       const answer = document.getElementById('faq-' + id);
       const isOpen = btn.classList.contains('open');
-      documen
+      document.querySelectorAll('.faq-q').forEach(b => b.classList.remove('open'));
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      if (!isOpen) { btn.classList.add('open'); answer.classList.add('open'); }
+    });
+  });
+</script>
+</body>
+</html>
