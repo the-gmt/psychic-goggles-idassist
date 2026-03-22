@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assist Identité – Tableau de bord</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #E8292F;
+    --gold: #FAAF42;
+    --gold-hover: #e89e2e;
+    --dark: #212529;
+    --body: #4B3F34;
+    --slate: #495057;
+    --teal: #287292;
+    --light: #F2F2F2;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
+    --amber: #F57C00;
+    --amber-light: #FFF3E0;
+    --border: #E0E0E0;
+    --white: #fff;
+    --emerald: #10B981;
+  }
+
+  body {
+    font-family: 'Source Sans Pro', 'Trebuchet MS', -apple-system, sans-serif;
+    color: var(--body);
+    background: #F5F5F5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ─── TOP NAV ─── */
+  .top-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 64px; background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+  }
+  .top-nav-left a { display: flex; align-items: center; }
+  .top-nav-left img { height: 40px; }
+  .top-nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-help {
+    text-decoration: none; color: var(--body); font-size: 16px; font-weight: 600;
+    padding: 6px 14px; border-radius: 6px; transition: background .15s;
+  }
+  .nav-help:hover { background: var(--light); color: var(--red); }
+  .nav-bell {
+    position: relative; background: none; border: none; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .nav-bell:hover { background: var(--light); }
+  .nav-bell svg { width: 20px; height: 20px; color: var(--body); }
+  .bell-badge {
+    position: absolute; top: 2px; right: 2px;
+    width: 17px; height: 17px; border-radius: 50%;
+    background: var(--red); color: var(--white);
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--white);
+  }
+
+  /* Hamburger */
+  .hamburger-btn {
+    background: none; border: none; cursor: pointer;
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0; position: relative; transition: background .15s;
+  }
+  .hamburger-btn:hover { background: var(--light); }
+  .hamburger-btn.open:hover { background: transparent; }
+  .hamburger-btn span {
+    display: block; width: 22px; height: 2px; background: var(--body);
+    border-radius: 2px; position: absolute;
+    transition: transform .3s ease, opacity .2s ease;
+  }
+  .hamburger-btn span:nth-child(1) { transform: translateY(-7px); }
+  .hamburger-btn span:nth-child(2) { transform: translateY(0); }
+  .hamburger-btn span:nth-child(3) { transform: translateY(7px); }
+  .hamburger-btn.open span:nth-child(1) { transform: rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg); }
+
+  /* Slide Menu */
+  .menu-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.3); z-index: 250;
+    opacity: 0; transition: opacity .25s ease;
+  }
+  .menu-overlay.open { display: block; opacity: 1; }
+  .slide-menu {
+    position: fixed; top: 64px; right: 0; bottom: 0; width: 300px;
+    background: var(--white); z-index: 300;
+    transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+    box-shadow: -4px 0 24px rgba(0,0,0,.1);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .slide-menu.open { transform: translateX(0); }
+  .menu-header {
+    padding: 18px 24px; border-bottom: 1px solid #eee;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .menu-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--slate); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .menu-user-name { font-size: 16px; font-weight: 700; color: var(--dark); }
+  .menu-user-email { font-size: 13px; color: #888; }
+  .menu-section { padding: 12px 0; }
+  .menu-section + .menu-section { border-top: 1px solid #eee; }
+  .menu-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: #999; padding: 4px 24px 8px;
+  }
+  .menu-link {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 24px; text-decoration: none; color: var(--body);
+    font-size: 15px; font-weight: 600; transition: background .12s;
+  }
+  .menu-link:hover { background: var(--light); }
+  .menu-link.active { background: #FFF5E0; color: var(--dark); }
+  .menu-link svg { width: 20px; height: 20px; color: #888; flex-shrink: 0; }
+  .menu-link.active svg { color: var(--gold); }
+  .menu-link .menu-badge {
+    margin-left: auto; background: var(--red); color: var(--white);
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  }
+  .menu-link.logout { color: var(--red); }
+  .menu-link.logout svg { color: var(--red); }
+
+  /* ─── LAYOUT ─── */
+  .dashboard-wrap {
+    max-width: 1200px; margin: 64px auto 0;
+    padding: 32px 24px 64px;
+  }
+  .page-header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .page-header-row h1 {
+    font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1.2;
+  }
+  .page-header-row h1 span { color: var(--red); }
+  .header-date { font-size: 14px; color: #888; }
+
+  /* ─── MAIN GRID ─── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    animation: fadeUp 0.3s ease both;
+  }
+  .card:nth-child(2) { animation-delay: 0.04s; }
+  .card:nth-child(3) { animation-delay: 0.08s; }
+  .card:nth-child(4) { animation-delay: 0.12s; }
+  .card:nth-child(5) { animation-delay: 0.16s; }
+  .card:nth-child(6) { animation-delay: 0.20s; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .card-title-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-title-icon svg { width: 20px; height: 20px; }
+  .card-title-text h3 {
+    font-size: 18px; font-weight: 700; color: var(--dark); line-height: 1.3;
+  }
+  .card-title-text p {
+    font-size: 14px; color: var(--slate); margin-top: 1px;
+  }
+
+  /* Action ribbon banner */
+  .tile-banner {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 24px;
+    font-size: 14px; font-weight: 700; color: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .tile-banner svg { flex-shrink: 0; width: 18px; height: 18px; }
+  .tile-banner.green { background: #3A7D44; }
+  .tile-banner.red {
+    background: var(--red);
+    cursor: pointer; text-decoration: none;
+    transition: opacity .15s;
+  }
+  .tile-banner.red:hover { opacity: 0.92; }
+
+  /* Card body */
+  .card-body {
+    padding: 20px 24px;
+    flex: 1;
+    display: flex; flex-direction: column;
+  }
+  .card-content { flex: 1; }
+
+  /* Card actions */
+  .card-actions {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    padding-top: 16px; margin-top: auto;
+    border-top: 1px solid var(--border);
+  }
+  .card-actions.single { grid-template-columns: 1fr; }
+
+  /* Buttons */
+  .btn-gold {
+    background: var(--gold); color: var(--dark);
+    padding: 11px 16px; border-radius: 8px;
+    font-size: 16px; font-weight: 700;
+    text-align: center; text-decoration: none; display: block;
+    border: none; cursor: pointer; transition: background 0.2s;
+    font-family: inherit;
+  }
+  .btn-gold:hover { background: var(--gold-hover); }
+  .btn-outline {
+    background: var(--white); color: var(--dark);
+    padding: 9px 16px; border-radius: 8px;
+    font-size: 16px; font-weight: 700;
+    border: 2px solid var(--dark); text-align: center;
+    text-decoration: none; display: block;
+    cursor: pointer; transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-outline:hover { background: var(--light); }
+  .btn-outline-gold {
+    background: var(--white); color: var(--dark);
+    padding: 9px 16px; border-radius: 8px;
+    font-size: 16px; font-weight: 700;
+    border: 2px solid var(--gold); text-align: center;
+    text-decoration: none; display: block;
+    cursor: pointer; transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-outline-gold:hover { background: #FFF8E7; }
+
+  /* ─── ANALYSE & ÉVALUATION CARD ─── */
+  .scan-card .card-title-icon { background: #FFF3E0; }
+
+  .autoscan-status {
+    padding: 0 0 16px; margin-bottom: 14px;
+  }
+  .autoscan-label {
+    font-size: 14px; font-weight: 700; color: var(--slate);
+    margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .autoscan-accounts { display: flex; gap: 16px; align-items: center; }
+  .autoscan-account {
+    position: relative; display: inline-flex;
+    align-items: center; justify-content: center;
+  }
+  .autoscan-account-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--light); box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .autoscan-account-badge {
+    position: absolute; top: -4px; right: -4px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--red); border: 2px solid var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 900; color: var(--white);
+  }
+  .autoscan-value p {
+    font-size: 16px; color: var(--slate); line-height: 1.55; margin-bottom: 8px;
+  }
+  .autoscan-value {
+    margin-bottom: 4px;
+  }
+  .autoscan-value-link {
+    font-size: 14px; font-weight: 600; color: var(--teal);
+    text-decoration: none;
+  }
+  .autoscan-value-link:hover { text-decoration: underline; }
+
+  /* ─── SURVEILLANCE DE L'IDENTITÉ (ALERTES) CARD ─── */
+  .alerts-card .card-title-icon { background: #FDECEA; }
+
+  .alert-list { flex: 1; }
+  .alert-item {
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer; transition: background 0.1s;
+  }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 5px;
+  }
+  .alert-dot.new { background: var(--red); }
+  .alert-dot.read { background: var(--border); }
+  .alert-content { flex: 1; min-width: 0; }
+  .alert-type {
+    font-size: 14px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 3px;
+  }
+  .alert-type.dark-web { color: var(--slate); }
+  .alert-type.credit { color: var(--teal); }
+  .alert-message {
+    font-size: 14px; color: var(--dark); font-weight: 600; line-height: 1.4;
+  }
+  .alert-meta { flex-shrink: 0; text-align: right; }
+  .alert-date { font-size: 12px; color: #aaa; }
+  .alert-arrow { color: var(--border); font-size: 16px; }
+
+  .alert-footer {
+    padding-top: 16px; margin-top: auto;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .alert-footer-note {
+    font-size: 14px; color: var(--slate); margin-bottom: 4px;
+  }
+  .alert-footer a {
+    font-size: 14px; font-weight: 600; color: var(--teal);
+    text-decoration: none;
+  }
+  .alert-footer a:hover { text-decoration: underline; }
+
+  /* ─── COTE ET RAPPORT DE SOLVABILITÉ CARD ─── */
+  .credit-card .card-title-icon { background: #E3F2FD; }
+
+  .credit-score-display { text-align: center; padding: 8px 0 16px; }
+  .credit-gauge-wrap {
+    position: relative; width: 170px; height: 95px; margin: 0 auto 12px;
+  }
+  .credit-gauge-svg { width: 100%; height: auto; }
+  .credit-score-num {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    text-align: center; opacity: 0;
+  }
+  .credit-score-num.animate {
+    animation: scoreFadeIn 0.4s ease forwards;
+  }
+  .credit-score-num .score {
+    font-size: 34px; font-weight: 800; color: var(--dark); line-height: 1;
+  }
+  .credit-score-num .label {
+    font-size: 13px; font-weight: 700; color: var(--green);
+  }
+  .credit-updated { font-size: 14px; color: var(--slate); margin-bottom: 2px; }
+  .credit-next { font-size: 14px; color: #aaa; }
+
+  /* Animated arc */
+  .credit-arc-bg { opacity: 0.15; }
+  .credit-arc-fill {
+    stroke-dasharray: 0 251;
+  }
+  @keyframes scoreFadeIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  /* Needle dot */
+  .credit-needle { opacity: 0; }
+  .credit-needle.animate { opacity: 1; }
+  .credit-arc-cap { opacity: 0; }
+  .credit-arc-cap.animate { opacity: 1; }
+
+  .credit-bureaus {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-top: 14px; margin-bottom: 8px;
+  }
+  .bureau-chip {
+    background: var(--light); border-radius: 10px; padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .bureau-status-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    background: var(--green);
+  }
+  .bureau-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .bureau-sub { font-size: 11px; color: var(--slate); display: block; }
+
+  /* ─── SURVEILLANCE DU WEB CLANDESTIN CARD ─── */
+  .darkweb-card .card-title-icon { background: #E8F5E9; }
+
+  .dwm-progress-wrap { margin-bottom: 16px; }
+  .dwm-progress-bar {
+    height: 10px; background: var(--border); border-radius: 5px;
+    margin-bottom: 8px; position: relative;
+  }
+  .dwm-progress-fill {
+    height: 100%; border-radius: 5px;
+    background: linear-gradient(90deg, var(--teal), var(--emerald));
+    transition: width 0.6s ease;
+  }
+  .dwm-marker {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--white); border: 3px solid var(--emerald);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .dwm-progress-label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; color: var(--slate);
+  }
+  .dwm-progress-label strong { color: var(--dark); font-weight: 700; }
+  .dwm-progress-label span:last-child { font-size: 14px; }
+
+  .monitoring-categories {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px;
+    margin-bottom: 8px;
+  }
+  .cat-tag {
+    font-size: 12px; font-weight: 600; padding: 4px 10px;
+    border-radius: 6px; display: flex; align-items: center; gap: 5px;
+  }
+  .cat-tag.active { background: #F0FDF4; color: #065F46; }
+  .cat-tag.empty { background: #F5F5F5; color: #aaa; }
+  .cat-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .cat-tag.active .cat-dot { background: var(--emerald); }
+  .cat-tag.empty .cat-dot { background: #ccc; }
+
+  /* ─── ÉVALUATION DU RISQUE CARD ─── */
+  .risk-card .card-title-icon { background: #FFF8E1; }
+
+  .risk-gauge-mini {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+  }
+  .risk-label {
+    font-size: 14px; font-weight: 700; color: var(--amber); white-space: nowrap;
+  }
+  .risk-bar-full {
+    flex: 1; height: 10px; border-radius: 5px;
+    background: linear-gradient(90deg, var(--emerald), var(--gold), var(--red));
+    position: relative;
+  }
+  .risk-marker {
+    position: absolute; top: -4px; width: 18px; height: 18px;
+    border-radius: 50%; background: var(--white);
+    border: 3px solid var(--amber);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transform: translateX(-50%);
+  }
+  .risk-factors { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+  .risk-factor {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 14px; color: var(--body);
+  }
+  .risk-factor span { min-width: 120px; }
+  .risk-factor-bar {
+    width: 90px; height: 6px; border-radius: 3px;
+    background: #eee; overflow: hidden;
+  }
+  .risk-factor-fill { height: 100%; border-radius: 3px; }
+
+  /* ─── GESTIONNAIRE DE MOTS DE PASSE CARD ─── */
+  .pw-card .card-title-icon { background: #F3E5F5; }
+  .pw-upsell h4 {
+    font-size: 16px; font-weight: 700; color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .pw-upsell p {
+    font-size: 14px; color: var(--slate); line-height: 1.55;
+    margin-bottom: 4px;
+  }
+
+  /* ─── APP DOWNLOAD CTA ─── */
+  .app-cta {
+    background: var(--slate); color: var(--white);
+    border-radius: 14px; padding: 40px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; margin-top: 8px;
+  }
+  .app-cta-text h3 {
+    font-size: 22px; font-weight: 700; color: var(--white);
+    margin-bottom: 8px; line-height: 1.3;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+  .app-cta-text p {
+    font-size: 15px; color: rgba(255,255,255,0.75);
+    line-height: 1.6; max-width: 480px;
+  }
+  .app-cta-badges { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+  .app-cta-badges img { height: 44px; width: auto; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #000; color: #ccc; font-size: 15px; line-height: 1.7;
+  }
+  .footer-main {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    padding: 56px 48px 48px;
+  }
+  .footer-contact h4 {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+  .footer-contact table { border-collapse: collapse; margin-bottom: 12px; }
+  .footer-contact td { padding: 2px 24px 2px 0; color: #ccc; font-size: 15px; }
+  .footer-contact td:last-child { color: #fff; font-weight: 600; padding-right: 0; }
+  .footer-contact a { color: #ccc; text-decoration: none; }
+  .footer-contact a:hover { color: var(--gold); }
+  .footer-maple {
+    display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px;
+  }
+  .footer-maple p { font-size: 15px; color: #ccc; margin: 0; line-height: 1.5; }
+  .footer-maple strong { color: #fff; }
+  .footer-hours { font-size: 15px; }
+  .footer-hours strong { color: #fff; display: block; margin-bottom: 2px; }
+  .footer-nav { padding-top: 4px; }
+  .footer-nav ul { list-style: none; padding: 0; margin: 0; }
+  .footer-nav ul li { margin-bottom: 14px; text-align: right; }
+  .footer-nav ul li a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; }
+  .footer-nav ul li a:hover { color: var(--gold); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding: 28px 48px 36px; max-width: 1200px; margin: 0 auto;
+  }
+  .footer-bottom p { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 8px; }
+  .footer-bottom p:first-child { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 12px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1100px) {
+    .main-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 900px) {
+    .top-nav { padding: 0 16px; }
+    .nav-help { display: none; }
+    .dashboard-wrap { padding: 20px 16px 48px; }
+    .main-grid { grid-template-columns: 1fr; }
+    .scan-card   { order: 1; }
+    .alerts-card { order: 2; }
+    .credit-card { order: 3; }
+    .darkweb-card { order: 4; }
+    .risk-card   { order: 5; }
+    .pw-card     { order: 6; }
+    .app-cta {
+      flex-direction: column; text-align: center; padding: 32px 24px;
+    }
+    .app-cta-badges { justify-content: center; }
+    .page-header-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .slide-menu { width: 100%; }
+    .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
+    .footer-nav ul li { text-align: left; }
+    .credit-bureaus { padding: 0 4px; }
+    .footer-bottom { padding: 24px 24px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP NAV ═══════ -->
+<header class="top-nav">
+  <div class="top-nav-left">
+    <a href="#">
+      <img src="https://www.assistidentite.com/assets/images/id-assist-fr.svg" alt="Assist Identité" style="height: 50px;">
+    </a>
+  </div>
+  <div class="top-nav-right">
+    <a href="#" class="nav-help">Aide</a>
+    <button class="nav-bell" aria-label="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="bell-badge">2</span>
+    </button>
+    <button class="hamburger-btn" id="hamburger" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════ SLIDE MENU ═══════ -->
+<div class="menu-overlay" id="menu-overlay"></div>
+<nav class="slide-menu" id="slide-menu">
+  <div class="menu-header">
+    <div class="menu-avatar">GT</div>
+    <div>
+      <div class="menu-user-name">Geoffrey Thomas</div>
+      <div class="menu-user-email">geoff.thomas@gmail.com</div>
+    </div>
+  </div>
+  <div class="menu-section">
+    <a href="#" class="menu-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Tableau de bord
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+      Analyse &amp; Évaluation
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Cote et rapport de solvabilité
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+      Surveillance du Web clandestin
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Alertes<span class="menu-badge">2</span>
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Ressources</div>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+      Aide
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Vol d'identité et rétablissement
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Évaluation du risque
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Paramètres</div>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Renseignements personnels
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Compte et sécurité
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+      Facturation
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Paramètres Analyse &amp; Évaluation
+    </a>
+    <a href="#" class="menu-link logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Déconnexion
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════ TABLEAU DE BORD ═══════ -->
+<div class="dashboard-wrap">
+
+  <div class="page-header-row">
+    <h1>Bon retour, <span>Geoffrey</span></h1>
+    <span class="header-date">mercredi 19 mars 2026</span>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- ══ ANALYSE & ÉVALUATION ══ -->
+    <div class="card scan-card">
+      <div class="card-header">
+        <div class="card-title-icon" style="background:#FFF3E0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+            <circle cx="12" cy="12" r="3"/>
+            <path d="m16 16-1.9-1.9"/>
+          </svg>
+        </div>
+        <div class="card-title-text">
+          <h3>Analyse &amp; Évaluation</h3>
+          <p>Détection d'arnaques par IA</p>
+        </div>
+      </div>
+
+      <!-- Bandeau d'état -->
+      <div class="tile-banner green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9 12 11 14 15 10"/>
+        </svg>
+        Auto-Analyse activée
+      </div>
+
+      <div class="card-body">
+        <div class="card-content">
+          <!-- État de l'Auto-Analyse -->
+          <div class="autoscan-status">
+            <div class="autoscan-label">L'Auto-Analyse surveille actuellement&nbsp;:</div>
+            <div class="autoscan-accounts">
+              <div class="autoscan-account" title="Gmail">
+                <div class="autoscan-account-icon">
+                  <img src="https://raw.githubusercontent.com/the-gmt/psychic-goggles-idassist/68a7b0e9febd1c2d639f6afda5561253fb28c73e/images/Gmail_icon.svg" alt="Gmail" style="width:32px; height:32px; object-fit:contain;">
+                </div>
+              </div>
+              <div class="autoscan-account" title="Outlook">
+                <div class="autoscan-account-icon">
+                  <img src="https://raw.githubusercontent.com/the-gmt/psychic-goggles-idassist/68a7b0e9febd1c2d639f6afda5561253fb28c73e/images/Outlook_icon.svg" alt="Outlook" style="width:32px; height:32px; object-fit:contain;">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="autoscan-value">
+            <p>L'Auto-Analyse surveille vos boîtes de réception connectées en permanence et vous alerte dès qu'un courriel suspect est détecté — pour agir avant les fraudeurs.</p>
+            <a href="#" class="autoscan-value-link">Gérer les paramètres Analyse &amp; Évaluation →</a>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a href="#" class="btn-gold">Analyser</a>
+          <a href="#" class="btn-outline-gold">Résultats</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SURVEILLANCE DE L'IDENTITÉ ══ -->
+    <div class="card alerts-card">
+      <div class="card-header">
+        <div class="card-title-icon" style="background:#FDECEA;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E8292F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="card-title-text">
+          <h3>Surveillance de l'identité</h3>
+          <p>Web clandestin et activité de crédit</p>
+        </div>
+      </div>
+
+      <!-- Bandeau d'état -->
+      <a href="#" class="tile-banner red" style="text-decoration:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <line x1="23" y1="11" x2="17" y2="11"/><line x1="17" y1="11" x2="17" y2="17"/>
+        </svg>
+        50 nouvelles alertes d'identité
+      </a>
+
+      <div class="card-body">
+        <div class="card-content">
+          <div class="alert-list">
+            <div class="alert-item">
+              <div class="alert-dot new"></div>
+              <div class="alert-content">
+                <div class="alert-type dark-web">Web clandestin</div>
+                <div class="alert-message">Adresse courriel détectée dans une nouvelle brèche</div>
+              </div>
+              <div class="alert-meta">
+                <div class="alert-date">Aujourd'hui</div>
+                <div class="alert-arrow">›</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot new"></div>
+              <div class="alert-content">
+                <div class="alert-type credit">Crédit</div>
+                <div class="alert-message">Nouvelle demande détectée dans le dossier TransUnion</div>
+              </div>
+              <div class="alert-meta">
+                <div class="alert-date">25 févr.</div>
+                <div class="alert-arrow">›</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot read"></div>
+              <div class="alert-content">
+                <div class="alert-type dark-web">Web clandestin</div>
+                <div class="alert-message">Numéro de téléphone trouvé dans des données exposées</div>
+              </div>
+              <div class="alert-meta">
+                <div class="alert-date">20 févr.</div>
+                <div class="alert-arrow">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-footer">
+          <p class="alert-footer-note">Affichage de vos 3 alertes les plus récentes.</p>
+          <a href="#">Voir l'historique complet des alertes</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ COTE ET RAPPORT DE SOLVABILITÉ ══ -->
+    <div class="card credit-card">
+      <div class="card-header">
+        <div class="card-title-icon" style="background:#E3F2FD;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <div class="card-title-text">
+          <h3>Cote et rapport de solvabilité</h3>
+          <p>Propulsé par Equifax</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="card-content">
+          <!-- Demi-cercle avec dégradé -->
+          <div class="credit-score-display">
+            <div class="credit-gauge-wrap">
+              <svg class="credit-gauge-svg" viewBox="0 0 190 105">
+                <defs>
+                  <linearGradient id="creditGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#E8292F"/>
+                    <stop offset="35%" stop-color="#F57C00"/>
+                    <stop offset="60%" stop-color="#FAAF42"/>
+                    <stop offset="100%" stop-color="#2E7D32"/>
+                  </linearGradient>
+                </defs>
+                <!-- Arc d'arrière-plan -->
+                <path d="M 15 95 A 80 80 0 0 1 175 95" fill="none" stroke="#F2F2F2" stroke-width="14" stroke-linecap="round" class="credit-arc-bg"/>
+                <!-- Arc avec dégradé (animé) -->
+                <path d="M 15 95 A 80 80 0 0 1 175 95" fill="none" stroke="url(#creditGrad)" stroke-width="14" stroke-linecap="butt" class="credit-arc-fill" id="credit-arc" style="stroke-dasharray:233.73 17.59"/>
+                <!-- Embout arrondi au départ de l'arc -->
+                <circle cx="15" cy="95" r="7" fill="#E8292F" class="credit-arc-cap" id="credit-arc-cap" style="opacity:1"/>
+                <!-- Point indicateur — positionné par JS -->
+                <circle cx="173.07" cy="77.55" r="9" fill="white" stroke="#2E7D32" stroke-width="3" class="credit-needle" id="credit-needle" style="opacity:1"/>
+              </svg>
+              <div class="credit-score-num" id="credit-score-num" data-score="858">
+                <div class="score" id="credit-score-value"></div>
+                <div class="label" id="credit-score-label"></div>
+              </div>
+            </div>
+            <div class="credit-updated">Mise à jour le 1er janv. 2026</div>
+            <div class="credit-next">Prochaine mise à jour le 1er mars 2026</div>
+          </div>
+
+          <!-- Puces des agences -->
+          <div class="credit-bureaus">
+            <div class="bureau-chip">
+              <div class="bureau-status-dot"></div>
+              <div>
+                <div class="bureau-label">Equifax</div>
+                <span class="bureau-sub">Surveillance quotidienne</span>
+              </div>
+            </div>
+            <div class="bureau-chip">
+              <div class="bureau-status-dot"></div>
+              <div>
+                <div class="bureau-label">TransUnion</div>
+                <span class="bureau-sub">Surveillance quotidienne</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a href="#" class="btn-gold">Voir la cote</a>
+          <a href="#" class="btn-outline-gold">Voir le rapport</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SURVEILLANCE DU WEB CLANDESTIN ══ -->
+    <div class="card darkweb-card" data-monitored="25">
+      <div class="card-header">
+        <div class="card-title-icon" style="background:#E8F5E9;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <circle cx="12" cy="8" r="0.5" fill="#2E7D32"/>
+          </svg>
+        </div>
+        <div class="card-title-text">
+          <h3>Surveillance du Web clandestin</h3>
+          <p>Surveillance de l'identité active</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="card-content">
+          <!-- Barre de progression -->
+          <div class="dwm-progress-wrap">
+            <div class="dwm-progress-bar">
+              <div class="dwm-progress-fill" id="dwm-fill" style="width: 50%;"></div>
+              <div class="dwm-marker" id="dwm-marker" style="left: 50%;"></div>
+            </div>
+            <div class="dwm-progress-label">
+              <span id="dwm-label"><strong>25 de 50</strong> éléments surveillés</span>
+              <span id="dwm-nudge">Ajoutez des éléments pour une protection élargie</span>
+            </div>
+          </div>
+
+          <!-- Étiquettes de catégorie -->
+          <div class="monitoring-categories">
+            <span class="cat-tag active"><span class="cat-dot"></span> Cartes</span>
+            <span class="cat-tag active"><span class="cat-dot"></span> Courriel</span>
+            <span class="cat-tag active"><span class="cat-dot"></span> Téléphone</span>
+            <span class="cat-tag active"><span class="cat-dot"></span> Banque</span>
+            <span class="cat-tag active"><span class="cat-dot"></span> NAS</span>
+            <span class="cat-tag active"><span class="cat-dot"></span> Permis</span>
+            <span class="cat-tag empty"><span class="cat-dot"></span> Passeport</span>
+            <span class="cat-tag empty"><span class="cat-dot"></span> Fidélité</span>
+            <span class="cat-tag empty"><span class="cat-dot"></span> Santé</span>
+            <span class="cat-tag empty"><span class="cat-dot"></span> Carte RP</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a href="#" class="btn-gold">Ajouter</a>
+          <a href="#" class="btn-outline-gold">Gérer</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ÉVALUATION DU RISQUE ══ -->
+    <div class="card risk-card" data-risk="average">
+      <div class="card-header">
+        <div class="card-title-icon" style="background:#FFF8E1;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="card-title-text">
+          <h3>Évaluation du risque</h3>
+          <p>Votre profil de risque de vol d'identité</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="card-content">
+          <!-- Jauge globale -->
+          <div class="risk-gauge-mini">
+            <span class="risk-label" id="risk-label">Moyen</span>
+            <div class="risk-bar-full">
+              <div class="risk-marker" id="risk-marker" style="left:50%;"></div>
+            </div>
+          </div>
+
+          <!-- Détail par facteur -->
+          <div class="risk-factors">
+            <div class="risk-factor" data-risk="average">
+              <span>Démographiques</span>
+              <div class="risk-factor-bar"><div class="risk-factor-fill"></div></div>
+            </div>
+            <div class="risk-factor" data-risk="below-average">
+              <span>Mots de passe</span>
+              <div class="risk-factor-bar"><div class="risk-factor-fill"></div></div>
+            </div>
+            <div class="risk-factor" data-risk="above-average">
+              <span>Médias sociaux</span>
+              <div class="risk-factor-bar"><div class="risk-factor-fill"></div></div>
+            </div>
+            <div class="risk-factor" data-risk="low">
+              <span>Sécurité en ligne</span>
+              <div class="risk-factor-bar"><div class="risk-factor-fill"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a href="#" class="btn-gold">Voir le détail</a>
+          <a href="#" class="btn-outline-gold">Refaire</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ GESTIONNAIRE DE MOTS DE PASSE ══ -->
+    <div class="card pw-card">
+      <div class="card-header">
+        <div class="card-title-icon" style="background:#F3E5F5;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7B1FA2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <circle cx="12" cy="16" r="1"/>
+          </svg>
+        </div>
+        <div class="card-title-text">
+          <h3>Gestionnaire de mots de passe</h3>
+          <p>Stockage sécurisé et remplissage automatique</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="card-content">
+          <div class="pw-upsell">
+            <h4>Une meilleure sécurité en ligne commence par l'activation de votre gestionnaire de mots de passe!</h4>
+            <p>Créez, enregistrez et remplissez automatiquement des mots de passe robustes sur tous vos appareils.</p>
+          </div>
+        </div>
+
+        <div class="card-actions single">
+          <a href="#" class="btn-gold">Activer maintenant</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-grid -->
+
+  <!-- ═══════ APPEL À L'ACTION — APPLI MOBILE ═══════ -->
+  <div class="app-cta">
+    <div class="app-cta-text">
+      <h3>Une protection qui vous suit partout</h3>
+      <p>L'appli Assist&nbsp;Identité met toutes les fonctionnalités dans votre poche — analysez les messages suspects sur-le-champ, consultez votre cote de solvabilité, vérifiez vos alertes et gérez votre compte de partout.</p>
+    </div>
+    <div class="app-cta-badges">
+      <a href="https://apps.apple.com/ca/app/assist-identit%C3%A9-mobile/id540563542?l=fr-CA" target="_blank">
+        <img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/7ba5231ea865770d17881bd8a5e4c857f70f74ef/Download_on_the_App_Store_Badge_FRCA_RGB_blk.svg" alt="Télécharger dans l'App Store">
+      </a>
+      <a href="https://play.google.com/store/apps/details?id=com.finastra.myidentityassist&hl=fr_CA" target="_blank">
+        <img src="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/refs/heads/main/google-play-badge-fr.png" alt="Télécharger sur Google Play">
+      </a>
+    </div>
+  </div>
+
+</div><!-- /dashboard-wrap -->
+
+<!-- ═══════ PIED DE PAGE ═══════ -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4>
+        <img src="https://www.assistidentite.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">
+        Assistance d'urgence 24/7
+      </h4>
+      <table>
+        <tr><td>Amérique du Nord</td><td><a href="tel:18779001837">1&nbsp;877&nbsp;900-1837</a></td></tr>
+        <tr><td>Toronto et frais virés</td><td><a href="tel:16478375412">1&nbsp;647&nbsp;837-5412</a></td></tr>
+      </table>
+      <p><a href="mailto:servicealaclientele@assistidentite.com">servicealaclientele@assistidentite.com</a></p>
+      <div class="footer-maple">
+        <img src="https://www.assistidentite.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
+        <p><strong>Des représentants canadiens disponibles 24/7</strong><br>pour les services de rétablissement.</p>
+      </div>
+      <div class="footer-hours">
+        <strong>Nos heures d'ouverture habituelles sont</strong>
+        9&nbsp;h – 21&nbsp;h HE, du lundi au vendredi
+      </div>
+    </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="https://www.assistidentite.com/fr/identite">Vol d'identité et rétablissement</a></li>
+        <li><a href="https://www.assistidentite.com/fr/forfaits">Forfaits et tarifs</a></li>
+        <li><a href="https://www.assistidentite.com/fr/aide">Aide</a></li>
+        <li><a href="https://www.assistidentite.com/fr/conditions-utilisation">Conditions d'utilisation</a></li>
+        <li><a href="https://www.assistidentite.com/fr/politique-confidentialite">Politique de confidentialité</a></li>
+        <li><a href="https://www.assistidentite.com/fr/politique-annulation">Politique d'annulation</a></li>
+        <li><a href="#">EN</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Assist&nbsp;Identité est un système d'alerte précoce qui vous aide à protéger votre identité.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. Tous droits réservés. Assist&nbsp;Identité®, Sigma Loyalty Group Inc. et toutes les marques et logos associés sont des marques de commerce appartenant à Sigma Loyalty Group Inc. ou utilisées sous licence. Assist&nbsp;Identité® est fourni par Sigma Loyalty Group Inc.</p>
+    <p>iPhone et App Store sont des marques de commerce d'Apple Inc., déposées aux États-Unis et dans d'autres pays. Android, Google Play et Play Store sont des marques de commerce de Google Inc., déposées aux États-Unis et dans d'autres pays.</p>
+    <p>Tous les noms de produits, logos et marques sont la propriété de leurs détenteurs respectifs. Les noms de sociétés, produits et services utilisés sur ce site le sont à des fins d'identification uniquement. Leur utilisation n'implique aucune approbation.</p>
+  </div>
+</footer>
+
+<script>
+  // ── Surveillance du Web clandestin — barre de progression ────────────────────
+  // Valeur fournie via data-monitored sur .darkweb-card (maximum : 50).
+
+  (function() {
+    var dwmCard = document.querySelector('.darkweb-card');
+    if (!dwmCard) return;
+
+    var rawMonitored = parseInt(dwmCard.getAttribute('data-monitored'), 10);
+    var monitored    = Math.min(50, Math.max(0, isNaN(rawMonitored) ? 0 : rawMonitored));
+    var pct          = (monitored / 50) * 100;
+
+    var fill   = document.getElementById('dwm-fill');
+    var marker = document.getElementById('dwm-marker');
+    var label  = document.getElementById('dwm-label');
+    var nudge  = document.getElementById('dwm-nudge');
+
+    if (fill)   fill.style.width   = pct + '%';
+    if (marker) marker.style.left  = pct + '%';
+    if (label)  label.innerHTML    = '<strong>' + monitored + ' de 50</strong> éléments surveillés';
+    if (nudge)  nudge.textContent  = (monitored >= 50)
+                  ? '✓ Protection complète'
+                  : 'Ajoutez des éléments pour une protection élargie';
+    if (nudge && monitored >= 50) nudge.style.color = 'var(--green)';
+  })();
+
+  // ── Évaluation du risque ─────────────────────────────────────────────────────
+  // Valeur globale fournie via data-risk sur .risk-card.
+  // Valeurs acceptées : low | below-average | average | above-average | high
+
+  (function() {
+    var riskCard = document.querySelector('.risk-card');
+    if (!riskCard) return;
+
+    var RISK_LEVELS = {
+      'low':           { label: 'Faible',                  left: '10%', width: '10%', color: 'var(--green)'  },
+      'below-average': { label: 'Inférieur à la moyenne',  left: '30%', width: '30%', color: '#9DB35B' },
+      'average':       { label: 'Moyen',                   left: '50%', width: '50%', color: 'var(--amber)'  },
+      'above-average': { label: 'Supérieur à la moyenne',  left: '70%', width: '70%', color: '#E65100'       },
+      'high':          { label: 'Élevé',                   left: '90%', width: '90%', color: 'var(--red)'    }
+    };
+
+    var FACTOR_COLORS = {
+      'low':           '#21B97D',
+      'below-average': '#9DB35B',
+      'average':       '#F57C00',
+      'above-average': '#F16B38',
+      'high':          '#E82D2F'
+    };
+
+    function getConfig(el, attr) {
+      var key = (el.getAttribute(attr) || 'average').toLowerCase().trim();
+      return RISK_LEVELS[key] || RISK_LEVELS['average'];
+    }
+
+    // Jauge globale — étiquette et marqueur
+    var cfg        = getConfig(riskCard, 'data-risk');
+    var riskLabel  = document.getElementById('risk-label');
+    var riskMarker = document.getElementById('risk-marker');
+
+    if (riskLabel) {
+      riskLabel.textContent = cfg.label;
+      riskLabel.style.color = cfg.color;
+    }
+    if (riskMarker) {
+      riskMarker.style.left        = cfg.left;
+      riskMarker.style.borderColor = cfg.color;
+    }
+
+    // Barres de détail par facteur
+    var factors = riskCard.querySelectorAll('.risk-factor[data-risk]');
+    factors.forEach(function(row) {
+      var fcfg = getConfig(row, 'data-risk');
+      var key  = (row.getAttribute('data-risk') || 'average').toLowerCase().trim();
+      var fill = row.querySelector('.risk-factor-fill');
+      if (fill) {
+        fill.style.width      = fcfg.width;
+        fill.style.background = FACTOR_COLORS[key] || FACTOR_COLORS['average'];
+      }
+    });
+  })();
+
+  // ── Menu hamburger ───────────────────────────────────────────────────────────
+  const hamburger    = document.getElementById('hamburger');
+  const slideMenu    = document.getElementById('slide-menu');
+  const menuOverlay  = document.getElementById('menu-overlay');
+  function toggleMenu() {
+    const isOpen = slideMenu.classList.contains('open');
+    slideMenu.classList.toggle('open');
+    menuOverlay.classList.toggle('open');
+    hamburger.classList.toggle('open');
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  menuOverlay.addEventListener('click', toggleMenu);
+
+  // ── Jauge de cote de solvabilité ─────────────────────────────────────────────
+  // La cote est fournie via data-score sur #credit-score-num (plage 300–900).
+  // Ratio de remplissage = (cote - 300) / 600.
+  //
+  // Mobile (≤ 900 px) : pas d'animation — état final affiché immédiatement.
+  // Bureau : animation déclenchée par IntersectionObserver.
+
+  const creditArc      = document.getElementById('credit-arc');
+  const creditArcCap   = document.getElementById('credit-arc-cap');
+  const creditNeedle   = document.getElementById('credit-needle');
+  const creditScoreNum = document.getElementById('credit-score-num');
+  const creditScoreVal = document.getElementById('credit-score-value');
+  const creditScoreLbl = document.getElementById('credit-score-label');
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  // Correspondance cote → étiquette et couleur
+  // Bandes : Mauvaise 300–559 | Passable 560–659 | Bonne 660–724 |
+  //          Très Bonne 725–759 | Excellente 760–900
+  function scoreLabel(s) {
+    if (s >= 760) return { text: 'Excellente',   color: 'var(--green)' };
+    if (s >= 725) return { text: 'Très Bonne',   color: 'var(--green)' };
+    if (s >= 660) return { text: 'Bonne',         color: 'var(--teal)'  };
+    if (s >= 560) return { text: 'Passable',      color: 'var(--amber)' };
+    return              { text: 'Mauvaise',       color: 'var(--red)'   };
+  }
+
+  if (creditArc) {
+    var rawScore  = parseInt(creditScoreNum.getAttribute('data-score'), 10);
+    var score     = Math.min(900, Math.max(300, isNaN(rawScore) ? 300 : rawScore));
+    var fillRatio = (score - 300) / 600;
+
+    var lbl = scoreLabel(score);
+    creditScoreVal.textContent = score;
+    creditScoreLbl.textContent = lbl.text;
+    creditScoreLbl.style.color = lbl.color;
+
+    var ARC_R    = 80;
+    var ARC_CX   = 95;
+    var ARC_CY   = 95;
+    var totalLen  = Math.PI * ARC_R;
+    var targetLen = totalLen * fillRatio;
+    var duration  = 1400;
+
+    function getPointOnArc(len) {
+      var t     = len / totalLen;
+      var angle = Math.PI * (1 - t);
+      return {
+        x: ARC_CX + ARC_R * Math.cos(angle),
+        y: ARC_CY - ARC_R * Math.sin(angle)
+      };
+    }
+
+    function paintFinal() {
+      var pt = getPointOnArc(targetLen);
+      creditArc.style.strokeDasharray = targetLen + ' ' + (totalLen - targetLen);
+      creditNeedle.setAttribute('cx', pt.x);
+      creditNeedle.setAttribute('cy', pt.y);
+      creditArcCap.style.opacity   = '1';
+      creditNeedle.style.opacity   = '1';
+      creditScoreNum.style.opacity = '1';
+    }
+
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      paintFinal();
+    } else {
+      var scoreShown       = false;
+      var animationStarted = false;
+
+      function animateGauge(startTime) {
+        var elapsed    = performance.now() - startTime;
+        var progress   = Math.min(elapsed / duration, 1);
+        var eased      = easeOutCubic(progress);
+        var currentLen = Math.max(0.1, eased * targetLen);
+
+        creditArc.style.strokeDasharray = currentLen + ' ' + (totalLen - currentLen);
+
+        var pt = getPointOnArc(currentLen);
+        creditNeedle.setAttribute('cx', pt.x);
+        creditNeedle.setAttribute('cy', pt.y);
+
+        if (!scoreShown && progress > 0.7) {
+          creditScoreNum.classList.add('animate');
+          scoreShown = true;
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(function() { animateGauge(startTime); });
+        } else {
+          if (!scoreShown) {
+            creditScoreNum.classList.add('animate');
+            scoreShown = true;
+          }
+        }
+      }
+
+      function startAnimation() {
+        if (animationStarted) return;
+        animationStarted = true;
+        creditArcCap.classList.add('animate');
+        creditNeedle.classList.add('animate');
+        animateGauge(performance.now());
+      }
+
+      if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) { startAnimation(); obs.disconnect(); }
+          });
+        }, { threshold: 0 });
+        obs.observe(creditArc);
+      } else {
+        window.addEventListener('load', startAnimation);
+      }
+
+      setTimeout(function() {
+        if (animationStarted) return;
+        var rect = creditArc.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          startAnimation();
+        }
+      }, 600);
+    }
+  }
+</script>
+</body>
+</html>
