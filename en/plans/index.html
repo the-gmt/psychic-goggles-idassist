@@ -549,7 +549,7 @@
         <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
         <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
       </table>
-      <p><a href="/cdn-cgi/l/email-protection#cba8beb8bfa4a6aeb9b8aeb9bda2a8ae8ba2afaab8b8a2b8bfe5a8a4a6"><span class="__cf_email__" data-cfemail="4a293f393e25272f38392f383c23292f0a232e2b393923393e64292527">[email&#160;protected]</span></a></p>
+      <p><a href="/cdn-cgi/l/email-protection#e5869096918a888097968097938c8680a58c818496968c9691cb868a88"><span class="__cf_email__" data-cfemail="33504640475c5e5641405641455a5056735a575240405a40471d505c5e">[email&#160;protected]</span></a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
@@ -575,12 +575,12 @@
   <div class="footer-bottom">
     <p>ID Assist is an early warning system that helps you look after your identity.</p>
     <p>© 2026 Sigma Loyalty Group Inc. All rights reserved. ID Assist®, Sigma Loyalty Group Inc. and all associated marks and logos are trademarks owned or used under license. ID Assist® is provided by Sigma Loyalty Group Inc.</p>
-    <p>iPhone and App Store are trademarks of Apple Inc., registered in the U.S. and other countries. Android, Google Play and Play Store are trademarks of Google Inc., registered in the U.S. and other countries.</p>
+    <p>iPhone and App Stor in the U.S. and other countries.</p>
     <p>All product names, logos, and brands are property of their respective owners. All company, product, and service names used on this website are for identification purposes only. Use of these names, logos, and brands does not imply endorsement.</p>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   const hamburger = document.getElementById('hamburger');
   const slideMenu = document.getElementById('slide-menu');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -599,4 +599,11 @@
       const id = btn.dataset.faq;
       const answer = document.getElementById('faq-' + id);
       const isOpen = btn.classList.contains('open');
-      document.querySelectorAll('
+      document.querySelectorAll('.faq-q').forEach(b => b.classList.remove('open'));
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      if (!isOpen) { btn.classList.add('open'); answer.classList.add('open'); }
+    });
+  });
+</script>
+</body>
+</html>
