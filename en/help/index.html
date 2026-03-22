@@ -320,7 +320,7 @@
   </div>
   <div class="contact-bar-divider"></div>
   <div class="contact-bar-item">
-    Email: <a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a>
+    Email: <a href="/cdn-cgi/l/email-protection#2e4d5b5d5a41434b5c5d4b5c58474d4b080d181a15474a4f5d5d475d5a004d4143">customerservice&#64;idassist.com</a>
   </div>
   <div class="contact-bar-divider"></div>
   <div class="contact-bar-item">
@@ -371,7 +371,7 @@
     <div class="cat-nav-support">
       <p>Can't find what you're looking for? Our team is here to help.</p>
       <a href="tel:18779001837">1-877-900-1837</a>
-      <a href="mailto:customerservice&#64;idassist.com" class="ghost">Send us an email</a>
+      <a href="/cdn-cgi/l/email-protection#9ffceaecebf0f2faedecfaede9f6fcfab9bca9aba4f6fbfeececf6ecebb1fcf0f2" class="ghost">Send us an email</a>
     </div>
   </div>
 
@@ -380,7 +380,7 @@
 
     <!-- MOBILE SELECT -->
     <div class="cat-select-wrap">
-      <select class="cat-select" onchange="document.querySelector(this.value).scrollIntoView({behavior:'smooth'})">
+      <select class="cat-select">
         <option value="#scam-protection">Scam Protection</option>
         <option value="#credit">Credit Monitoring</option>
         <option value="#dark-web">Dark Web Monitoring</option>
@@ -477,7 +477,7 @@
           <p>Don't panic – you're not alone, and help is available. Review the recommended next steps provided with your scan result and follow them closely. If you've shared personal or financial information, contact the ID Assist Contact Centre right away.</p>
           <div class="contact-steps">
             <p><a href="tel:18779001837">1-877-900-1837</a></p>
-            <p><a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a></p>
+            <p><a href="/cdn-cgi/l/email-protection#a9cadcdaddc6c4ccdbdaccdbdfc0cacc8f8a9f9d92c0cdc8dadac0dadd87cac6c4">customerservice&#64;idassist.com</a></p>
             <p>Mon – Fri, 9 a.m. – 9 p.m. ET &nbsp;|&nbsp; 24/7 for emergencies</p>
           </div>
         </div>
@@ -761,7 +761,7 @@
         <div class="faq-a" id="faq-a4">
           <p>Yes. You can cancel at any time with no penalties or fees. When you cancel, all future charges stop and you can continue using your subscription until 30 days from your last billing date. To cancel, contact us by phone or email.</p>
           <div class="contact-steps">
-            <p><a href="tel:18779001837">1-877-900-1837</a> &nbsp;|&nbsp; <a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a></p>
+            <p><a href="tel:18779001837">1-877-900-1837</a> &nbsp;|&nbsp; <a href="/cdn-cgi/l/email-protection#0764727473686a6275746275716e6462212431333c6e636674746e74732964686a">customerservice&#64;idassist.com</a></p>
             <p>Mon – Fri, 9 a.m. – 9 p.m. ET</p>
           </div>
         </div>
@@ -854,7 +854,7 @@
       </div>
       <div class="help-banner-actions">
         <a class="btn-gold" href="tel:18779001837">1-877-900-1837</a>
-        <a class="btn-ghost-light" href="mailto:customerservice&#64;idassist.com">Email us</a>
+        <a class="btn-ghost-light" href="/cdn-cgi/l/email-protection#ef8c9a9c9b80828a9d9c8a9d99868c8ac9ccd9dbd4868b8e9c9c869c9bc18c8082">Email us</a>
       </div>
     </div>
 
@@ -873,7 +873,7 @@
         <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
         <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
       </table>
-      <p><a href="mailto:customerservice&#64;idassist.com">customerservice&#64;idassist.com</a></p>
+      <p><a href="/cdn-cgi/l/email-protection#a0c3d5d3d4cfcdc5d2d3c5d2d6c9c3c5868396949bc9c4c1d3d3c9d3d48ec3cfcd">customerservice&#64;idassist.com</a></p>
       <div class="footer-maple">
         <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
         <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
@@ -904,7 +904,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const hamburger = document.getElementById('hamburger');
   const slideMenu = document.getElementById('slide-menu');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -940,11 +940,11 @@
     });
   });
 
-  // Scrollspy – update active nav link as user scrolls through sections
+  // Scrollspy – update active desktop sidebar link
   const sections = document.querySelectorAll('.faq-section[id]');
   const navLinks = document.querySelectorAll('.cat-nav a[href^="#"]');
 
-  function setActive(id) {
+  function setActiveSidebar(id) {
     navLinks.forEach(a => {
       a.classList.toggle('active', a.getAttribute('href') === '#' + id);
     });
@@ -952,11 +952,98 @@
 
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) setActive(entry.target.id);
+      if (entry.isIntersecting) setActiveSidebar(entry.target.id);
     });
   }, { rootMargin: '-120px 0px -55% 0px', threshold: 0 });
 
   sections.forEach(s => observer.observe(s));
+
+  // ── Mobile select: scroll with offset for nav + sticky bar ──
+  document.querySelector('.cat-select').addEventListener('change', function () {
+    const target = document.querySelector(this.value);
+    if (target) {
+      const navH = document.querySelector('nav').offsetHeight;
+      const selWrap = document.querySelector('.cat-select-wrap');
+      const selH = selWrap.classList.contains('sticky') ? selWrap.offsetHeight : 0;
+      const top = target.getBoundingClientRect().top + window.scrollY - navH - selH - 16;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  });
+
+  // ── Sticky section dropdown on mobile ──
+  (function () {
+    const selWrap = document.querySelector('.cat-select-wrap');
+    const sel = document.querySelector('.cat-select');
+    if (!selWrap || !sel) return;
+
+    let placeholder = null;
+    let naturalTop = null;
+
+    function measureNaturalTop() {
+      const wasSticky = selWrap.classList.contains('sticky');
+      if (wasSticky) {
+        selWrap.classList.remove('sticky');
+        if (placeholder) placeholder.style.display = 'none';
+      }
+      naturalTop = selWrap.getBoundingClientRect().top + window.scrollY;
+      if (wasSticky) {
+        selWrap.classList.add('sticky');
+        if (placeholder) placeholder.style.display = '';
+      }
+    }
+
+    // Update mobile select only when a section heading scrolls past the dropdown bar
+    function updateMobileSelect() {
+      if (window.getComputedStyle(selWrap).display === 'none') return;
+
+      const navH = document.querySelector('nav').offsetHeight;
+      const selH = selWrap.classList.contains('sticky') ? selWrap.offsetHeight : 0;
+      const threshold = navH + selH + 8; // bottom edge of sticky bar + small buffer
+
+      let current = null;
+      sections.forEach(sec => {
+        if (sec.getBoundingClientRect().top <= threshold) current = sec;
+      });
+      if (current) sel.value = '#' + current.id;
+    }
+
+    function onScroll() {
+      if (window.getComputedStyle(selWrap).display === 'none') return;
+
+      const navH = document.querySelector('nav').offsetHeight;
+      document.documentElement.style.setProperty('--nav-height', navH + 'px');
+      document.documentElement.style.setProperty('--select-height', selWrap.offsetHeight + 'px');
+
+      if (naturalTop === null) measureNaturalTop();
+
+      const triggerPoint = naturalTop - navH;
+
+      if (window.scrollY >= triggerPoint) {
+        if (!selWrap.classList.contains('sticky')) {
+          if (!placeholder) {
+            placeholder = document.createElement('div');
+            placeholder.style.height = selWrap.offsetHeight + 'px';
+            selWrap.parentNode.insertBefore(placeholder, selWrap.nextSibling);
+          }
+          selWrap.classList.add('sticky');
+        }
+      } else {
+        if (selWrap.classList.contains('sticky')) {
+          selWrap.classList.remove('sticky');
+          if (placeholder) {
+            placeholder.remove();
+            placeholder = null;
+          }
+        }
+      }
+
+      updateMobileSelect();
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', function () { naturalTop = null; onScroll(); });
+    onScroll();
+  })();
 
 </script>
 </body>
