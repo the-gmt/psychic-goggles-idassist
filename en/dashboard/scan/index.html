@@ -422,29 +422,22 @@
   }
   .scan-row:last-child { border-bottom: none; }
   .scan-row:hover { background: #FAFAFA; }
-  .scan-verdict-icon {
-    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  .scan-type-icon {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
+    background: var(--light); border: 1px solid var(--border);
   }
-  .verdict-low { background: #E8F5E9; }
-  .verdict-high { background: #FDECEA; }
-  .verdict-inconclusive { background: #FFF3E0; }
-  .verdict-low svg { color: var(--green); }
-  .verdict-high svg { color: var(--red); }
-  .verdict-inconclusive svg { color: var(--amber); }
-  .scan-verdict-icon svg { width: 18px; height: 18px; }
+  .scan-type-icon img { width: 20px; height: 20px; object-fit: contain; }
+  .scan-type-icon svg { width: 18px; height: 18px; color: var(--slate); }
   .scan-row-info { flex: 1; min-width: 0; }
   .scan-row-name {
     font-size: 14px; font-weight: 700; color: var(--dark);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .scan-row-meta { font-size: 12px; color: #aaa; margin-top: 1px; }
-  .scan-row-score {
-    font-size: 13px; font-weight: 800; flex-shrink: 0;
+  .scan-verdict-img {
+    width: 28px; height: 28px; flex-shrink: 0; display: block;
   }
-  .score-low { color: var(--green); }
-  .score-high { color: var(--red); }
-  .score-inconclusive { color: var(--amber); }
 
   .card-footer {
     padding: 14px 24px; border-top: 1px solid var(--border);
@@ -472,36 +465,35 @@
   .tip-text strong { color: var(--dark); }
 
   /* ─── FOOTER ─── */
-  .site-footer {
-    background: var(--dark); color: rgba(255,255,255,0.6);
-    padding: 48px 48px 32px;
+  footer { background: #000; color: #ccc; font-size: 15px; line-height: 1.7; }
+  .footer-main {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; padding: 56px 48px 48px; border-bottom: 1px solid rgba(255,255,255,.08);
   }
-  .footer-inner { max-width: 1200px; margin: 0 auto; }
-  .footer-grid {
-    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 48px; margin-bottom: 40px;
+  .footer-contact h4 {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px;
+    font-family: 'Trebuchet MS', sans-serif;
   }
-  .footer-brand img { height: 40px; margin-bottom: 16px; filter: brightness(0) invert(1) opacity(0.8); }
-  .footer-brand p { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.5); }
-  .footer-col-title {
-    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-    color: rgba(255,255,255,0.4); margin-bottom: 14px;
-  }
-  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .footer-col ul li a {
-    font-size: 14px; color: rgba(255,255,255,0.6); text-decoration: none; transition: color .15s;
-  }
-  .footer-col ul li a:hover { color: var(--white); }
-  .footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-  }
-  .footer-legal { font-size: 13px; color: rgba(255,255,255,0.35); }
-  .footer-legal-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .footer-legal-links a {
-    font-size: 13px; color: rgba(255,255,255,0.4); text-decoration: none; transition: color .15s;
-  }
-  .footer-legal-links a:hover { color: rgba(255,255,255,0.7); }
+  .footer-contact table { border-collapse: collapse; margin-bottom: 12px; }
+  .footer-contact td { padding: 2px 24px 2px 0; color: #ccc; font-size: 15px; }
+  .footer-contact td:last-child { color: #fff; font-weight: 600; padding-right: 0; }
+  .footer-contact a { color: #ccc; text-decoration: none; }
+  .footer-contact a:hover { color: var(--gold); }
+  .footer-maple { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px; }
+  .footer-maple p { font-size: 15px; color: #ccc; margin: 0; line-height: 1.5; }
+  .footer-maple strong { color: #fff; }
+  .footer-hours { font-size: 15px; }
+  .footer-hours strong { color: #fff; display: block; margin-bottom: 2px; }
+  .footer-nav { padding-top: 4px; }
+  .footer-nav ul { list-style: none; }
+  .footer-nav ul li { margin-bottom: 14px; text-align: right; }
+  .footer-nav ul li a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; }
+  .footer-nav ul li a:hover { color: var(--gold); }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; padding: 28px 48px 36px; }
+  .footer-bottom p { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 8px; }
+  .footer-bottom p:first-child { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 12px; }
 
   /* ─── RESPONSIVE ─── */
   @media (max-width: 960px) {
@@ -510,14 +502,16 @@
     .status-hero h1 { font-size: 26px; }
     .capability-grid { grid-template-columns: 1fr; }
     .field-row { grid-template-columns: 1fr; }
-    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 32px 32px; }
+    .footer-nav ul li { text-align: left; }
+    .footer-bottom { padding: 20px 32px 32px; }
   }
   @media (max-width: 600px) {
     .top-nav { padding: 0 16px; }
     .status-hero { padding: 28px 16px 24px; }
     .input-tab { font-size: 13px; padding: 12px 10px; }
-    .footer-grid { grid-template-columns: 1fr; }
-    .footer-inner { padding: 0; }
+    .footer-main { padding: 32px 20px 28px; }
+    .footer-bottom { padding: 20px 20px 32px; }
   }
 </style>
 </head>
@@ -531,7 +525,6 @@
     </a>
   </div>
   <div class="top-nav-right">
-    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="nav-help">Help</a>
     <button class="nav-bell" aria-label="Notifications">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -631,11 +624,11 @@
       </div>
       <h1>Scan &amp; Score</h1>
       <p>Paste a suspicious message or upload an image — we'll analyse it and tell you whether it's a scam.</p>
+      <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scansettings" class="hero-autoscan-pill" style="margin-top:14px;display:inline-flex;">
+        <div class="hero-autoscan-dot"></div>
+        AutoScan Active
+      </a>
     </div>
-    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scansettings" class="hero-autoscan-pill">
-      <div class="hero-autoscan-dot"></div>
-      AutoScan Active
-    </a>
   </div>
 </div>
 
@@ -879,64 +872,64 @@
       </div>
       <div class="recent-list">
 
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
-          <div class="scan-verdict-icon verdict-high">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scanresults" class="scan-row">
+          <div class="scan-type-icon">
+            <img src="https://raw.githubusercontent.com/the-gmt/psychic-goggles-idassist/408fd279c95684a10fcfdcdf5e385ca2531ac999/images/Gmail_icon.svg" alt="Gmail">
           </div>
           <div class="scan-row-info">
             <div class="scan-row-name">CRA tax refund notice</div>
-            <div class="scan-row-meta">Mar 24, 2026 · Email · AutoScan</div>
+            <div class="scan-row-meta">Mar 24, 2026 · Gmail · AutoScan</div>
           </div>
-          <span class="scan-row-score score-high">High risk</span>
+          <img class="scan-verdict-img" src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAyADEDASIAAhEBAxEB/8QAGgABAQADAQEAAAAAAAAAAAAAAAgBBgcCBf/EACwQAAEEAQQAAwgDAQAAAAAAAAEAAgMFBAYHESESE2EkMTVBQlFxsXSRsiL/xAAaAQACAgMAAAAAAAAAAAAAAAAABQMGAgQH/8QALhEAAAUBBgQEBwAAAAAAAAAAAAECAxESBAUTIUFRFTEysQcWcaEUIiMkYYHB/9oADAMBAAIRAxEAPwCy0RatuLrmm0RWNyrJ5lyJefIxYyPHKR+h6rFa0oKpR5Caz2d20uE0ympR8iIbSili9321tm5DnVz8Orh+lkcDZHAepeDz/QSi321thZDXWL8O0h+pkkDY3EehYBx/RWlxJmYzFt8iXph1/LO059o9xU6LVtutc02t6x2VWvMWRFx5+LIR44if2PVbSt1KyWVSTyFStFndszhtPJpUXMjBERZCEFFe6OpMjVGtrGylkLoRK6LGbz0yJp4aB+ff+SrUUIXmBNVXWbW5DXNlxZ3xODh3y0kJVehnSktB0Xw8abU+8s+oiKPQ5nsQ2nYxsD91qOPJiZLE+SRjmPYHNPMTwOQfUhe9+GY8e7F3HiwxwxMdC0MjaGtHEMYPAHryvm7WPs4twKeanrn2ObFP5jMZsojMgAJcPE7pvXPZWd1X2Uu4VxNb1zq7Mln8b8Z0ok8sFoLf+h07rjsJdV9vH5/gvGEfG8SSjCiJKeuZjn+4jQNrtSZGl9bV1lFIWwmVsWS3np8Tjw4H8e/8hWooQo8Ca1usKtx2udLlTsiaGjvlxAV3pjdZnSotBR/ENptL7Ky6jI59CiO5giImo50C4nv1tXlXeU/U2m4BJmlvteK3ozcDp7fu7joj5rtiKJ5lLyaVBjdd5v3ZaCfYPP2MtjENUdpdaS1DFYYRlwbHFJAEsXY5BBDmuHuIJWb21u9XagksM98ufYZBADY4++AOA1rWjoAfIftWraUtNafE6nAzv5GMyT/QKVdLTVfwypwMH+PjMj/yAl3DVdNeQvPnyzzjfDfViJkuW0xMToORbC7V5VJlM1NqSAR5ob7Jiu7MPI7e77O46A+S7YiJiyyllNKRRr0vN+87Qb7557aEWxAiIpQuBERAAREQAEREABERAB//2Q==" alt="High risk" title="High risk">
         </a>
 
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
-          <div class="scan-verdict-icon verdict-low">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scanresults" class="scan-row">
+          <div class="scan-type-icon">
+            <img src="https://raw.githubusercontent.com/the-gmt/psychic-goggles-idassist/408fd279c95684a10fcfdcdf5e385ca2531ac999/images/Gmail_icon.svg" alt="Gmail">
           </div>
           <div class="scan-row-info">
             <div class="scan-row-name">BMO e-Transfer received</div>
-            <div class="scan-row-meta">Mar 23, 2026 · Email · AutoScan</div>
+            <div class="scan-row-meta">Mar 23, 2026 · Gmail · AutoScan</div>
           </div>
-          <span class="scan-row-score score-low">Low risk</span>
+          <img class="scan-verdict-img" src="data:image/png;base64,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" alt="Low risk" title="Low risk">
         </a>
 
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
-          <div class="scan-verdict-icon verdict-inconclusive">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scanresults" class="scan-row">
+          <div class="scan-type-icon">
+            <img src="data:image/png;base64,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" alt="Text" style="width:22px;height:22px;object-fit:contain;">
           </div>
           <div class="scan-row-info">
             <div class="scan-row-name">Your parcel is waiting</div>
             <div class="scan-row-meta">Mar 22, 2026 · Text · Manual</div>
           </div>
-          <span class="scan-row-score score-inconclusive">Inconclusive</span>
+          <img class="scan-verdict-img" src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAvAC4DASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAAAAcFBgEDBAj/xAAzEAABAwIEAggDCQAAAAAAAAABAgMEAAUGERIhUWEHExQxQZGhwRZCYiIyUlRxgZKT4f/EABYBAQEBAAAAAAAAAAAAAAAAAAUGBP/EACsRAAIBAwEGBQUBAAAAAAAAAAECAwAEESEFBhIxUXEiobHB4RMyYXLw0f/aAAwDAQACEQMRAD8A9l0UEgDM7Clxi3FEibIciQHS1ESctSDkXeefDlR20tpxbPj45NSeQ61ssrKS7fhTkOZq+v3G3sL0Pz4rSx8q3kg+prey808jWy6hxB+ZCgR6Ukq6bfOl2+QH4j62ljgdjyI8RUzHveePxxeH8HX58qafd8cPhfXtTnoqHwpe0XqAVqCUSW9nUD0I5GpirG3njuIxLGcg1OyxNE5RxgiorF8hcbDc11BIV1egEeGohPvSttkJ+4zm4cfT1rmenUchsCfamxiGGqfZZcRG61tnQOKhuPUClAC405mCptaTltsRUTvWCLqJnGUx76+WKpdhEGB1X7s+2lWL4Kvf4Y/9n+VouGFbrAhOy5AYDTYzVkvM9+XCojtUn8y9/M1hUiQpJSp91QPeCs70E8tgVIWNgf2H+Uosd0CMuMdvmp7o7kLaxI20knS+2tCh+g1e1M2lz0bQlvXlc0pPVx0EZ/UrbLyzpjVbbrK4sctyJOO2nvmprbhU3WnQZ/u1FVPFeEhPeXNt6ktyFbrbVslZ4g+Bq2UUxeWUN5H9OYZHp2o63uZLZ+OM60oX7DemV6F2yUT9DZWPMZipC04Qu0x1JkNdkZz+0pz737J7/PKmdRQMe6dqr5ZiR00/vSlX29OVwFAPWuS02+NbIKIkVJCE7knvUfEnnXXRRVNHGsahEGAKFZi7FmOSa//Z" alt="Inconclusive" title="Inconclusive">
         </a>
 
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
-          <div class="scan-verdict-icon verdict-low">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scanresults" class="scan-row">
+          <div class="scan-type-icon">
+            <img src="https://raw.githubusercontent.com/the-gmt/psychic-goggles-idassist/408fd279c95684a10fcfdcdf5e385ca2531ac999/images/Gmail_icon.svg" alt="Gmail">
           </div>
           <div class="scan-row-info">
             <div class="scan-row-name">Netflix billing update</div>
-            <div class="scan-row-meta">Mar 20, 2026 · Email · AutoScan</div>
+            <div class="scan-row-meta">Mar 20, 2026 · Gmail · AutoScan</div>
           </div>
-          <span class="scan-row-score score-low">Low risk</span>
+          <img class="scan-verdict-img" src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAxADQDASIAAhEBAxEB/8QAHAABAAIDAAMAAAAAAAAAAAAAAAcIAgQGAwUJ/8QANBAAAQMDAgQFAgILAAAAAAAAAQIDBAAFEQYhBxIxQQgTImGRUXEUFjI0UmJygaKxweHw/8QAGQEAAgMBAAAAAAAAAAAAAAAAAAQCAwUG/8QAJREAAgICAQIGAwAAAAAAAAAAAAECEQMEBSExEhQiQWFxI1Gx/9oADAMBAAIRAxEAPwC5dKVg862wyt55xDbTaSpa1qwlIG5JJ6CgDOlQRr3xEW63ynIWk7cm5KQcGXIUUsk/upHqUPfKa45rxIa0DgLlosCkZ3Sll4H58w/2peWzjTqzPnyevB1dlqKVF3C3jRYNZSmrXLZVaLs5s2y4sKbeP0Qvbfr6SB7ZqUauhOM1cRzFmhmj4oO0KUpUiwVA3i21dIgW2DpKE6pszkmRMI2JaBwhP2Kgon+EVPNVY8YDDqeINrklJ8py1IQlXYqS66SP6k/NL7LaxujP5Oco67ohWvLCiyZ0xmHDYcfkPrDbTTacqWonAAHck1KXD6xaN1/o9Ol2kNWXWMXnciy1KPJOGSeVe/XtsMjAIyMpr3Vvt0Lgjp8Xu7tsTNcz0KTAicwUiEg5BcUQd9sgkdf0RtzKpBYm+rfQ5+Go2lNv0+7/AF8fZwfEbRaNBotDD96Q9f3my/MiMp/UuhQOcHdXX4z0wTaXgfqt3WHDuDcpSuaayTFlq/acRj1fcpKSfcmqX3e4zrtc5FyuUlyTLkrLjrqzupR/7oNhVpfCMy61wxlrcSQl66urbJ7p8tpOflJ+Ku1pfkaj2HuMyLzLUFUWv4TFSlK0TohUf8c9A/nzSiWYhQi6wVF2GpZwFEj1Nk9grA3+oHbNSBSoyipKmQy445YOEuzPn1Ph3KyXVcWYxIgToy/UlQKFoUO/+6xutxuF2mrnXSdJnSl4CnpDqnFnAwMknOwq9uqNJ6b1Oylq/WaJP5RhK3EYWkfQLGFAfY1y7fBXhk24HE6YQSDn1TJCh8FeKRenL2fQwZ8PlTqElXyVS0Bo2961vbdttEZRTkefIUD5bCe6lH/HU9qu3pKxQ9NabgWKAD+HhtBtJPVR6qUfckk/zrZtFst1ohJg2qDGgxkdGmGwhOfrgd/etumcOBYvs0tLRjrJu7bFKUq8fFKUoAUpSgBSlKAFKUoA/9k=" alt="Low risk" title="Low risk">
         </a>
 
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
-          <div class="scan-verdict-icon verdict-high">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scanresults" class="scan-row">
+          <div class="scan-type-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </div>
           <div class="scan-row-info">
             <div class="scan-row-name">Suspicious login link</div>
             <div class="scan-row-meta">Mar 18, 2026 · URL · Manual</div>
           </div>
-          <span class="scan-row-score score-high">High risk</span>
+          <img class="scan-verdict-img" src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAyADEDASIAAhEBAxEB/8QAGgABAQADAQEAAAAAAAAAAAAAAAgBBgcCBf/EACwQAAEEAQQAAwgDAQAAAAAAAAEAAgMFBAYHESESE2EkMTVBQlFxsXSRsiL/xAAaAQACAgMAAAAAAAAAAAAAAAAABQMGAgQH/8QALhEAAAUBBgQEBwAAAAAAAAAAAAECAxESBAUTIUFRFTEysQcWcaEUIiMkYYHB/9oADAMBAAIRAxEAPwCy0RatuLrmm0RWNyrJ5lyJefIxYyPHKR+h6rFa0oKpR5Caz2d20uE0ympR8iIbSili9321tm5DnVz8Orh+lkcDZHAepeDz/QSi321thZDXWL8O0h+pkkDY3EehYBx/RWlxJmYzFt8iXph1/LO059o9xU6LVtutc02t6x2VWvMWRFx5+LIR44if2PVbSt1KyWVSTyFStFndszhtPJpUXMjBERZCEFFe6OpMjVGtrGylkLoRK6LGbz0yJp4aB+ff+SrUUIXmBNVXWbW5DXNlxZ3xODh3y0kJVehnSktB0Xw8abU+8s+oiKPQ5nsQ2nYxsD91qOPJiZLE+SRjmPYHNPMTwOQfUhe9+GY8e7F3HiwxwxMdC0MjaGtHEMYPAHryvm7WPs4twKeanrn2ObFP5jMZsojMgAJcPE7pvXPZWd1X2Uu4VxNb1zq7Mln8b8Z0ok8sFoLf+h07rjsJdV9vH5/gvGEfG8SSjCiJKeuZjn+4jQNrtSZGl9bV1lFIWwmVsWS3np8Tjw4H8e/8hWooQo8Ca1usKtx2udLlTsiaGjvlxAV3pjdZnSotBR/ENptL7Ky6jI59CiO5giImo50C4nv1tXlXeU/U2m4BJmlvteK3ozcDp7fu7joj5rtiKJ5lLyaVBjdd5v3ZaCfYPP2MtjENUdpdaS1DFYYRlwbHFJAEsXY5BBDmuHuIJWb21u9XagksM98ufYZBADY4++AOA1rWjoAfIftWraUtNafE6nAzv5GMyT/QKVdLTVfwypwMH+PjMj/yAl3DVdNeQvPnyzzjfDfViJkuW0xMToORbC7V5VJlM1NqSAR5ob7Jiu7MPI7e77O46A+S7YiJiyyllNKRRr0vN+87Qb7557aEWxAiIpQuBERAAREQAEREABERAB//2Q==" alt="High risk" title="High risk">
         </a>
 
       </div>
       <div class="card-footer">
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results">View all scan results →</a>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scanresults">View all scan results →</a>
       </div>
     </div>
 
@@ -975,49 +968,43 @@
 </div><!-- /page layout -->
 
 <!-- ═══════ FOOTER ═══════ -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist">
-        <p>Comprehensive identity protection and monitoring for Canadians. Powered by Equifax.</p>
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4>
+        <img src="https://www.idassist.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">
+        24/7 Emergency Assistance
+      </h4>
+      <table>
+        <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
+        <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
+      </table>
+      <p><a href="mailto:customerservice@idassist.com">customerservice&#64;idassist.com</a></p>
+      <div class="footer-maple">
+        <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
+        <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
       </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Dashboard</div>
-        <ul>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">Overview</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan">Scan &amp; Score</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/credit">Credit Score</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/darkweb">Dark Web Monitoring</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts">Alerts</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Resources</div>
-        <ul>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help">Help Centre</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/identity">Identity Theft &amp; Recovery</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/risk">Risk Assessment</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Account</div>
-        <ul>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/info">Personal Info</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/account">Account &amp; Security</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/billing">Billing</a></li>
-          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/">Log Out</a></li>
-        </ul>
+      <div class="footer-hours">
+        <strong>Our regular hours of operation are</strong>
+        9:00am – 9:00pm EST, Monday to Friday
       </div>
     </div>
-    <div class="footer-bottom">
-      <span class="footer-legal">© 2026 ID Assist. All rights reserved.</span>
-      <div class="footer-legal-links">
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/privacy">Privacy Policy</a>
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/terms">Terms of Service</a>
-        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/accessibility">Accessibility</a>
-      </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/identity">Identity Theft &amp; Recovery</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help">Help</a></li>
+        <li><a href="https://www.idassist.com/en/terms-conditions">Terms &amp; Conditions</a></li>
+        <li><a href="https://www.idassist.com/en/privacy-policy">Privacy Policy</a></li>
+        <li><a href="https://www.idassist.com/en/cancellation-policy">Cancellation Policy</a></li>
+        <li><a href="#">FR</a></li>
+      </ul>
     </div>
+  </div>
+  <div class="footer-bottom">
+    <p>ID&nbsp;Assist is an early warning system that helps you look after your identity.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. All rights reserved. ID&nbsp;Assist®, Sigma Loyalty Group Inc. and all associated marks and logos are trademarks owned or used under license. ID&nbsp;Assist® is provided by Sigma Loyalty Group Inc.</p>
+    <p>iPhone and App Store are trademarks of Apple Inc., registered in the U.S. and other countries. Android, Google Play and Play Store are trademarks of Google Inc., registered in the U.S. and other countries.</p>
+    <p>All product names, logos, and brands are property of their respective owners. All company, product, and service names used on this website are for identification purposes only. Use of these names, logos, and brands does not imply endorsement.</p>
   </div>
 </footer>
 
