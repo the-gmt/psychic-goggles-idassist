@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID Assist – Scan &amp; Score</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans Pro', 'Trebuchet MS', -apple-system, sans-serif;
+    color: #4B3F34; line-height: 1.6; background: #F5F5F5;
+    -webkit-font-smoothing: antialiased;
+    padding-top: 64px;
+  }
+  h1, h2, h6, p { font-family: 'Source Sans Pro', sans-serif; }
+  h3, h4, h5    { font-family: 'Trebuchet MS', sans-serif; }
+
+  :root {
+    --red: #E8292F;
+    --gold: #FAAF42;
+    --gold-hover: #e89e2e;
+    --dark: #212529;
+    --body: #4B3F34;
+    --slate: #495057;
+    --teal: #287292;
+    --light: #F2F2F2;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
+    --amber: #F57C00;
+    --amber-light: #FFF3E0;
+    --border: #E0E0E0;
+    --white: #fff;
+    --emerald: #10B981;
+  }
+
+  /* ─── TOP NAV ─── */
+  .top-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 64px; background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+  }
+  .top-nav-left a { display: flex; align-items: center; }
+  .top-nav-left img { height: 50px; }
+  .top-nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-help {
+    text-decoration: none; color: var(--body); font-size: 16px; font-weight: 600;
+    padding: 6px 14px; border-radius: 6px; transition: background .15s, color .15s;
+  }
+  .nav-help:hover { background: var(--light); color: var(--red); }
+  .nav-bell {
+    position: relative; background: none; border: none; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; transition: background .15s;
+  }
+  .nav-bell:hover { background: var(--light); }
+  .nav-bell svg { width: 20px; height: 20px; color: var(--body); }
+  .bell-badge {
+    position: absolute; top: 2px; right: 2px; width: 17px; height: 17px; border-radius: 50%;
+    background: var(--red); color: var(--white); font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; border: 2px solid var(--white);
+  }
+
+  /* ─── HAMBURGER ─── */
+  .hamburger-btn {
+    background: none; border: none; cursor: pointer; width: 40px; height: 40px;
+    border-radius: 8px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 0; position: relative; transition: background .15s;
+  }
+  .hamburger-btn:hover { background: var(--light); }
+  .hamburger-btn.open:hover { background: transparent; }
+  .hamburger-btn span {
+    display: block; width: 22px; height: 2px; background: var(--dark);
+    border-radius: 2px; position: absolute;
+    transition: transform .3s ease, opacity .2s ease;
+  }
+  .hamburger-btn span:nth-child(1) { transform: translateY(-7px); }
+  .hamburger-btn span:nth-child(2) { transform: translateY(0); }
+  .hamburger-btn span:nth-child(3) { transform: translateY(7px); }
+  .hamburger-btn.open span:nth-child(1) { transform: rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg); }
+
+  /* ─── SLIDE MENU ─── */
+  .menu-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.3); z-index: 250; opacity: 0; transition: opacity .25s ease;
+  }
+  .menu-overlay.open { display: block; opacity: 1; }
+  .slide-menu {
+    position: fixed; top: 64px; right: 0; bottom: 0; width: 300px;
+    background: var(--white); z-index: 300;
+    transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+    box-shadow: -4px 0 24px rgba(0,0,0,.1);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .slide-menu.open { transform: translateX(0); }
+  .menu-header {
+    padding: 18px 24px; border-bottom: 1px solid #eee;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .menu-avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--slate); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .menu-user-name { font-size: 16px; font-weight: 700; color: var(--dark); }
+  .menu-user-email { font-size: 13px; color: #888; }
+  .menu-section { padding: 12px 0; }
+  .menu-section + .menu-section { border-top: 1px solid #eee; }
+  .menu-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: #999; padding: 4px 24px 8px;
+  }
+  .menu-link {
+    display: flex; align-items: center; gap: 12px; padding: 12px 24px;
+    text-decoration: none; color: var(--body); font-size: 15px; font-weight: 600;
+    transition: background .12s;
+  }
+  .menu-link:hover { background: var(--light); }
+  .menu-link.active { background: #FFF5E0; color: var(--dark); }
+  .menu-link svg { width: 20px; height: 20px; color: #888; flex-shrink: 0; }
+  .menu-link.active svg { color: var(--gold); }
+  .menu-link .menu-badge {
+    margin-left: auto; background: var(--red); color: var(--white);
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  }
+  .menu-link.logout { color: var(--red); }
+  .menu-link.logout svg { color: var(--red); }
+
+  /* ─── HERO ─── */
+  .status-hero {
+    background: linear-gradient(135deg, #7A3B00 0%, #B35400 45%, #C96B10 100%);
+    padding: 44px 48px 40px; position: relative; overflow: hidden;
+  }
+  .status-hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3Ccircle cx='30' cy='30' r='12'/%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  }
+  .status-hero-inner {
+    max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
+  }
+  .status-breadcrumb {
+    font-size: 13px; color: rgba(255,255,255,0.65); font-weight: 600;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+  .status-breadcrumb a { color: rgba(255,255,255,0.65); text-decoration: none; }
+  .status-breadcrumb a:hover { color: rgba(255,255,255,0.9); }
+  .status-breadcrumb span { color: rgba(255,255,255,0.35); }
+  .status-hero h1 {
+    font-size: 32px; font-weight: 800; color: var(--white); line-height: 1.2; margin-bottom: 14px;
+  }
+  .status-hero p {
+    font-size: 16px; color: rgba(255,255,255,0.8); max-width: 560px; line-height: 1.55;
+  }
+  .hero-autoscan-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: var(--white); font-size: 14px; font-weight: 700;
+    padding: 6px 14px; border-radius: 20px; backdrop-filter: blur(4px);
+    text-decoration: none; transition: background .15s;
+    white-space: nowrap;
+  }
+  .hero-autoscan-pill:hover { background: rgba(255,255,255,0.25); }
+  .hero-autoscan-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74,222,128,0.3);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(74,222,128,0.3); }
+    50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0.1); }
+  }
+
+  /* ─── PAGE LAYOUT ─── */
+  .page-layout {
+    max-width: 1200px; margin: 0 auto;
+    padding: 40px 48px 80px;
+    display: grid; grid-template-columns: 1fr 340px;
+    gap: 32px; align-items: start;
+  }
+
+  /* ─── SHARED CARD ─── */
+  .card {
+    background: var(--white); border-radius: 14px; border: 1px solid var(--border);
+    overflow: hidden; animation: fadeUp .3s ease both; margin-bottom: 24px;
+  }
+  .card:last-child { margin-bottom: 0; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card:nth-child(2) { animation-delay: .06s; }
+  .card:nth-child(3) { animation-delay: .12s; }
+
+  .card-head {
+    padding: 20px 24px 18px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .card-icon {
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-icon svg { width: 20px; height: 20px; }
+  .card-title { font-size: 18px; font-weight: 700; color: var(--dark); line-height: 1.3; }
+  .card-subtitle { font-size: 14px; color: var(--slate); margin-top: 2px; }
+
+  /* ─── UNIVERSAL INPUT CARD ─── */
+  .input-card { margin-bottom: 24px; }
+
+  /* Input mode tabs */
+  .input-mode-tabs {
+    display: flex; border-bottom: 1px solid var(--border);
+  }
+  .input-tab {
+    flex: 1; padding: 14px 20px; border: none; background: none;
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    color: var(--slate); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; gap: 8px; border-bottom: 3px solid transparent;
+    margin-bottom: -1px; transition: color .15s, border-color .15s, background .15s;
+  }
+  .input-tab:hover { background: #FAFAFA; color: var(--dark); }
+  .input-tab.active {
+    color: var(--amber); border-bottom-color: var(--amber); background: #FFFAF4;
+  }
+  .input-tab svg { width: 18px; height: 18px; }
+
+  .input-body { padding: 24px; }
+
+  /* Text paste area */
+  .paste-area-wrap { position: relative; margin-bottom: 20px; }
+  .paste-area {
+    width: 100%; min-height: 180px; padding: 16px;
+    border: 2px solid var(--border); border-radius: 10px;
+    font-family: inherit; font-size: 15px; color: var(--dark);
+    line-height: 1.6; resize: vertical; outline: none;
+    transition: border-color .2s;
+    background: #FAFAFA;
+  }
+  .paste-area:focus { border-color: var(--amber); background: var(--white); }
+  .paste-area::placeholder { color: #BBBBBB; }
+  .char-count {
+    position: absolute; bottom: 10px; right: 14px;
+    font-size: 12px; color: #BBBBBB;
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 48px 24px; text-align: center;
+    background: #FAFAFA; cursor: pointer;
+    transition: border-color .2s, background .2s;
+    margin-bottom: 20px;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--amber); background: #FFFAF4;
+  }
+  .drop-zone-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--amber-light); display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .drop-zone-icon svg { width: 26px; height: 26px; color: var(--amber); }
+  .drop-zone-title { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .drop-zone-sub { font-size: 14px; color: var(--slate); margin-bottom: 16px; }
+  .drop-zone-btn {
+    display: inline-block; padding: 9px 20px; border-radius: 8px;
+    background: var(--white); border: 2px solid var(--border);
+    font-family: inherit; font-size: 14px; font-weight: 700; color: var(--dark);
+    cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .drop-zone-btn:hover { border-color: var(--amber); background: #FFFAF4; }
+  .drop-zone-formats { font-size: 12px; color: #aaa; margin-top: 12px; }
+
+  /* Image preview */
+  .image-preview {
+    display: none; border: 2px solid var(--border); border-radius: 10px;
+    overflow: hidden; margin-bottom: 20px; position: relative;
+  }
+  .image-preview.show { display: block; }
+  .image-preview img { width: 100%; max-height: 280px; object-fit: contain; background: #f9f9f9; }
+  .image-preview-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-top: 1px solid var(--border);
+    background: #FAFAFA;
+  }
+  .image-preview-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .image-preview-remove {
+    background: none; border: none; cursor: pointer; font-size: 13px;
+    font-weight: 600; color: var(--red); font-family: inherit;
+    display: flex; align-items: center; gap: 4px;
+    padding: 4px 8px; border-radius: 6px; transition: background .12s;
+  }
+  .image-preview-remove:hover { background: #FFF0F0; }
+
+  /* Optional sender details */
+  .sender-details-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-radius: 10px; background: var(--light);
+    border: 1px solid var(--border); cursor: pointer; margin-bottom: 0;
+    transition: background .15s;
+  }
+  .sender-details-toggle:hover { background: #ebebeb; }
+  .sender-details-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 700; color: var(--dark);
+  }
+  .sender-details-label svg { width: 16px; height: 16px; color: var(--slate); }
+  .toggle-chevron {
+    color: var(--slate); transition: transform .2s; display: flex;
+  }
+  .toggle-chevron.open { transform: rotate(180deg); }
+  .sender-fields {
+    display: none; padding: 20px 0 4px; gap: 16px;
+  }
+  .sender-fields.open { display: flex; flex-direction: column; }
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  .field-label {
+    font-size: 13px; font-weight: 700; color: var(--dark); letter-spacing: 0.2px;
+  }
+  .field-input {
+    width: 100%; padding: 10px 14px;
+    border: 2px solid var(--border); border-radius: 8px;
+    font-family: inherit; font-size: 15px; color: var(--dark);
+    outline: none; transition: border-color .2s; background: var(--white);
+  }
+  .field-input:focus { border-color: var(--amber); }
+  .field-input::placeholder { color: #BBBBBB; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Language selector */
+  .lang-row {
+    display: flex; align-items: center; gap: 12px;
+    padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
+  }
+  .lang-label { font-size: 14px; font-weight: 700; color: var(--dark); flex-shrink: 0; }
+  .lang-btn {
+    padding: 7px 18px; border-radius: 20px; border: 2px solid var(--border);
+    font-family: inherit; font-size: 14px; font-weight: 700; color: var(--slate);
+    background: var(--white); cursor: pointer; transition: all .15s;
+  }
+  .lang-btn.active {
+    background: var(--amber-light); border-color: var(--amber); color: var(--dark);
+  }
+  .lang-btn:hover:not(.active) { border-color: #ccc; background: #fafafa; }
+
+  /* Submit button */
+  .submit-row { padding-top: 20px; border-top: 1px solid var(--border); margin-top: 8px; }
+  .btn-scan {
+    width: 100%; padding: 14px 24px; border-radius: 10px;
+    background: var(--gold); border: none; cursor: pointer;
+    font-family: inherit; font-size: 17px; font-weight: 700; color: var(--dark);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: background .2s, transform .1s; letter-spacing: 0.1px;
+  }
+  .btn-scan:hover { background: var(--gold-hover); }
+  .btn-scan:active { transform: scale(0.99); }
+  .btn-scan svg { width: 22px; height: 22px; }
+  .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; }
+  .scan-note { font-size: 13px; color: #aaa; text-align: center; margin-top: 10px; }
+
+  /* ─── WHAT WE LOOK FOR CARD ─── */
+  .capability-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px 24px;
+  }
+  .capability-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px; border-radius: 10px; background: #FAFAFA; border: 1px solid var(--border);
+  }
+  .cap-icon {
+    width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cap-icon svg { width: 16px; height: 16px; }
+  .cap-name { font-size: 14px; font-weight: 700; color: var(--dark); line-height: 1.3; }
+  .cap-desc { font-size: 12px; color: var(--slate); margin-top: 2px; line-height: 1.4; }
+
+  /* ─── SIDEBAR CARDS ─── */
+  .sidebar-col .card { animation-delay: .08s; }
+  .sidebar-col .card:nth-child(2) { animation-delay: .14s; }
+
+  /* AutoScan status */
+  .autoscan-status-block { padding: 20px 24px; }
+  .autoscan-accounts-row { display: flex; gap: 12px; margin-bottom: 16px; }
+  .autoscan-acct {
+    flex: 1; border-radius: 10px; border: 1px solid var(--border);
+    padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: #FAFAFA;
+  }
+  .autoscan-acct-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .autoscan-acct-name { font-size: 12px; font-weight: 700; color: var(--dark); }
+  .autoscan-acct-status {
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  }
+  .status-active { background: #E8F5E9; color: #2E7D32; }
+  .status-inactive { background: var(--light); color: #aaa; }
+  .autoscan-cta {
+    display: block; text-align: center; padding: 10px 16px; border-radius: 8px;
+    background: var(--light); border: 1px solid var(--border);
+    font-family: inherit; font-size: 14px; font-weight: 700; color: var(--dark);
+    text-decoration: none; transition: background .15s;
+  }
+  .autoscan-cta:hover { background: #ebebeb; }
+  .autoscan-note {
+    font-size: 13px; color: var(--slate); margin-bottom: 14px; line-height: 1.5;
+  }
+
+  /* Recent scans */
+  .recent-list { padding: 4px 0; }
+  .scan-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 24px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background .1s; text-decoration: none;
+  }
+  .scan-row:last-child { border-bottom: none; }
+  .scan-row:hover { background: #FAFAFA; }
+  .scan-verdict-icon {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .verdict-low { background: #E8F5E9; }
+  .verdict-high { background: #FDECEA; }
+  .verdict-inconclusive { background: #FFF3E0; }
+  .verdict-low svg { color: var(--green); }
+  .verdict-high svg { color: var(--red); }
+  .verdict-inconclusive svg { color: var(--amber); }
+  .scan-verdict-icon svg { width: 18px; height: 18px; }
+  .scan-row-info { flex: 1; min-width: 0; }
+  .scan-row-name {
+    font-size: 14px; font-weight: 700; color: var(--dark);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .scan-row-meta { font-size: 12px; color: #aaa; margin-top: 1px; }
+  .scan-row-score {
+    font-size: 13px; font-weight: 800; flex-shrink: 0;
+  }
+  .score-low { color: var(--green); }
+  .score-high { color: var(--red); }
+  .score-inconclusive { color: var(--amber); }
+
+  .card-footer {
+    padding: 14px 24px; border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .card-footer a {
+    font-size: 14px; font-weight: 600; color: var(--teal); text-decoration: none;
+  }
+  .card-footer a:hover { text-decoration: underline; }
+
+  /* Tips card */
+  .tips-list { padding: 4px 24px 20px; }
+  .tip-item {
+    display: flex; align-items: flex-start; gap: 10px; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tip-item:last-child { border-bottom: none; }
+  .tip-dot {
+    width: 24px; height: 24px; border-radius: 6px; background: var(--amber-light);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .tip-dot svg { width: 13px; height: 13px; color: var(--amber); }
+  .tip-text { font-size: 14px; color: var(--body); line-height: 1.5; }
+  .tip-text strong { color: var(--dark); }
+
+  /* ─── FOOTER ─── */
+  .site-footer {
+    background: var(--dark); color: rgba(255,255,255,0.6);
+    padding: 48px 48px 32px;
+  }
+  .footer-inner { max-width: 1200px; margin: 0 auto; }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px; margin-bottom: 40px;
+  }
+  .footer-brand img { height: 40px; margin-bottom: 16px; filter: brightness(0) invert(1) opacity(0.8); }
+  .footer-brand p { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.5); }
+  .footer-col-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    color: rgba(255,255,255,0.4); margin-bottom: 14px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .footer-col ul li a {
+    font-size: 14px; color: rgba(255,255,255,0.6); text-decoration: none; transition: color .15s;
+  }
+  .footer-col ul li a:hover { color: var(--white); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .footer-legal { font-size: 13px; color: rgba(255,255,255,0.35); }
+  .footer-legal-links { display: flex; gap: 20px; flex-wrap: wrap; }
+  .footer-legal-links a {
+    font-size: 13px; color: rgba(255,255,255,0.4); text-decoration: none; transition: color .15s;
+  }
+  .footer-legal-links a:hover { color: rgba(255,255,255,0.7); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 960px) {
+    .page-layout { grid-template-columns: 1fr; padding: 24px 20px 60px; }
+    .status-hero { padding: 32px 20px 28px; }
+    .status-hero h1 { font-size: 26px; }
+    .capability-grid { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+  @media (max-width: 600px) {
+    .top-nav { padding: 0 16px; }
+    .status-hero { padding: 28px 16px 24px; }
+    .input-tab { font-size: 13px; padding: 12px 10px; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-inner { padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP NAV ═══════ -->
+<header class="top-nav">
+  <div class="top-nav-left">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">
+      <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist" style="height:50px;">
+    </a>
+  </div>
+  <div class="top-nav-right">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="nav-help">Help</a>
+    <button class="nav-bell" aria-label="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="bell-badge">2</span>
+    </button>
+    <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════ SLIDE MENU ═══════ -->
+<div class="menu-overlay" id="menu-overlay"></div>
+<nav class="slide-menu" id="slide-menu">
+  <div class="menu-header">
+    <div class="menu-avatar">GT</div>
+    <div>
+      <div class="menu-user-name">Geoffrey Thomas</div>
+      <div class="menu-user-email">gthomas@outlook.com</div>
+    </div>
+  </div>
+  <div class="menu-section">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan" class="menu-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+      Scan &amp; Score
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/credit" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Credit Score &amp; Report
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/darkweb" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Dark Web Monitoring
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Alerts<span class="menu-badge">2</span>
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Resources</div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+      Help
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/identity" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Identity Theft &amp; Recovery
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/risk" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Risk Assessment
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Settings</div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scansettings" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Scan &amp; Score Settings
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/info" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Personal Info
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/account" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9.24,5.35 L10.51,2.62 L13.49,2.62 L14.76,5.35 L17.58,4.31 L19.69,6.42 L18.65,9.24 L21.38,10.51 L21.38,13.49 L18.65,14.76 L19.69,17.58 L17.58,19.69 L14.76,18.65 L13.49,21.38 L10.51,21.38 L9.24,18.65 L6.42,19.69 L4.31,17.58 L5.35,14.76 L2.62,13.49 L2.62,10.51 L5.35,9.24 L4.31,6.42 L6.42,4.31 Z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      Account &amp; Security
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/billing" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+      Billing
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/" class="menu-link logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<div class="status-hero">
+  <div class="status-hero-inner">
+    <div>
+      <div class="status-breadcrumb">
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">Dashboard</a>
+        <span>›</span>
+        <span>Scan &amp; Score</span>
+      </div>
+      <h1>Scan &amp; Score</h1>
+      <p>Paste a suspicious message or upload an image — we'll analyse it and tell you whether it's a scam.</p>
+    </div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scansettings" class="hero-autoscan-pill">
+      <div class="hero-autoscan-dot"></div>
+      AutoScan Active
+    </a>
+  </div>
+</div>
+
+<!-- ═══════ PAGE LAYOUT ═══════ -->
+<div class="page-layout">
+
+  <!-- ── LEFT COLUMN ── -->
+  <div class="main-col">
+
+    <!-- UNIVERSAL INPUT CARD -->
+    <div class="card input-card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#FFF3E0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Submit for review</div>
+          <div class="card-subtitle">Paste the content of a suspicious email, text, or URL — or upload a screenshot.</div>
+        </div>
+      </div>
+
+      <!-- Input mode tabs -->
+      <div class="input-mode-tabs">
+        <button class="input-tab active" id="tab-paste" onclick="switchTab('paste')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Paste text
+        </button>
+        <button class="input-tab" id="tab-upload" onclick="switchTab('upload')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Upload image
+        </button>
+      </div>
+
+      <!-- Input body -->
+      <div class="input-body">
+
+        <!-- Language row -->
+        <div class="lang-row">
+          <span class="lang-label">Content language:</span>
+          <button class="lang-btn active" id="lang-en" onclick="setLang('en')">English</button>
+          <button class="lang-btn" id="lang-fr" onclick="setLang('fr')">French</button>
+        </div>
+
+        <!-- PASTE PANEL -->
+        <div id="panel-paste">
+          <div class="paste-area-wrap">
+            <textarea class="paste-area" id="paste-input"
+              placeholder="Paste the full text of the email, text message, or URL you'd like us to review…"
+              oninput="updateCharCount(this)"
+              rows="8"></textarea>
+            <span class="char-count" id="char-count">0 characters</span>
+          </div>
+        </div>
+
+        <!-- UPLOAD PANEL (hidden by default) -->
+        <div id="panel-upload" style="display:none;">
+          <div class="drop-zone" id="drop-zone" onclick="triggerFileInput()">
+            <div class="drop-zone-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <div class="drop-zone-title">Drag and drop your image here</div>
+            <div class="drop-zone-sub">Screenshot of an email, text message, or website</div>
+            <button class="drop-zone-btn" onclick="event.stopPropagation(); triggerFileInput()">
+              Choose a file
+            </button>
+            <div class="drop-zone-formats">Supported formats: JPG, PNG, WEBP, GIF — max 10 MB</div>
+          </div>
+          <div class="image-preview" id="image-preview">
+            <img id="preview-img" src="" alt="Uploaded image preview">
+            <div class="image-preview-bar">
+              <span class="image-preview-name" id="preview-name"></span>
+              <button class="image-preview-remove" onclick="removeImage()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Remove
+              </button>
+            </div>
+          </div>
+          <div class="drop-zone-formats" style="text-align:center;padding-bottom:6px;">Tip: Include as much of the message as possible for the most accurate assessment.</div>
+        </div>
+
+        <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="handleFile(this)">
+
+        <!-- Optional sender details -->
+        <div style="margin-top:16px;">
+          <button class="sender-details-toggle" onclick="toggleSender()" id="sender-toggle">
+            <span class="sender-details-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Sender details (optional)
+            </span>
+            <span class="toggle-chevron" id="sender-chevron">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </button>
+          <div class="sender-fields" id="sender-fields">
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="sender-name">Sender name</label>
+                <input class="field-input" id="sender-name" type="text" placeholder="e.g. Canada Revenue Agency">
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="sender-contact">Email address or phone number</label>
+                <input class="field-input" id="sender-contact" type="text" placeholder="e.g. info@example.com">
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="scan-name">Give this scan a name <span style="font-weight:400;color:#aaa;">(helps you find it later)</span></label>
+              <input class="field-input" id="scan-name" type="text" placeholder="e.g. Suspicious CRA email – March 2026">
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-row">
+          <button class="btn-scan" id="scan-btn" onclick="submitScan()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+            Scan now
+          </button>
+          <div class="scan-note">Results are usually ready within a few seconds.</div>
+        </div>
+
+      </div><!-- /input-body -->
+    </div><!-- /input card -->
+
+    <!-- WHAT WE CHECK CARD -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#E3F2FD;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <div>
+          <div class="card-title">What Scan &amp; Score checks for</div>
+          <div class="card-subtitle">Our system analyses content across multiple threat categories.</div>
+        </div>
+      </div>
+      <div class="capability-grid">
+        <div class="capability-item">
+          <div class="cap-icon" style="background:#FEF3F2;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E8292F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="cap-name">Phishing emails</div>
+            <div class="cap-desc">Deceptive messages posing as legitimate organizations to steal credentials or personal info.</div>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="cap-icon" style="background:#FFF3E0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.95 3.37a2 2 0 0 1 1.99-2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div>
+            <div class="cap-name">Smishing texts</div>
+            <div class="cap-desc">Fraudulent SMS messages designed to trick you into clicking malicious links or sharing information.</div>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="cap-icon" style="background:#E8F5E9;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div>
+            <div class="cap-name">Malicious URLs</div>
+            <div class="cap-desc">Website links that lead to fake pages, malware downloads, or other harmful destinations.</div>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="cap-icon" style="background:#F3E5F5;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6A1B9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <div>
+            <div class="cap-name">Screenshots</div>
+            <div class="cap-desc">Images of emails, texts, or web pages — our AI extracts and analyses the content automatically.</div>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="cap-icon" style="background:#E3F2FD;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="cap-name">Impersonation</div>
+            <div class="cap-desc">Messages pretending to be from government agencies, banks, couriers, or well-known brands.</div>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="cap-icon" style="background:#FFF3E0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="cap-name">Social engineering</div>
+            <div class="cap-desc">Urgency tactics, fear-based language, and manipulation techniques used to bypass your judgement.</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /what we check card -->
+
+  </div><!-- /main col -->
+
+  <!-- ── RIGHT SIDEBAR ── -->
+  <div class="sidebar-col">
+
+    <!-- AutoScan status -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#FFF3E0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <div>
+          <div class="card-title">AutoScan</div>
+          <div class="card-subtitle">Monitors your connected inboxes automatically.</div>
+        </div>
+      </div>
+      <div class="autoscan-status-block">
+        <p class="autoscan-note">AutoScan reviews your incoming emails in the background and alerts you to anything suspicious — no manual submission required.</p>
+        <div class="autoscan-accounts-row">
+          <div class="autoscan-acct">
+            <div class="autoscan-acct-icon" style="background:#fff;border:1px solid var(--border);">
+              <img src="https://raw.githubusercontent.com/the-gmt/psychic-goggles-idassist/408fd279c95684a10fcfdcdf5e385ca2531ac999/images/Gmail_icon.svg" alt="Gmail" style="width:22px;height:22px;object-fit:contain;">
+            </div>
+            <div class="autoscan-acct-name">Gmail</div>
+            <span class="autoscan-acct-status status-active">Active</span>
+          </div>
+          <div class="autoscan-acct">
+            <div class="autoscan-acct-icon" style="background:#fff;border:1px solid var(--border);">
+              <img src="https://raw.githubusercontent.com/the-gmt/psychic-goggles-idassist/408fd279c95684a10fcfdcdf5e385ca2531ac999/images/Outlook_icon.svg" alt="Outlook" style="width:22px;height:22px;object-fit:contain;">
+            </div>
+            <div class="autoscan-acct-name">Outlook</div>
+            <span class="autoscan-acct-status status-inactive">Not connected</span>
+          </div>
+        </div>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scansettings" class="autoscan-cta">Manage AutoScan</a>
+      </div>
+    </div>
+
+    <!-- Recent scan results -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#F2F2F2;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Recent scans</div>
+          <div class="card-subtitle">Your last 5 results.</div>
+        </div>
+      </div>
+      <div class="recent-list">
+
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
+          <div class="scan-verdict-icon verdict-high">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="scan-row-info">
+            <div class="scan-row-name">CRA tax refund notice</div>
+            <div class="scan-row-meta">Mar 24, 2026 · Email · AutoScan</div>
+          </div>
+          <span class="scan-row-score score-high">High risk</span>
+        </a>
+
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
+          <div class="scan-verdict-icon verdict-low">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="scan-row-info">
+            <div class="scan-row-name">BMO e-Transfer received</div>
+            <div class="scan-row-meta">Mar 23, 2026 · Email · AutoScan</div>
+          </div>
+          <span class="scan-row-score score-low">Low risk</span>
+        </a>
+
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
+          <div class="scan-verdict-icon verdict-inconclusive">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+          <div class="scan-row-info">
+            <div class="scan-row-name">Your parcel is waiting</div>
+            <div class="scan-row-meta">Mar 22, 2026 · Text · Manual</div>
+          </div>
+          <span class="scan-row-score score-inconclusive">Inconclusive</span>
+        </a>
+
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
+          <div class="scan-verdict-icon verdict-low">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="scan-row-info">
+            <div class="scan-row-name">Netflix billing update</div>
+            <div class="scan-row-meta">Mar 20, 2026 · Email · AutoScan</div>
+          </div>
+          <span class="scan-row-score score-low">Low risk</span>
+        </a>
+
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results" class="scan-row">
+          <div class="scan-verdict-icon verdict-high">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="scan-row-info">
+            <div class="scan-row-name">Suspicious login link</div>
+            <div class="scan-row-meta">Mar 18, 2026 · URL · Manual</div>
+          </div>
+          <span class="scan-row-score score-high">High risk</span>
+        </a>
+
+      </div>
+      <div class="card-footer">
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan/results">View all scan results →</a>
+      </div>
+    </div>
+
+    <!-- Tips card -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#FFF3E0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Tips for best results</div>
+        </div>
+      </div>
+      <div class="tips-list">
+        <div class="tip-item">
+          <div class="tip-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="tip-text"><strong>Include the full message.</strong> The more text or image content you provide, the more accurate the assessment.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="tip-text"><strong>Don't click links.</strong> Copy and paste the URL directly into the text field rather than clicking through.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="tip-text"><strong>Add sender details.</strong> If you know who sent the message, include their name and contact info — it helps us verify their identity.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="tip-text"><strong>Screenshots work too.</strong> A clear screenshot of the message gives us everything we need for a complete analysis.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sidebar -->
+
+</div><!-- /page layout -->
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist">
+        <p>Comprehensive identity protection and monitoring for Canadians. Powered by Equifax.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Dashboard</div>
+        <ul>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">Overview</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan">Scan &amp; Score</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/credit">Credit Score</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/darkweb">Dark Web Monitoring</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts">Alerts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Resources</div>
+        <ul>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help">Help Centre</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/identity">Identity Theft &amp; Recovery</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/risk">Risk Assessment</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Account</div>
+        <ul>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/info">Personal Info</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/account">Account &amp; Security</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/billing">Billing</a></li>
+          <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/">Log Out</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-legal">© 2026 ID Assist. All rights reserved.</span>
+      <div class="footer-legal-links">
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/privacy">Privacy Policy</a>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/terms">Terms of Service</a>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/accessibility">Accessibility</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Menu toggle ──────────────────────────────────────────────────────────────
+  const hamburger    = document.getElementById('hamburger');
+  const slideMenu    = document.getElementById('slide-menu');
+  const menuOverlay  = document.getElementById('menu-overlay');
+  function toggleMenu() {
+    const isOpen = slideMenu.classList.contains('open');
+    slideMenu.classList.toggle('open');
+    menuOverlay.classList.toggle('open');
+    hamburger.classList.toggle('open');
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  menuOverlay.addEventListener('click', toggleMenu);
+
+  // ── Input mode tabs ──────────────────────────────────────────────────────────
+  function switchTab(mode) {
+    document.getElementById('tab-paste').classList.toggle('active', mode === 'paste');
+    document.getElementById('tab-upload').classList.toggle('active', mode === 'upload');
+    document.getElementById('panel-paste').style.display  = mode === 'paste'  ? '' : 'none';
+    document.getElementById('panel-upload').style.display = mode === 'upload' ? '' : 'none';
+  }
+
+  // ── Language selector ────────────────────────────────────────────────────────
+  function setLang(lang) {
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    document.getElementById('lang-fr').classList.toggle('active', lang === 'fr');
+  }
+
+  // ── Char count ───────────────────────────────────────────────────────────────
+  function updateCharCount(el) {
+    const n = el.value.length;
+    document.getElementById('char-count').textContent =
+      n === 0 ? '0 characters' : n.toLocaleString() + ' character' + (n === 1 ? '' : 's');
+  }
+
+  // ── Sender details toggle ────────────────────────────────────────────────────
+  function toggleSender() {
+    const fields  = document.getElementById('sender-fields');
+    const chevron = document.getElementById('sender-chevron');
+    const open = fields.classList.toggle('open');
+    chevron.classList.toggle('open', open);
+  }
+
+  // ── File upload ──────────────────────────────────────────────────────────────
+  function triggerFileInput() { document.getElementById('file-input').click(); }
+
+  function handleFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('preview-img').src = e.target.result;
+      document.getElementById('preview-name').textContent = file.name;
+      document.getElementById('drop-zone').style.display = 'none';
+      document.getElementById('image-preview').classList.add('show');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage() {
+    document.getElementById('file-input').value = '';
+    document.getElementById('preview-img').src = '';
+    document.getElementById('preview-name').textContent = '';
+    document.getElementById('image-preview').classList.remove('show');
+    document.getElementById('drop-zone').style.display = '';
+  }
+
+  // ── Drag-and-drop on drop zone ───────────────────────────────────────────────
+  const dropZone = document.getElementById('drop-zone');
+  if (dropZone) {
+    dropZone.addEventListener('dragover', function(e) {
+      e.preventDefault(); dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', function() {
+      dropZone.classList.remove('drag-over');
+    });
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault(); dropZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        document.getElementById('file-input').files = dt.files;
+        handleFile(document.getElementById('file-input'));
+      }
+    });
+  }
+
+  // ── Submit (demo) ─────────────────────────────────────────────────────────────
+  function submitScan() {
+    const btn = document.getElementById('scan-btn');
+    btn.disabled = true;
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;width:22px;height:22px;">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      Scanning…`;
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+        Scan now`;
+    }, 2000);
+  }
+
+  // CSS spin keyframe ─────────────────────────────────────────────────────────
+  const style = document.createElement('style');
+  style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+  document.head.appendChild(style);
+</script>
+</body>
+</html>
