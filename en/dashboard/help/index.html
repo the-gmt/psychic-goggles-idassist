@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID Assist – Help</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+
+  html { scroll-behavior: smooth; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #E8292F;
+    --gold: #FAAF42;
+    --gold-hover: #e89e2e;
+    --dark: #212529;
+    --body: #4B3F34;
+    --slate: #495057;
+    --teal: #287292;
+    --light: #F2F2F2;
+    --border: #E0E0E0;
+    --white: #fff;
+  }
+
+  body {
+    font-family: 'Source Sans Pro', 'Trebuchet MS', -apple-system, sans-serif;
+    color: var(--body);
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    padding-top: 64px; /* fixed top-nav height */
+  }
+  h1, h2, h6, p { font-family: 'Source Sans Pro', sans-serif; }
+  h3, h4, h5    { font-family: 'Trebuchet MS', sans-serif; }
+
+  /* ─── TOP NAV ─── */
+  .top-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 64px; background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+  }
+  .top-nav-left a { display: flex; align-items: center; }
+  .top-nav-left img { height: 50px; }
+  .top-nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-help {
+    text-decoration: none; color: var(--body); font-size: 16px; font-weight: 600;
+    padding: 6px 14px; border-radius: 6px; transition: background .15s, color .15s;
+  }
+  .nav-help:hover { background: var(--light); color: var(--red); }
+  .nav-help.active { background: var(--light); color: var(--red); }
+  .nav-bell {
+    position: relative; background: none; border: none; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .nav-bell:hover { background: var(--light); }
+  .nav-bell svg { width: 20px; height: 20px; color: var(--body); }
+  .bell-badge {
+    position: absolute; top: 2px; right: 2px;
+    width: 17px; height: 17px; border-radius: 50%;
+    background: var(--red); color: var(--white);
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--white);
+  }
+
+  /* ─── HAMBURGER ─── */
+  .hamburger-btn {
+    background: none; border: none; cursor: pointer;
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0; position: relative; transition: background .15s;
+  }
+  .hamburger-btn:hover { background: var(--light); }
+  .hamburger-btn.open:hover { background: transparent; }
+  .hamburger-btn span {
+    display: block; width: 22px; height: 2px; background: var(--dark);
+    border-radius: 2px; position: absolute;
+    transition: transform .3s ease, opacity .2s ease;
+  }
+  .hamburger-btn span:nth-child(1) { transform: translateY(-7px); }
+  .hamburger-btn span:nth-child(2) { transform: translateY(0); }
+  .hamburger-btn span:nth-child(3) { transform: translateY(7px); }
+  .hamburger-btn.open span:nth-child(1) { transform: rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg); }
+
+  /* ─── SLIDE MENU ─── */
+  .menu-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.3); z-index: 250;
+    opacity: 0; transition: opacity .25s ease;
+  }
+  .menu-overlay.open { display: block; opacity: 1; }
+  .slide-menu {
+    position: fixed; top: 64px; right: 0; bottom: 0; width: 300px;
+    background: var(--white); z-index: 300;
+    transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+    box-shadow: -4px 0 24px rgba(0,0,0,.1);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .slide-menu.open { transform: translateX(0); }
+  .menu-header {
+    padding: 18px 24px; border-bottom: 1px solid #eee;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .menu-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--slate); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .menu-user-name { font-size: 16px; font-weight: 700; color: var(--dark); }
+  .menu-user-email { font-size: 13px; color: #888; }
+  .menu-section { padding: 12px 0; }
+  .menu-section + .menu-section { border-top: 1px solid #eee; }
+  .menu-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: #999; padding: 4px 24px 8px;
+  }
+  .menu-link {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 24px; text-decoration: none; color: var(--body);
+    font-size: 15px; font-weight: 600; transition: background .12s;
+  }
+  .menu-link:hover { background: var(--light); }
+  .menu-link.active { background: #FFF5E0; color: var(--dark); }
+  .menu-link svg { width: 20px; height: 20px; color: #888; flex-shrink: 0; }
+  .menu-link.active svg { color: var(--gold); }
+  .menu-link .menu-badge {
+    margin-left: auto; background: var(--red); color: var(--white);
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  }
+  .menu-link.logout { color: var(--red); }
+  .menu-link.logout svg { color: var(--red); }
+
+  /* ─── PAGE HEADER ─── */
+  .page-header { background: var(--light); padding: 60px 48px 52px; text-align: center; }
+  .page-header h1 { font-size: 36px; font-weight: 800; color: var(--dark); margin-bottom: 12px; line-height: 1.3; }
+  .page-header h1 span { color: var(--red); }
+  .page-header p { font-size: 20px; color: var(--body); max-width: 580px; margin: 0 auto; line-height: 1.6; }
+
+  /* ─── CONTACT BAR ─── */
+  .contact-bar {
+    background: var(--slate); padding: 20px 48px;
+    display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;
+  }
+  .contact-bar-item { display: flex; align-items: center; gap: 10px; font-size: 18px; color: rgba(255,255,255,0.85); font-weight: 600; }
+  .contact-bar-item a { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 18px; }
+  .contact-bar-item a:hover { color: var(--gold-hover); }
+  .contact-bar-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
+
+  /* ─── HELP LAYOUT ─── */
+  .help-layout {
+    max-width: 1200px; margin: 0 auto;
+    padding: 64px 48px 80px;
+    display: grid; grid-template-columns: 260px 1fr; gap: 60px; align-items: start;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .cat-nav { position: sticky; top: 88px; }
+  .cat-nav h4 { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 16px; }
+  .cat-nav ul { list-style: none; }
+  .cat-nav ul li { margin-bottom: 4px; }
+  .cat-nav ul li a {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px;
+    font-size: 18px; font-weight: 600; color: var(--body); text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .cat-nav ul li a:hover { background: #fef8eb; color: var(--red); }
+  .cat-nav ul li a.active { background: #fef8eb; color: var(--red); }
+  .cat-nav ul li a .cat-icon { flex-shrink: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+  .cat-nav ul li a .cat-icon img { width: 30px; height: 30px; object-fit: contain; }
+
+  .cat-nav-support { margin-top: 28px; padding: 20px; background: var(--light); border-radius: 12px; }
+  .cat-nav-support p { font-size: 18px; color: var(--body); margin-bottom: 10px; line-height: 1.5; }
+  .cat-nav-support a {
+    display: block; text-align: center; background: var(--gold); color: var(--dark);
+    padding: 10px 16px; border-radius: 8px; font-size: 18px; font-weight: 700;
+    text-decoration: none; margin-bottom: 8px;
+  }
+  .cat-nav-support a:hover { background: var(--gold-hover); }
+  .cat-nav-support a.ghost { background: none; border: 2px solid var(--gold); color: var(--dark); }
+  .cat-nav-support a.ghost:hover { background: #fef8eb; }
+
+  /* ─── MOBILE SECTION DROPDOWN ─── */
+  .cat-select-wrap { display: none; margin-bottom: 28px; }
+  .cat-select-wrap.sticky {
+    position: fixed; top: 64px; left: 0; right: 0; z-index: 90;
+    background: #fff; padding: 10px 24px; margin-bottom: 0;
+    border-bottom: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .cat-select-wrap.sticky + .faq-section { margin-top: var(--select-height, 64px); }
+  .cat-select {
+    width: 100%; padding: 12px 16px; font-size: 18px; border: 2px solid #e0e0e0;
+    border-radius: 8px; background: #fff; font-family: 'Source Sans Pro', sans-serif;
+    color: var(--dark); font-weight: 600; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+
+  /* ─── FAQ CONTENT ─── */
+  .faq-main { min-width: 0; }
+  .faq-section { margin-bottom: 56px; scroll-margin-top: 100px; }
+  .faq-section-head {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    padding-bottom: 16px; border-bottom: 2px solid var(--light);
+  }
+  .faq-section-icon { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .faq-section-icon img { width: 30px; height: 30px; object-fit: contain; }
+  .faq-section-head h2 { font-size: 22px; font-weight: 800; color: var(--dark); line-height: 1.3; font-family: 'Source Sans Pro', sans-serif; }
+
+  .faq-item { border-bottom: 1px solid #ebebeb; }
+  .faq-q {
+    width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: 18px 0; font-size: 18px; font-weight: 700; color: var(--dark);
+    font-family: 'Trebuchet MS', sans-serif; transition: color 0.15s;
+  }
+  .faq-q:hover { color: var(--red); }
+  .faq-chevron { font-size: 20px; flex-shrink: 0; color: var(--gold); transition: transform 0.2s; }
+  .faq-q.open .faq-chevron { transform: rotate(180deg); }
+  .faq-a { display: none; font-size: 18px; color: var(--body); line-height: 1.75; padding-bottom: 20px; }
+  .faq-a.open { display: block; }
+  .faq-a p { margin-bottom: 12px; }
+  .faq-a p:last-child { margin-bottom: 0; }
+  .faq-a ul { padding-left: 20px; margin: 8px 0 12px; }
+  .faq-a ul li { margin-bottom: 6px; font-size: 18px; }
+  .faq-a strong { color: var(--dark); }
+
+  .ida-box {
+    background: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid var(--teal);
+    border-radius: 10px; padding: 14px 18px; margin-top: 12px;
+  }
+  .ida-box .tag { font-size: 18px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .ida-box p { font-size: 18px; color: var(--body); margin: 0 !important; line-height: 1.65; }
+
+  .contact-steps { background: var(--light); border-radius: 10px; padding: 16px 20px; margin-top: 12px; }
+  .contact-steps p { font-size: 18px; color: var(--body); margin-bottom: 4px !important; }
+  .contact-steps a { color: var(--teal); font-weight: 700; text-decoration: none; }
+  .contact-steps a:hover { color: var(--red); }
+
+  .browser-steps { margin-top: 16px; }
+  .browser-steps h5 { font-size: 17px; font-weight: 700; color: var(--dark); margin: 14px 0 6px; font-family: 'Trebuchet MS', sans-serif; }
+  .browser-steps h5:first-child { margin-top: 0; }
+  .browser-steps ol { padding-left: 20px; margin: 0; }
+  .browser-steps ol li { font-size: 17px; color: var(--body); margin-bottom: 4px; line-height: 1.6; }
+
+  .footnote { font-size: 14px; color: #777; line-height: 1.6; margin-top: 6px !important; }
+  .footnote sup { font-size: 11px; }
+
+  .toolkit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
+  .toolkit-card {
+    background: var(--light); border-radius: 12px; padding: 20px; text-align: center;
+    text-decoration: none; color: var(--body); transition: box-shadow 0.2s, transform 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .toolkit-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
+  .toolkit-card .tk-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .toolkit-card h3 { font-size: 18px; font-weight: 700; color: var(--dark); line-height: 1.3; }
+  .toolkit-card p { font-size: 18px; color: var(--body); line-height: 1.5; }
+  .toolkit-card .tk-cta { font-size: 18px; font-weight: 700; color: var(--teal); margin-top: auto; }
+
+  /* ─── STILL NEED HELP BANNER ─── */
+  .help-banner {
+    background: var(--slate); border-radius: 16px; padding: 36px 40px;
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    color: #fff; margin-top: 8px;
+  }
+  .help-banner h3 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; font-family: 'Source Sans Pro', sans-serif; }
+  .help-banner p { font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .help-banner-actions { display: flex; gap: 12px; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
+  .btn-gold { background: var(--gold); color: var(--dark); padding: 12px 24px; border-radius: 8px; font-size: 18px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .btn-gold:hover { background: var(--gold-hover); }
+  .btn-ghost-light { background: none; border: 2px solid rgba(255,255,255,0.35); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 18px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .btn-ghost-light:hover { background: rgba(255,255,255,0.08); }
+
+  /* ─── FOOTER ─── */
+  footer { background: #000; color: #ccc; font-size: 15px; line-height: 1.7; }
+  .footer-main { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 56px 48px 48px; }
+  .footer-contact h4 { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; font-family: 'Trebuchet MS', sans-serif; }
+  .footer-contact table { border-collapse: collapse; margin-bottom: 12px; }
+  .footer-contact td { padding: 2px 24px 2px 0; color: #ccc; font-size: 15px; }
+  .footer-contact td:last-child { color: #fff; font-weight: 600; padding-right: 0; }
+  .footer-contact a { color: #ccc; text-decoration: none; }
+  .footer-contact a:hover { color: var(--gold); }
+  .footer-maple { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px; }
+  .footer-maple p { font-size: 15px; color: #ccc; margin: 0; line-height: 1.5; }
+  .footer-maple strong { color: #fff; }
+  .footer-hours { font-size: 15px; }
+  .footer-hours strong { color: #fff; display: block; margin-bottom: 2px; }
+  .footer-nav { padding-top: 4px; }
+  .footer-nav ul { list-style: none; }
+  .footer-nav ul li { margin-bottom: 14px; text-align: right; }
+  .footer-nav ul li a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; }
+  .footer-nav ul li a:hover { color: var(--gold); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.12); padding: 28px 48px 36px; max-width: 1200px; margin: 0 auto; }
+  .footer-bottom p { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 8px; }
+  .footer-bottom p:first-child { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 12px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .top-nav { padding: 0 20px; }
+    .slide-menu { width: 100%; }
+    .page-header { padding: 48px 24px 40px; }
+    .page-header h1 { font-size: 28px; }
+    .contact-bar { padding: 16px 24px; gap: 12px; flex-direction: column; align-items: center; text-align: center; }
+    .contact-bar-divider { display: none; }
+    .contact-bar-item { justify-content: center; }
+    .help-layout { grid-template-columns: 1fr; padding: 40px 24px 60px; gap: 0; }
+    .cat-nav { display: none; }
+    .cat-select-wrap { display: block; }
+    .toolkit-grid { grid-template-columns: 1fr; }
+    .help-banner { flex-direction: column; }
+    .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
+    .footer-nav ul li { text-align: left; }
+    .footer-bottom { padding: 24px 24px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP NAV ═══════ -->
+<header class="top-nav">
+  <div class="top-nav-left">
+    <a href="#">
+      <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist">
+    </a>
+  </div>
+  <div class="top-nav-right">
+    <a href="#" class="nav-help active">Help</a>
+    <button class="nav-bell" aria-label="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="bell-badge">2</span>
+    </button>
+    <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════ SLIDE MENU ═══════ -->
+<div class="menu-overlay" id="menu-overlay"></div>
+<nav class="slide-menu" id="slide-menu">
+  <div class="menu-header">
+    <div class="menu-avatar">GT</div>
+    <div>
+      <div class="menu-user-name">Geoffrey Thomas</div>
+      <div class="menu-user-email">gthomas@outlook.com</div>
+    </div>
+  </div>
+  <div class="menu-section">
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+      Scan &amp; Score
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Credit Score &amp; Report
+    </a>
+    <a href="#" class="menu-link">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="2" y1="12" x2="22" y2="12"></line>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+      </svg>
+      Dark Web Monitoring
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Alerts<span class="menu-badge">2</span>
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Resources</div>
+    <a href="#" class="menu-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+      Help
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      Identity Theft &amp; Recovery
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Risk Assessment
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Settings</div>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Scan &amp; Score Settings
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Personal Info
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9.24,5.35 L10.51,2.62 L13.49,2.62 L14.76,5.35 L17.58,4.31 L19.69,6.42 L18.65,9.24 L21.38,10.51 L21.38,13.49 L18.65,14.76 L19.69,17.58 L17.58,19.69 L14.76,18.65 L13.49,21.38 L10.51,21.38 L9.24,18.65 L6.42,19.69 L4.31,17.58 L5.35,14.76 L2.62,13.49 L2.62,10.51 L5.35,9.24 L4.31,6.42 L6.42,4.31 Z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      Account &amp; Security
+    </a>
+    <a href="#" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+      Billing
+    </a>
+    <a href="#" class="menu-link logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════ PAGE HEADER ═══════ -->
+<div class="page-header">
+  <h1>How can we <span>help you?</span></h1>
+  <p>Find answers to common questions about your ID Assist subscription, features, and account.</p>
+</div>
+
+<!-- ═══════ CONTACT BAR ═══════ -->
+<div class="contact-bar">
+  <div class="contact-bar-item">
+    Call us: <a href="tel:18779001837">1-877-900-1837</a>
+  </div>
+  <div class="contact-bar-divider"></div>
+  <div class="contact-bar-item">
+    Email: <a href="mailto:customerservice@idassist.com">customerservice&#64;idassist.com</a>
+  </div>
+  <div class="contact-bar-divider"></div>
+  <div class="contact-bar-item">
+    Mon – Fri, 9 a.m. – 9 p.m. ET
+  </div>
+  <div class="contact-bar-divider"></div>
+  <div class="contact-bar-item">
+    <strong style="color:#FAAF42;">24/7 emergency restoration support</strong>
+  </div>
+</div>
+
+<!-- ═══════ MAIN LAYOUT ═══════ -->
+<div class="help-layout">
+
+  <!-- SIDEBAR -->
+  <div class="cat-nav">
+    <h4>Topics</h4>
+    <ul>
+      <li><a href="#scam-protection" class="active">
+        <span class="cat-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+    <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+    <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+    <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M16 16l-1.9-1.9"/>
+  </g>
+</svg></span>
+        Scam Protection
+      </a></li>
+      <li><a href="#credit">
+        <span class="cat-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+  </g>
+</svg></span>
+        Credit Monitoring
+      </a></li>
+      <li><a href="#dark-web">
+        <span class="cat-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="2" y1="12" x2="22" y2="12"/>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+  </g>
+</svg></span>
+        Dark Web Monitoring
+      </a></li>
+      <li><a href="#identity-theft">
+        <span class="cat-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+    <circle cx="9" cy="7" r="4"/>
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </g>
+</svg></span>
+        Identity Theft &amp; Restoration
+      </a></li>
+      <li><a href="#account">
+        <span class="cat-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.24,5.35 L10.51,2.62 L13.49,2.62 L14.76,5.35 L17.58,4.31 L19.69,6.42 L18.65,9.24 L21.38,10.51 L21.38,13.49 L18.65,14.76 L19.69,17.58 L17.58,19.69 L14.76,18.65 L13.49,21.38 L10.51,21.38 L9.24,18.65 L6.42,19.69 L4.31,17.58 L5.35,14.76 L2.62,13.49 L2.62,10.51 L5.35,9.24 L4.31,6.42 L6.42,4.31 Z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </g>
+</svg></span>
+        Account Management
+      </a></li>
+      <li><a href="#password-manager">
+        <span class="cat-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"></rect>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    <circle cx="12" cy="16" r="1"></circle>
+  </g>
+</svg></span>
+        Password Manager
+      </a></li>
+      <li><a href="#resources">
+        <span class="cat-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6"/>
+    <line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/>
+    <circle cx="4" cy="6" r="1" fill="#FFFFFF" stroke="none"/>
+    <circle cx="4" cy="12" r="1" fill="#FFFFFF" stroke="none"/>
+    <circle cx="4" cy="18" r="1" fill="#FFFFFF" stroke="none"/>
+  </g>
+</svg></span>
+        Resources &amp; Toolkits
+      </a></li>
+    </ul>
+    <div class="cat-nav-support">
+      <p>Can't find what you're looking for? Our team is here to help.</p>
+      <a href="tel:18779001837">1-877-900-1837</a>
+      <a href="mailto:customerservice@idassist.com" class="ghost">Send us an email</a>
+    </div>
+  </div>
+
+  <!-- FAQ CONTENT -->
+  <div class="faq-main">
+
+    <!-- MOBILE SELECT -->
+    <div class="cat-select-wrap">
+      <select class="cat-select">
+        <option value="#scam-protection">Scam Protection</option>
+        <option value="#credit">Credit Monitoring</option>
+        <option value="#dark-web">Dark Web Monitoring</option>
+        <option value="#identity-theft">Identity Theft &amp; Restoration</option>
+        <option value="#account">Account Management</option>
+        <option value="#password-manager">Password Manager</option>
+        <option value="#resources">Resources &amp; Toolkits</option>
+      </select>
+    </div>
+
+    <!-- ── SCAM PROTECTION ── -->
+    <div class="faq-section" id="scam-protection">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+    <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+    <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+    <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M16 16l-1.9-1.9"/>
+  </g>
+</svg></div>
+        <h2>Scam Protection</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s1">What is Scan &amp; Score? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s1">
+          <p>Scan &amp; Score is ID Assist's AI-powered scam detection tool. It analyses emails, text messages, images, and website URLs for signs of phishing, fraud, or other deceptive activity – and returns a Scam Score that tells you whether the communication appears to be legitimate or suspicious.</p>
+          <p>You can scan any suspicious message manually, and subscribers on eligible plans can connect their Gmail or Outlook inbox to AutoScan – a service that monitors your email 24/7 and alerts you the moment a suspicious message is detected.</p>
+          <div class="ida-box">
+            <div class="tag">ID Assist Tip</div>
+            <p>When you scan a message and get a High Risk result, don't delete it right away – you may need it as evidence if you report the scam to the Canadian Anti-Fraud Centre (CAFC) at <strong>1-888-495-8501</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s2">How do I connect my email inbox to AutoScan? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s2">
+          <p>Log in to your account and go to <strong>Scan &amp; Score</strong> on your dashboard. Click <strong>Connect Inbox</strong> and follow the prompts to authorize access to your Gmail or Outlook account. Once connected, AutoScan begins monitoring immediately.</p>
+          <p>You can connect up to two inboxes (one Gmail and one Outlook) and manage or disconnect them at any time from the Scan &amp; Score Settings page.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s3">Why can't I connect my work or organizational Outlook account? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s3">
+          <p>For security and privacy reasons, AutoScan currently supports personal Gmail and personal Outlook accounts only. Work and organizational accounts often have security restrictions and administrative controls that prevent third-party services from connecting.</p>
+          <p>You can still scan suspicious work emails using the manual Scan &amp; Score feature – just copy and paste the message content for the same AI-powered analysis.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s4">What types of communications can I scan? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s4">
+          <p>You can submit four types of content for analysis:</p>
+          <ul>
+            <li><strong>Emails</strong> – copy and paste the complete message, including the sender's name and email address</li>
+            <li><strong>Text messages</strong> – paste the message content along with the sender's phone number</li>
+            <li><strong>Images and screenshots</strong> – upload a photo or screenshot of any suspicious communication</li>
+            <li><strong>URLs</strong> – submit any website address you want to verify before visiting</li>
+          </ul>
+          <p>Note that images or photos that don't contain readable text or a QR code cannot be analyzed at this time.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s5">How does the Scam Score work? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s5">
+          <p>Every submission is assigned one of three risk levels:</p>
+          <ul>
+            <li><strong>Low Risk</strong> – The communication appears to come from a legitimate source and contains the typical characteristics of genuine communications.</li>
+            <li><strong>High Risk</strong> – Multiple indicators of deceptive intent have been detected. The communication poses a significant risk of fraud or identity theft.</li>
+            <li><strong>Risk Level Inconclusive</strong> – The submitted content may be incomplete or doesn't contain enough information for a full analysis. Try resubmitting with complete message content.</li>
+          </ul>
+          <p>Each result includes contributing factors that explain why the score was assigned, along with specific recommended next steps.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s6">How do I get the most accurate result? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s6">
+          <p>The more information you include, the more accurate the analysis will be. For best results:</p>
+          <ul>
+            <li><strong>Emails and texts:</strong> Include the complete message, sender details, and any links or URLs</li>
+            <li><strong>Images:</strong> Make sure the full message is visible, including any text, QR codes, sender name, and dates</li>
+            <li><strong>URLs:</strong> Submit the complete website address – a screenshot of a URL cannot be analyzed</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s7">Does a human read the messages I submit? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s7">
+          <p>No. Scan &amp; Score uses advanced AI technology to analyze your submissions – no human reads the messages you scan. The system automatically checks sender details, message content, and digital patterns associated with scams to generate your Scam Score and recommendations.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s8">I got a high Scam Score on something I've already responded to. What should I do? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s8">
+          <p>Don't panic – you're not alone, and help is available. Review the recommended next steps provided with your scan result and follow them closely. If you've shared personal or financial information, contact the ID Assist Contact Centre right away.</p>
+          <div class="contact-steps">
+            <p><a href="tel:18779001837">1-877-900-1837</a></p>
+            <p><a href="mailto:customerservice@idassist.com">customerservice&#64;idassist.com</a></p>
+            <p>Mon – Fri, 9 a.m. – 9 p.m. ET &nbsp;|&nbsp; 24/7 for emergencies</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="s9">Why can't I upload images from my phone? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-s9">
+          <p>You may need to grant ID Assist permission to access your device's photos and camera. To update these permissions:</p>
+          <ul>
+            <li>Open <strong>Settings</strong> on your device</li>
+            <li>Tap <strong>Apps</strong> or <strong>Applications</strong></li>
+            <li>Find and tap <strong>ID Assist</strong></li>
+            <li>Enable both <strong>Photos</strong> and <strong>Camera</strong> permissions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CREDIT MONITORING ── -->
+    <div class="faq-section" id="credit">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+  </g>
+</svg></div>
+        <h2>Credit Monitoring</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c1">What credit monitoring does ID Assist provide? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c1">
+          <p>Depending on your plan, ID Assist monitors your credit files at both Equifax and TransUnion on a daily basis. You'll be alerted if changes appear that could be a sign of identity theft – such as a new credit inquiry or account – so you can take action before any damage is done.</p>
+          <p>You can also request an updated <strong>credit score</strong> from Equifax at any time, with a fresh score available <strong>every 30 days</strong>. An updated <strong>credit report</strong> is available to request <strong>every three months</strong>, giving you a detailed snapshot of your credit history and any recent changes.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c2">Why does it matter whether both credit bureaus are monitored? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c2">
+          <p>Canada has two major credit bureaus – Equifax and TransUnion. Lenders don't always report to the same one, and a fraudster applying for credit in your name might only trigger an inquiry at one bureau. If you're only monitoring one, that activity can go undetected until the damage is done.</p>
+          <p>ID Assist Platinum and Ultimate monitor both bureaus every day – so you're notified at the earliest possible sign of fraudulent activity, regardless of which bureau it appears at first.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c3">Does enrolling in ID Assist affect my credit score? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c3">
+          <p>No. ID Assist uses a <strong>soft inquiry</strong> when monitoring your credit file, which has no impact on your credit score or report. Soft inquiries include your own requests for your credit report, promotional inquiries from lenders, and checkup inquiries from your existing creditors.</p>
+          <p>Only <strong>hard inquiries</strong> – made by lenders when you apply for new credit – can affect your score.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c4">How do I view my credit report and credit score? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c4">
+          <p>Log in to your ID Assist account and go to <strong>Credit Scores &amp; Reports</strong> on your dashboard.</p>
+          <ul>
+            <li>To view your <strong>credit score</strong>, click <strong>Request Credit Score</strong>. A new score is available to request every 30 days.</li>
+            <li>To view your <strong>credit report</strong>, click <strong>View Equifax Report</strong>. An updated report is available to request every three months.</li>
+          </ul>
+          <p>Note that you'll need to complete your credit bureau authentication questions before your report or score can be displayed.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c5">What do I do if I find an error in my credit report? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c5">
+          <p>Contact the credit bureaus directly to dispute any inaccuracies:</p>
+          <div class="contact-steps">
+            <p><strong>Equifax Canada</strong> – <a href="https://www.equifax.ca/personal/dispute-credit-report/options/" target="_blank">Submit a dispute online</a></p>
+            <p><strong>TransUnion Canada</strong> – <a href="https://secure-ocs.transunion.ca/secureocs/home.html?lang=en" target="_blank">Submit a dispute online</a></p>
+          </div>
+          <p>Equifax will investigate and can take up to 20 business days to respond. TransUnion's self-service site allows you to view your credit file and submit disputes directly.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="c6">What is a credit score and why does it matter? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-c6">
+          <p>A credit score is a three-digit number (typically 300–900) calculated from your credit report. A higher score signals better creditworthiness to lenders, which can improve your eligibility for loans, mortgages, and credit cards – and reduce the interest rates you're offered.</p>
+          <p>An unexpected drop in your score or a new inquiry you don't recognize can be one of the first signs of identity fraud.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DARK WEB MONITORING ── -->
+    <div class="faq-section" id="dark-web">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="2" y1="12" x2="22" y2="12"/>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+  </g>
+</svg></div>
+        <h2>Dark Web Monitoring</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="d1">What is the dark web? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-d1">
+          <p>The dark web consists of anonymous online networks used for buying and selling illicit goods – including stolen personal information, credit card numbers, Social Insurance Numbers, and other credentials that criminals use to commit identity fraud.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="d2">How does dark web monitoring work? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-d2">
+          <p>ID Assist uses multiple data providers to continuously search criminal marketplaces for the personal information you've registered with us. These searches use both automated tools and human searchers to find exposed information as quickly as possible. When any of your registered information is detected, we alert you immediately so you can take action – like changing passwords or cancelling a compromised card.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="d3">What types of information can I register for monitoring? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-d3">
+          <p>You can register up to 50 items across 12 categories, including:</p>
+          <ul>
+            <li>Up to 10 credit and debit card numbers</li>
+            <li>Up to 10 bank account numbers</li>
+            <li>Up to 5 email addresses</li>
+            <li>Up to 5 phone numbers</li>
+            <li>Up to 10 loyalty card numbers</li>
+            <li>Up to 5 health benefit plan numbers</li>
+            <li>Social Insurance Number (SIN)</li>
+            <li>Driver's licence</li>
+            <li>Up to 2 passports</li>
+            <li>Permanent Resident Card number</li>
+          </ul>
+          <p>The more information you register, the broader your protection. We recommend registering all items that apply to you.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="d4">What should I do if I receive a dark web alert? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-d4">
+          <p>Log in to your account to review the full alert details. Depending on what was found, recommended steps may include changing passwords, contacting your bank or card issuer, or placing a fraud alert on your credit files. If you need help interpreting an alert or aren't sure what to do, call our Contact Centre – our team can guide you through the right response.</p>
+          <div class="contact-steps">
+            <p><a href="tel:18779001837">1-877-900-1837</a> &nbsp;|&nbsp; Mon – Fri, 9 a.m. – 9 p.m. ET &nbsp;|&nbsp; 24/7 for emergencies</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── IDENTITY THEFT & RESTORATION ── -->
+    <div class="faq-section" id="identity-theft">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+    <circle cx="9" cy="7" r="4"/>
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </g>
+</svg></div>
+        <h2>Identity Theft &amp; Restoration</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="i1">What should I do if I think my identity has been stolen? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-i1">
+          <p>Contact us immediately. Our restoration specialists are available 24/7 for emergencies and will take over the process on your behalf – contacting your financial institutions, placing fraud alerts at both credit bureaus, disputing fraudulent accounts, and managing communications with creditors and government agencies.</p>
+          <div class="contact-steps">
+            <p><a href="tel:18779001837">1-877-900-1837</a> &nbsp;|&nbsp; Available 24/7 for emergencies</p>
+          </div>
+          <p style="margin-top:12px;">For a step-by-step guide to the recovery process, visit our <a href="#" style="color:#287292; font-weight:700;">Identity Theft &amp; Recovery page</a>.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="i2">What are the warning signs that my identity may have been stolen? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-i2">
+          <p>Common warning signs include:</p>
+          <ul>
+            <li>Accounts, inquiries, or addresses you don't recognize appearing on your credit report</li>
+            <li>Bills or collection calls for accounts you didn't open</li>
+            <li>Expected mail or statements that stop arriving</li>
+            <li>Being denied credit unexpectedly</li>
+            <li>Unexpected activity in your CRA My Account (e.g., returns filed or direct deposit information changed)</li>
+            <li>A dark web monitoring alert from ID Assist</li>
+          </ul>
+          <p>If you notice any of these, act quickly – contact your financial institutions and call our team.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="i3">What restoration support does ID Assist provide? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-i3">
+          <p>ID Assist Platinum and Ultimate include <strong>Full-Service Restoration</strong>, which means our specialists are with you every step of the way through the recovery process. This includes:</p>
+          <ul>
+            <li>Placing fraud alerts at both Equifax and TransUnion</li>
+            <li>Contacting banks, creditors, and credit bureaus</li>
+            <li>Drafting and sending dispute letters</li>
+            <li>Following up until each fraudulent item is resolved</li>
+            <li>Cheque reimbursement if a fraudulent cheque is drawn on your account<sup>1</sup></li>
+            <li>Emergency cash advance if your account is compromised while you're travelling<sup>2</sup></li>
+          </ul>
+          <p class="footnote"><sup>1</sup> If you need to close your account due to theft, ID Assist will reimburse you for the cost of your cheque order. Reimbursement amount is up to $50.00. Receipt must be submitted within 30 days of new account opening.</p>
+          <p class="footnote"><sup>2</sup> If you experience theft or loss while travelling, ID Assist will make arrangements to have emergency cash available to you, including directions to the nearest money transfer service for pick up. Funds will be charged to your credit card to a maximum of $2,500 and are dependent on existing credit card limits and cash advance privileges. You must be located more than 160 km from your residence. See full terms and conditions for more details.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="i4">How is my data kept secure? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-i4">
+          <p>ID Assist's technology is trusted by over 500,000 Canadians and most major Canadian banks. Key security measures include:</p>
+          <ul>
+            <li>Fully encrypted databases using the highest industry-standard security</li>
+            <li>PCI-certified environment – independently audited to Payment Card Industry Security Standards</li>
+            <li>Multi-factor authentication controls for all personnel with data access</li>
+            <li>Endpoint protection, threat detection, and firewalls</li>
+            <li>No sharing of your data with third parties for marketing or loan solicitation purposes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ACCOUNT MANAGEMENT ── -->
+    <div class="faq-section" id="account">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.24,5.35 L10.51,2.62 L13.49,2.62 L14.76,5.35 L17.58,4.31 L19.69,6.42 L18.65,9.24 L21.38,10.51 L21.38,13.49 L18.65,14.76 L19.69,17.58 L17.58,19.69 L14.76,18.65 L13.49,21.38 L10.51,21.38 L9.24,18.65 L6.42,19.69 L4.31,17.58 L5.35,14.76 L2.62,13.49 L2.62,10.51 L5.35,9.24 L4.31,6.42 L6.42,4.31 Z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </g>
+</svg></div>
+        <h2>Account Management</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a0a">Who is Sigma Loyalty Group? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a0a">
+          <p>ID Assist is provided by Sigma Loyalty Group Inc., a Canadian company that partners with major banks and financial institutions to offer identity protection services to their customers. Sigma Loyalty Group operates ID Assist and its French equivalent, Assist Identité, on behalf of these banking partners.</p>
+          <p>When you enrolled in ID Assist, you may have done so through your bank or credit card provider. Sigma Loyalty Group is the company behind the service, and all billing, monitoring, and restoration support is managed by them.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a0b">How does ID Assist use cookies, and how do I manage them? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a0b">
+          <p>ID Assist uses cookies to keep you securely logged in, remember your preferences, and understand how our website is being used so we can improve it.</p>
+          <p>If you don't want to accept third-party cookies, you can block them through your browser settings. Note that doing so may affect how the site functions, including keeping you logged in to your account. Here's how to block third-party cookies in the most common browsers:</p>
+          <div class="browser-steps">
+            <h5>Chrome</h5>
+            <ol>
+              <li>Click the menu button (⋮) in the upper-right corner of the Chrome window.</li>
+              <li>Click <strong>Settings</strong>.</li>
+              <li>Click <strong>Privacy and Security</strong>.</li>
+              <li>Click <strong>Cookies and other site data</strong>.</li>
+              <li>Click <strong>Block third-party cookies</strong>.</li>
+            </ol>
+            <h5>Safari (Mac)</h5>
+            <ol>
+              <li>Click the <strong>Safari</strong> menu in the menu bar.</li>
+              <li>Click <strong>Preferences</strong>.</li>
+              <li>Click the <strong>Privacy</strong> tab.</li>
+              <li>Under "Cookies and website data", select <strong>Allow from current website only</strong>.</li>
+            </ol>
+            <h5>Safari (iPhone / iPad)</h5>
+            <ol>
+              <li>Open <strong>Settings</strong>.</li>
+              <li>Tap <strong>Safari</strong>.</li>
+              <li>Scroll to <strong>Privacy &amp; Security</strong>.</li>
+              <li>Tap <strong>Block All Cookies</strong>.</li>
+            </ol>
+            <h5>Microsoft Edge</h5>
+            <ol>
+              <li>Click the menu button (⋯) in the upper-right corner.</li>
+              <li>Click <strong>Settings</strong>.</li>
+              <li>Click <strong>Cookies and site permissions</strong>.</li>
+              <li>Click <strong>Manage and delete cookies and site data</strong>.</li>
+              <li>Toggle on <strong>Block third-party cookies</strong>.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a1">How do I change my password? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a1">
+          <p>Log in to your account and go to <strong>Account &amp; Security</strong> in your profile. Click the <strong>Edit</strong> button next to your password, make your changes, and click <strong>Save</strong> before exiting.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a2">What do I do if I've forgotten my password? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a2">
+          <p>On the login page, click <strong>I forgot my password</strong>. Enter the email address associated with your account and we'll send you a password reset link. Click the link in the email and follow the prompts to set a new password.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a3">How do I set up or update my security questions? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a3">
+          <p>You'll be prompted to set up at least two security questions and answers when you first create your account. You can add up to four in total. To update your questions or answers, log in and go to <strong>Account &amp; Security</strong> in your profile, click <strong>Edit</strong>, and save your changes.</p>
+          <p>We use security questions to verify your identity if you contact us about a forgotten login, or when we detect access from an unrecognized device.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="a4">Can I cancel my subscription anytime? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-a4">
+          <p>Yes. You can cancel at any time with no penalties or fees. When you cancel, all future charges stop and you can continue using your subscription until 30 days from your last billing date. To cancel, call us at:</p>
+          <div class="contact-steps">
+            <p><a href="tel:18779001837">1-877-900-1837</a> &nbsp;|&nbsp; Mon&nbsp;–&nbsp;Fri,&nbsp;9&nbsp;a.m.&nbsp;–&nbsp;9&nbsp;p.m.&nbsp;ET</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PASSWORD MANAGER ── -->
+    <div class="faq-section" id="password-manager">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"></rect>
+  <g transform="translate(14,14) translate(12,12) scale(1.5) translate(-12,-12)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    <circle cx="12" cy="16" r="1"></circle>
+  </g>
+</svg></div>
+        <h2>Password Manager</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="p1">What is the ID Assist Password Manager? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-p1">
+          <p>ID Assist Password Manager is a secure tool included with the <strong>Ultimate plan</strong> that helps you create, store, and manage strong, unique passwords for all your online accounts. Using browser extensions and the mobile app, you can log in to any website in seconds without having to remember every password.</p>
+          <p>Industry-leading encryption keeps your credentials safe, and two-factor authentication adds an additional layer of security to your Password Manager account itself.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="p2">Why is using a password manager important? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-p2">
+          <p>Weak or reused passwords are one of the most common ways criminals gain access to online accounts. A password manager makes it easy to use strong, unique passwords for every account – so that if one account is compromised, your others remain safe.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq="p3">Where can I get help with the Password Manager? <span class="faq-chevron">&#8964;</span></button>
+        <div class="faq-a" id="faq-p3">
+          <p>Visit our dedicated Password Manager help centre at <a href="https://landing.idassist.com/passwordhelp" target="_blank" style="color:#287292; font-weight:700;">landing.idassist.com/passwordhelp</a> for step-by-step guides on getting started, managing your passwords, and using browser extensions. You can also contact our team directly for additional assistance.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RESOURCES & TOOLKITS ── -->
+    <div class="faq-section" id="resources">
+      <div class="faq-section-head">
+        <div class="faq-section-icon"><svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <rect width="52" height="52" rx="14" fill="#EA3A3F"/>
+  <g transform="translate(14,14)" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6"/>
+    <line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/>
+    <circle cx="4" cy="6" r="1" fill="#FFFFFF" stroke="none"/>
+    <circle cx="4" cy="12" r="1" fill="#FFFFFF" stroke="none"/>
+    <circle cx="4" cy="18" r="1" fill="#FFFFFF" stroke="none"/>
+  </g>
+</svg></div>
+        <h2>Resources &amp; Toolkits</h2>
+      </div>
+
+      <p style="font-size:18px; color:#4B3F34; margin-bottom:20px; line-height:1.65;">View and download our free guides to help you understand and protect your identity.</p>
+
+      <div class="toolkit-grid">
+        <a class="toolkit-card" href="https://www.idassist.com/assets/docs/en/IDAssist-Toolkit.pdf" target="_blank">
+          <span class="tk-icon" style="background: rgba(250,175,66,0.12);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FAAF42" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </span>
+          <h3>Identity Theft Toolkit</h3>
+          <p>What to do if your identity has been compromised, step by step.</p>
+          <span class="tk-cta">View guide →</span>
+        </a>
+        <a class="toolkit-card" href="https://www.idassist.com/assets/docs/en/CreditReport-UserGuide.pdf" target="_blank">
+          <span class="tk-icon" style="background: rgba(40,114,146,0.1);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <line x1="10" y1="9" x2="8" y2="9"/>
+            </svg>
+          </span>
+          <h3>Credit Report: A User Guide</h3>
+          <p>What a credit report includes and why your credit history matters.</p>
+          <span class="tk-cta">View guide →</span>
+        </a>
+        <a class="toolkit-card" href="https://www.idassist.com/assets/docs/en/CreditScore-UserGuide.pdf" target="_blank">
+          <span class="tk-icon" style="background: rgba(40,114,146,0.1);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#287292" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </span>
+          <h3>Credit Score: A User Guide</h3>
+          <p>How your credit score is calculated and how to protect it.</p>
+          <span class="tk-cta">View guide →</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── STILL NEED HELP ── -->
+    <div class="help-banner">
+      <div>
+        <h3>Still need help?</h3>
+        <p>Our team is available Monday to Friday, 9 a.m. to 9 p.m. ET. Canadian representatives are available 24/7 for identity theft emergencies.</p>
+      </div>
+      <div class="help-banner-actions">
+        <a class="btn-gold" href="tel:18779001837">1-877-900-1837</a>
+        <a class="btn-ghost-light" href="mailto:customerservice@idassist.com">Email us</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4>
+        <img src="https://www.idassist.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">
+        24/7 Emergency Assistance
+      </h4>
+      <table>
+        <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
+        <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
+      </table>
+      <p><a href="mailto:customerservice@idassist.com">customerservice&#64;idassist.com</a></p>
+      <div class="footer-maple">
+        <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
+        <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
+      </div>
+      <div class="footer-hours">
+        <strong>Our regular hours of operation are</strong>
+        9:00am – 9:00pm EST, Monday to Friday
+      </div>
+    </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="#">Identity Theft &amp; Recovery</a></li>
+        <li><a href="#">Plans &amp; Pricing</a></li>
+        <li><a href="#">Help</a></li>
+        <li><a href="https://www.idassist.com/en/terms-conditions">Terms &amp; Conditions</a></li>
+        <li><a href="https://www.idassist.com/en/privacy-policy">Privacy Policy</a></li>
+        <li><a href="https://www.idassist.com/en/cancellation-policy">Cancellation Policy</a></li>
+        <li><a href="#">FR</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>ID&nbsp;Assist is an early warning system that helps you look after your identity.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. All rights reserved. ID&nbsp;Assist®, Sigma Loyalty Group Inc. and all associated marks and logos are trademarks owned or used under license. ID&nbsp;Assist® is provided by Sigma Loyalty Group Inc.</p>
+    <p>iPhone and App Store are trademarks of Apple Inc., registered in the U.S. and other countries. Android, Google Play and Play Store are trademarks of Google Inc., registered in the U.S. and other countries.</p>
+    <p>All product names, logos, and brands are property of their respective owners. All company, product, and service names used on this website are for identification purposes only. Use of these names, logos, and brands does not imply endorsement.</p>
+  </div>
+</footer>
+
+<script>
+  // ── Hamburger / slide menu ──────────────────────────────────────────────────
+  const hamburger   = document.getElementById('hamburger');
+  const slideMenu   = document.getElementById('slide-menu');
+  const menuOverlay = document.getElementById('menu-overlay');
+
+  function toggleMenu() {
+    const isOpen = slideMenu.classList.contains('open');
+    slideMenu.classList.toggle('open');
+    menuOverlay.classList.toggle('open');
+    hamburger.classList.toggle('open');
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  menuOverlay.addEventListener('click', toggleMenu);
+
+  // ── FAQ accordion ──────────────────────────────────────────────────────────
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id     = btn.dataset.faq;
+      const answer = document.getElementById('faq-' + id);
+      const isOpen = btn.classList.contains('open');
+      btn.classList.toggle('open', !isOpen);
+      answer.classList.toggle('open', !isOpen);
+    });
+  });
+
+  // ── Desktop sidebar smooth scroll ─────────────────────────────────────────
+  document.querySelectorAll('.cat-nav a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        const navH = document.querySelector('.top-nav').offsetHeight;
+        const top  = target.getBoundingClientRect().top + window.scrollY - navH - 24;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ── Scrollspy – update active desktop sidebar link ─────────────────────────
+  const sections = document.querySelectorAll('.faq-section[id]');
+  const navLinks = document.querySelectorAll('.cat-nav a[href^="#"]');
+
+  function setActiveSidebar(id) {
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+    });
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActiveSidebar(entry.target.id);
+    });
+  }, { rootMargin: '-100px 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // ── Mobile select: scroll to section ──────────────────────────────────────
+  document.querySelector('.cat-select').addEventListener('change', function () {
+    const target = document.querySelector(this.value);
+    if (target) {
+      const navH   = document.querySelector('.top-nav').offsetHeight;
+      const selWrap = document.querySelector('.cat-select-wrap');
+      const selH   = selWrap.classList.contains('sticky') ? selWrap.offsetHeight : 0;
+      const top    = target.getBoundingClientRect().top + window.scrollY - navH - selH - 16;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  });
+
+  // ── Sticky section dropdown on mobile ─────────────────────────────────────
+  (function () {
+    const selWrap = document.querySelector('.cat-select-wrap');
+    const sel     = document.querySelector('.cat-select');
+    if (!selWrap || !sel) return;
+
+    let placeholder  = null;
+    let naturalTop   = null;
+
+    function measureNaturalTop() {
+      const wasSticky = selWrap.classList.contains('sticky');
+      if (wasSticky) {
+        selWrap.classList.remove('sticky');
+        if (placeholder) placeholder.style.display = 'none';
+      }
+      naturalTop = selWrap.getBoundingClientRect().top + window.scrollY;
+      if (wasSticky) {
+        selWrap.classList.add('sticky');
+        if (placeholder) placeholder.style.display = '';
+      }
+    }
+
+    function updateMobileSelect() {
+      if (window.getComputedStyle(selWrap).display === 'none') return;
+      const navH      = document.querySelector('.top-nav').offsetHeight;
+      const selH      = selWrap.classList.contains('sticky') ? selWrap.offsetHeight : 0;
+      const threshold = navH + selH + 8;
+      let current = null;
+      sections.forEach(sec => {
+        if (sec.getBoundingClientRect().top <= threshold) current = sec;
+      });
+      if (current) sel.value = '#' + current.id;
+    }
+
+    function onScroll() {
+      if (window.getComputedStyle(selWrap).display === 'none') return;
+      const navH = document.querySelector('.top-nav').offsetHeight;
+      document.documentElement.style.setProperty('--nav-height', navH + 'px');
+      document.documentElement.style.setProperty('--select-height', selWrap.offsetHeight + 'px');
+
+      if (naturalTop === null) measureNaturalTop();
+
+      const triggerPoint = naturalTop - navH;
+
+      if (window.scrollY >= triggerPoint) {
+        if (!selWrap.classList.contains('sticky')) {
+          if (!placeholder) {
+            placeholder = document.createElement('div');
+            placeholder.style.height = selWrap.offsetHeight + 'px';
+            selWrap.parentNode.insertBefore(placeholder, selWrap.nextSibling);
+          }
+          selWrap.classList.add('sticky');
+        }
+      } else {
+        if (selWrap.classList.contains('sticky')) {
+          selWrap.classList.remove('sticky');
+          if (placeholder) { placeholder.remove(); placeholder = null; }
+        }
+      }
+      updateMobileSelect();
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', function () { naturalTop = null; onScroll(); });
+    onScroll();
+  })();
+</script>
+</body>
+</html>
