@@ -170,19 +170,6 @@
     50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0.1); }
   }
 
-  /* Stat chips */
-  .status-hero-stats { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
-  .stat-chip {
-    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 12px; padding: 14px 20px; text-align: center; min-width: 100px;
-    backdrop-filter: blur(4px);
-  }
-  .stat-chip.total {
-    background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4);
-  }
-  .stat-chip-num { font-size: 26px; font-weight: 800; color: var(--white); line-height: 1; margin-bottom: 4px; }
-  .stat-chip-label { font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 700; white-space: nowrap; }
-
   /* ─── PAGE LAYOUT ─── */
   .page-layout {
     max-width: 1200px; margin: 0 auto;
@@ -476,18 +463,6 @@
     .status-hero h1 { font-size: 26px; margin-bottom: 12px; }
     .status-pill { font-size: 13px; }
 
-    /* Stat chips: 2-up grid, equal width */
-    .status-hero-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      width: 100%;
-    }
-    .stat-chip { padding: 14px 12px; min-width: 0; }
-    .stat-chip.total { grid-column: 1 / -1; } /* total chip spans full width */
-    .stat-chip-num { font-size: 24px; }
-    .stat-chip-label { font-size: 12px; }
-
     /* Page layout */
     .page-layout { padding: 20px 16px 48px; }
 
@@ -681,25 +656,6 @@
       </div>
     </div>
 
-    <!-- Stat chips: total first, then one per active category -->
-    <div class="status-hero-stats" id="hero-stats">
-      <div class="stat-chip total">
-        <div class="stat-chip-num" id="chip-total">4</div>
-        <div class="stat-chip-label">Items Monitored</div>
-      </div>
-      <div class="stat-chip" id="chip-email">
-        <div class="stat-chip-num">2</div>
-        <div class="stat-chip-label">Email Addresses</div>
-      </div>
-      <div class="stat-chip" id="chip-phone">
-        <div class="stat-chip-num">1</div>
-        <div class="stat-chip-label">Phone Number</div>
-      </div>
-      <div class="stat-chip" id="chip-sin">
-        <div class="stat-chip-num">1</div>
-        <div class="stat-chip-label">Gov't ID</div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1186,18 +1142,7 @@
         : rem + ' slot' + (rem === 1 ? '' : 's') + ' remaining — add more items to strengthen your coverage';
   }
 
-  function updateHeroChip(type) {
-    const chip = document.getElementById('chip-' + type);
-    const n    = groupCounts[type] || 0;
-    if (!chip) return;
-    if (n === 0) {
-      chip.style.display = 'none';
-    } else {
-      chip.style.display = '';
-      chip.querySelector('.stat-chip-num').textContent = n;
-    }
-    document.getElementById('chip-total').textContent = totalItems();
-  }
+  function updateHeroChip(type) { /* no-op: chips removed */ }
 
   function removeItem(rowId, type) {
     const row = document.getElementById(rowId);
@@ -1220,7 +1165,6 @@
       }
 
       updateBar();
-      updateHeroChip(type);
     }, 200);
   }
 
