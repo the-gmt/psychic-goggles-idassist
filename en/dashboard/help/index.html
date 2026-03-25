@@ -44,12 +44,6 @@
   .top-nav-left a { display: flex; align-items: center; }
   .top-nav-left img { height: 50px; }
   .top-nav-right { display: flex; align-items: center; gap: 12px; }
-  .nav-help {
-    text-decoration: none; color: var(--body); font-size: 16px; font-weight: 600;
-    padding: 6px 14px; border-radius: 6px; transition: background .15s, color .15s;
-  }
-  .nav-help:hover { background: var(--light); color: var(--red); }
-  .nav-help.active { background: var(--light); color: var(--red); }
   .nav-bell {
     position: relative; background: none; border: none; cursor: pointer;
     width: 36px; height: 36px; border-radius: 8px;
@@ -148,8 +142,8 @@
     background: var(--slate); padding: 20px 48px;
     display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;
   }
-  .contact-bar-item { display: flex; align-items: center; gap: 10px; font-size: 18px; color: rgba(255,255,255,0.85); font-weight: 600; }
-  .contact-bar-item a { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 18px; }
+  .contact-bar-item { display: flex; align-items: center; gap: 10px; font-size: 16px; color: rgba(255,255,255,0.85); font-weight: 600; }
+  .contact-bar-item a { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 16px; }
   .contact-bar-item a:hover { color: var(--gold-hover); }
   .contact-bar-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
 
@@ -162,12 +156,12 @@
 
   /* ─── SIDEBAR ─── */
   .cat-nav { position: sticky; top: 88px; }
-  .cat-nav h4 { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 16px; }
+  .cat-nav h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 16px; }
   .cat-nav ul { list-style: none; }
   .cat-nav ul li { margin-bottom: 4px; }
   .cat-nav ul li a {
     display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px;
-    font-size: 18px; font-weight: 600; color: var(--body); text-decoration: none;
+    font-size: 15px; font-weight: 600; color: var(--body); text-decoration: none;
     transition: background 0.15s, color 0.15s;
   }
   .cat-nav ul li a:hover { background: #fef8eb; color: var(--red); }
@@ -176,10 +170,10 @@
   .cat-nav ul li a .cat-icon img { width: 30px; height: 30px; object-fit: contain; }
 
   .cat-nav-support { margin-top: 28px; padding: 20px; background: var(--light); border-radius: 12px; }
-  .cat-nav-support p { font-size: 18px; color: var(--body); margin-bottom: 10px; line-height: 1.5; }
+  .cat-nav-support p { font-size: 15px; color: var(--body); margin-bottom: 10px; line-height: 1.5; }
   .cat-nav-support a {
     display: block; text-align: center; background: var(--gold); color: var(--dark);
-    padding: 10px 16px; border-radius: 8px; font-size: 18px; font-weight: 700;
+    padding: 10px 16px; border-radius: 8px; font-size: 15px; font-weight: 700;
     text-decoration: none; margin-bottom: 8px;
   }
   .cat-nav-support a:hover { background: var(--gold-hover); }
@@ -195,7 +189,7 @@
   }
   .cat-select-wrap.sticky + .faq-section { margin-top: var(--select-height, 64px); }
   .cat-select {
-    width: 100%; padding: 12px 16px; font-size: 18px; border: 2px solid #e0e0e0;
+    width: 100%; padding: 12px 16px; font-size: 15px; border: 2px solid #e0e0e0;
     border-radius: 8px; background: #fff; font-family: 'Source Sans Pro', sans-serif;
     color: var(--dark); font-weight: 600; appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
@@ -217,29 +211,29 @@
   .faq-q {
     width: 100%; text-align: left; background: none; border: none; cursor: pointer;
     display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    padding: 18px 0; font-size: 18px; font-weight: 700; color: var(--dark);
+    padding: 18px 0; font-size: 16px; font-weight: 700; color: var(--dark);
     font-family: 'Trebuchet MS', sans-serif; transition: color 0.15s;
   }
   .faq-q:hover { color: var(--red); }
   .faq-chevron { font-size: 20px; flex-shrink: 0; color: var(--gold); transition: transform 0.2s; }
   .faq-q.open .faq-chevron { transform: rotate(180deg); }
-  .faq-a { display: none; font-size: 18px; color: var(--body); line-height: 1.75; padding-bottom: 20px; }
+  .faq-a { display: none; font-size: 15px; color: var(--body); line-height: 1.75; padding-bottom: 20px; }
   .faq-a.open { display: block; }
   .faq-a p { margin-bottom: 12px; }
   .faq-a p:last-child { margin-bottom: 0; }
   .faq-a ul { padding-left: 20px; margin: 8px 0 12px; }
-  .faq-a ul li { margin-bottom: 6px; font-size: 18px; }
+  .faq-a ul li { margin-bottom: 6px; font-size: 15px; }
   .faq-a strong { color: var(--dark); }
 
   .ida-box {
     background: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid var(--teal);
     border-radius: 10px; padding: 14px 18px; margin-top: 12px;
   }
-  .ida-box .tag { font-size: 18px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
-  .ida-box p { font-size: 18px; color: var(--body); margin: 0 !important; line-height: 1.65; }
+  .ida-box .tag { font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .ida-box p { font-size: 15px; color: var(--body); margin: 0 !important; line-height: 1.65; }
 
   .contact-steps { background: var(--light); border-radius: 10px; padding: 16px 20px; margin-top: 12px; }
-  .contact-steps p { font-size: 18px; color: var(--body); margin-bottom: 4px !important; }
+  .contact-steps p { font-size: 15px; color: var(--body); margin-bottom: 4px !important; }
   .contact-steps a { color: var(--teal); font-weight: 700; text-decoration: none; }
   .contact-steps a:hover { color: var(--red); }
 
@@ -247,7 +241,7 @@
   .browser-steps h5 { font-size: 17px; font-weight: 700; color: var(--dark); margin: 14px 0 6px; font-family: 'Trebuchet MS', sans-serif; }
   .browser-steps h5:first-child { margin-top: 0; }
   .browser-steps ol { padding-left: 20px; margin: 0; }
-  .browser-steps ol li { font-size: 17px; color: var(--body); margin-bottom: 4px; line-height: 1.6; }
+  .browser-steps ol li { font-size: 15px; color: var(--body); margin-bottom: 4px; line-height: 1.6; }
 
   .footnote { font-size: 14px; color: #777; line-height: 1.6; margin-top: 6px !important; }
   .footnote sup { font-size: 11px; }
@@ -260,9 +254,9 @@
   }
   .toolkit-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
   .toolkit-card .tk-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .toolkit-card h3 { font-size: 18px; font-weight: 700; color: var(--dark); line-height: 1.3; }
-  .toolkit-card p { font-size: 18px; color: var(--body); line-height: 1.5; }
-  .toolkit-card .tk-cta { font-size: 18px; font-weight: 700; color: var(--teal); margin-top: auto; }
+  .toolkit-card h3 { font-size: 16px; font-weight: 700; color: var(--dark); line-height: 1.3; }
+  .toolkit-card p { font-size: 14px; color: var(--body); line-height: 1.5; }
+  .toolkit-card .tk-cta { font-size: 14px; font-weight: 700; color: var(--teal); margin-top: auto; }
 
   /* ─── STILL NEED HELP BANNER ─── */
   .help-banner {
@@ -271,7 +265,7 @@
     color: #fff; margin-top: 8px;
   }
   .help-banner h3 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; font-family: 'Source Sans Pro', sans-serif; }
-  .help-banner p { font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .help-banner p { font-size: 16px; color: rgba(255,255,255,0.8); line-height: 1.6; }
   .help-banner-actions { display: flex; gap: 12px; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
   .btn-gold { background: var(--gold); color: var(--dark); padding: 12px 24px; border-radius: 8px; font-size: 18px; font-weight: 700; text-decoration: none; white-space: nowrap; }
   .btn-gold:hover { background: var(--gold-hover); }
@@ -326,12 +320,11 @@
 <!-- ═══════ TOP NAV ═══════ -->
 <header class="top-nav">
   <div class="top-nav-left">
-    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">
+    <a href="#">
       <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist">
     </a>
   </div>
   <div class="top-nav-right">
-    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="nav-help active">Help</a>
     <button class="nav-bell" aria-label="Notifications">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -356,7 +349,7 @@
     </div>
   </div>
   <div class="menu-section">
-    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/" class="menu-link">
+    <a href="#" class="menu-link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Dashboard
     </a>
@@ -383,7 +376,7 @@
   </div>
   <div class="menu-section">
     <div class="menu-section-label">Resources</div>
-    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="menu-link active">
+    <a href="#" class="menu-link active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
       Help
     </a>
