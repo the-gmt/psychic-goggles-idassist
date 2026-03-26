@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID Assist – Credit Score &amp; Report</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans Pro', 'Trebuchet MS', -apple-system, sans-serif;
+    color: #4B3F34; line-height: 1.6; background: #F5F5F5;
+    -webkit-font-smoothing: antialiased;
+    padding-top: 64px;
+  }
+
+  :root {
+    --red:         #E8292F;
+    --gold:        #FAAF42;
+    --gold-hover:  #e89e2e;
+    --dark:        #212529;
+    --body:        #4B3F34;
+    --slate:       #495057;
+    --teal:        #287292;
+    --light:       #F2F2F2;
+    --green:       #2E7D32;
+    --green-light: #E8F5E9;
+    --amber:       #F57C00;
+    --amber-light: #FFF3E0;
+    --border:      #E0E0E0;
+    --white:       #fff;
+    --emerald:     #10B981;
+    --blue:        #1565C0;
+    --blue-light:  #E3F2FD;
+  }
+
+  /* ─── TOP NAV ─── */
+  .top-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 64px; background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+  }
+  .top-nav-left a { display: flex; align-items: center; }
+  .top-nav-left img { height: 50px; }
+  .top-nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-bell {
+    position: relative; background: none; border: none; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; transition: background .15s;
+  }
+  .nav-bell:hover { background: var(--light); }
+  .nav-bell svg { width: 20px; height: 20px; color: var(--body); }
+  .bell-badge {
+    position: absolute; top: 2px; right: 2px; width: 17px; height: 17px; border-radius: 50%;
+    background: var(--red); color: var(--white); font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; border: 2px solid var(--white);
+  }
+
+  /* ─── HAMBURGER ─── */
+  .hamburger-btn {
+    background: none; border: none; cursor: pointer; width: 40px; height: 40px;
+    border-radius: 8px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 0; position: relative; transition: background .15s;
+  }
+  .hamburger-btn:hover { background: var(--light); }
+  .hamburger-btn.open:hover { background: transparent; }
+  .hamburger-btn span {
+    display: block; width: 22px; height: 2px; background: var(--dark);
+    border-radius: 2px; position: absolute;
+    transition: transform .3s ease, opacity .2s ease;
+  }
+  .hamburger-btn span:nth-child(1) { transform: translateY(-7px); }
+  .hamburger-btn span:nth-child(2) { transform: translateY(0); }
+  .hamburger-btn span:nth-child(3) { transform: translateY(7px); }
+  .hamburger-btn.open span:nth-child(1) { transform: rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg); }
+
+  /* ─── SLIDE MENU ─── */
+  .menu-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.3); z-index: 250; opacity: 0; transition: opacity .25s ease;
+  }
+  .menu-overlay.open { display: block; opacity: 1; }
+  .slide-menu {
+    position: fixed; top: 64px; right: 0; bottom: 0; width: 300px;
+    background: var(--white); z-index: 300;
+    transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+    box-shadow: -4px 0 24px rgba(0,0,0,.1);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .slide-menu.open { transform: translateX(0); }
+  .menu-header {
+    padding: 18px 24px; border-bottom: 1px solid #eee;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .menu-avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--slate); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .menu-user-name { font-size: 16px; font-weight: 700; color: var(--dark); }
+  .menu-user-email { font-size: 13px; color: #888; }
+  .menu-section { padding: 12px 0; }
+  .menu-section + .menu-section { border-top: 1px solid #eee; }
+  .menu-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: #999; padding: 4px 24px 8px;
+  }
+  .menu-link {
+    display: flex; align-items: center; gap: 12px; padding: 12px 24px;
+    text-decoration: none; color: var(--body); font-size: 15px; font-weight: 600;
+    transition: background .12s;
+  }
+  .menu-link:hover { background: var(--light); }
+  .menu-link.active { background: #FFF5E0; color: var(--dark); }
+  .menu-link svg { width: 20px; height: 20px; color: #888; flex-shrink: 0; }
+  .menu-link.active svg { color: var(--gold); }
+  .menu-link .menu-badge {
+    margin-left: auto; background: var(--red); color: var(--white);
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  }
+  .menu-link.logout { color: var(--red); }
+  .menu-link.logout svg { color: var(--red); }
+
+  /* ─── HERO ─── */
+  .status-hero {
+    background: linear-gradient(135deg, #1a3a5c 0%, #1b5e8f 55%, #287292 100%);
+    padding: 44px 48px 40px; position: relative; overflow: hidden;
+  }
+  .status-hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3Ccircle cx='30' cy='30' r='12'/%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  }
+  .status-hero-inner {
+    max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
+  }
+  .status-breadcrumb {
+    font-size: 13px; color: rgba(255,255,255,.65); font-weight: 600;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+  .status-breadcrumb a { color: rgba(255,255,255,.65); text-decoration: none; }
+  .status-breadcrumb a:hover { color: rgba(255,255,255,.9); }
+  .status-breadcrumb span { color: rgba(255,255,255,.35); }
+  .status-hero h1 {
+    font-size: 32px; font-weight: 800; color: var(--white); line-height: 1.2; margin-bottom: 14px;
+  }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+    color: var(--white); font-size: 14px; font-weight: 700;
+    padding: 6px 14px; border-radius: 20px; backdrop-filter: blur(4px);
+  }
+  .status-pill-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74,222,128,.3);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(74,222,128,.3); }
+    50%       { box-shadow: 0 0 0 6px rgba(74,222,128,.1); }
+  }
+  /* ─── TAB BAR ─── */
+  .tab-bar {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    position: sticky; top: 64px; z-index: 200;
+  }
+  .tab-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 48px; display: flex;
+  }
+  .tab-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 15px 24px 14px;
+    border: none; border-bottom: 3px solid transparent; margin-bottom: -1px;
+    background: none; cursor: pointer; font-family: inherit;
+    font-size: 16px; font-weight: 700; color: var(--slate);
+    transition: color .15s, background .15s;
+  }
+  .tab-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .tab-btn.active { color: var(--dark); border-bottom-color: var(--gold); }
+  .tab-btn:hover:not(.active) { color: var(--dark); background: #FAFAFA; }
+
+  /* ─── PAGE LAYOUT ─── */
+  .page-layout {
+    max-width: 1200px; margin: 0 auto;
+    padding: 40px 48px 80px;
+    display: grid; grid-template-columns: 1fr 340px;
+    gap: 40px; align-items: start;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* On wide screens, the two columns (main-col + sidebar) inside each panel
+     need to participate in the parent grid — achieved by making the panel a
+     grid subgrid wrapper rather than display:contents (which breaks on some
+     browsers) */
+  @media (min-width: 1025px) {
+    .tab-panel.active {
+      display: contents;
+    }
+  }
+
+  /* ─── SHARED CARD ─── */
+  .card {
+    background: var(--white); border-radius: 14px; border: 1px solid var(--border);
+    overflow: hidden; animation: fadeUp .3s ease both; margin-bottom: 24px;
+  }
+  .card:last-child { margin-bottom: 0; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card:nth-child(2) { animation-delay: .06s; }
+  .card:nth-child(3) { animation-delay: .12s; }
+  .card:nth-child(4) { animation-delay: .18s; }
+
+  .card-head {
+    padding: 20px 24px 18px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .card-icon {
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-icon svg { width: 20px; height: 20px; }
+  .card-title    { font-size: 18px; font-weight: 700; color: var(--dark); }
+  .card-subtitle { font-size: 14px; color: var(--slate); margin-top: 1px; }
+
+  /* ─── SCORE CARD ─── */
+  .score-gauge-section {
+    padding: 28px 24px 20px; border-bottom: 1px solid var(--border);
+    display: flex; gap: 32px; align-items: flex-start;
+  }
+  .large-gauge-wrap {
+    position: relative; width: 260px; flex-shrink: 0;
+  }
+  .large-gauge-svg { width: 100%; height: auto; display: block; }
+  .large-score-overlay {
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    text-align: center; opacity: 0; white-space: nowrap;
+  }
+  .large-score-overlay.show { animation: scoreFadeIn .4s ease forwards; }
+  @keyframes scoreFadeIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  .large-score-num {
+    font-size: 52px; font-weight: 800; color: var(--dark); line-height: 1;
+  }
+  .large-score-lbl {
+    font-size: 16px; font-weight: 700; color: var(--green); margin-top: 6px;
+  }
+  .large-gauge-sub {
+    font-size: 13px; color: #aaa; margin-top: 10px; text-align: center;
+  }
+  /* SVG arc elements */
+  .lg-arc-bg { opacity: .15; }
+  .lg-arc-fill { stroke-dasharray: 0 408; }
+  .lg-arc-cap { opacity: 0; }
+  .lg-arc-cap.animate { opacity: 1; }
+  .lg-needle { opacity: 0; }
+  .lg-needle.animate { opacity: 1; }
+
+  /* Creditworthiness panel */
+  .creditworthiness { flex: 1; padding-top: 4px; }
+  .cw-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .8px; color: var(--slate); margin-bottom: 16px;
+  }
+  .cw-standing {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+    padding: 14px 16px; background: var(--green-light); border-radius: 10px;
+    border: 2px solid #A5D6A7;
+  }
+  .cw-standing-dot {
+    width: 14px; height: 14px; border-radius: 50%; background: var(--green); flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(46,125,50,.15);
+  }
+  .cw-standing-label {
+    font-size: 20px; font-weight: 800; color: var(--green); line-height: 1;
+  }
+  .cw-standing-range { font-size: 13px; color: var(--green); opacity: .75; margin-top: 2px; }
+  .cw-perks { display: flex; flex-direction: column; gap: 10px; }
+  .cw-perk {
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .cw-perk-icon {
+    width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--green-light);
+  }
+  .cw-perk-icon svg { width: 14px; height: 14px; }
+  .cw-perk-text { font-size: 14px; color: var(--body); line-height: 1.5; }
+  .cw-perk-text strong { color: var(--dark); }
+
+  /* Factor bar — gradient track with marker dot */
+  .factor-bar-wrap { width: 120px; flex-shrink: 0; }
+  .factor-bar-track {
+    height: 8px; border-radius: 4px; overflow: visible; position: relative;
+    background: linear-gradient(90deg, #E8292F 0%, #F57C00 35%, #FAAF42 60%, #2E7D32 100%);
+  }
+  .factor-bar-marker {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--white); border: 2.5px solid var(--dark);
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  }
+
+  /* ─── SCORE FACTORS CARD ─── */
+  .factors-list { padding: 8px 0; }
+  .factor-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 24px; border-bottom: 1px solid #f5f5f5;
+    transition: background .1s;
+  }
+  .factor-row:last-child { border-bottom: none; }
+  .factor-row:hover { background: #FAFAFA; }
+  .factor-icon {
+    width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .factor-icon svg { width: 17px; height: 17px; }
+  .factor-info { flex: 1; min-width: 0; }
+  .factor-name {
+    font-size: 15px; font-weight: 700; color: var(--dark); line-height: 1.3;
+  }
+  .factor-detail { font-size: 13px; color: var(--slate); margin-top: 2px; }
+  .factor-badge {
+    flex-shrink: 0; font-size: 12px; font-weight: 700; padding: 3px 0;
+    border-radius: 5px; white-space: nowrap;
+    text-transform: uppercase; letter-spacing: .4px;
+    min-width: 84px; text-align: center;
+  }
+  .factor-badge.excellent { background: var(--green-light); color: var(--green); padding: 3px 10px; }
+  .factor-badge.very-good { background: #E0F2F1; color: #00695C; padding: 3px 10px; }
+  .factor-badge.good      { background: #E3F2FD; color: var(--teal); padding: 3px 10px; }
+  .factor-badge.fair      { background: var(--amber-light); color: var(--amber); padding: 3px 10px; }
+  .factor-badge.poor      { background: #FEECEC; color: var(--red); padding: 3px 10px; }
+
+  /* ─── REPORT: PERSONAL INFO ─── */
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  }
+  .info-row {
+    padding: 14px 24px; border-bottom: 1px solid #f5f5f5;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .info-row:nth-child(odd) { border-right: 1px solid #f5f5f5; }
+  .info-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: #aaa; }
+  .info-value { font-size: 15px; font-weight: 600; color: var(--dark); }
+  .info-secondary { font-size: 13px; color: var(--slate); margin-top: 2px; }
+
+  /* ─── REPORT: ACCOUNTS ─── */
+  .account-summary-bar {
+    padding: 14px 24px; background: #FAFAFA; border-bottom: 1px solid var(--border);
+    display: flex; gap: 24px; align-items: center;
+  }
+  .acct-summary-stat { text-align: center; }
+  .acct-summary-num { font-size: 24px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .acct-summary-lbl { font-size: 12px; color: var(--slate); margin-top: 2px; }
+  .acct-divider { width: 1px; height: 36px; background: var(--border); }
+
+  .account-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 24px; border-bottom: 1px solid #f5f5f5;
+    transition: background .1s; cursor: default;
+  }
+  .account-row:last-child { border-bottom: none; }
+  .account-row:hover { background: #FAFAFA; }
+  .account-type-icon {
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .account-type-icon svg { width: 19px; height: 19px; }
+  .account-info { flex: 1; min-width: 0; }
+  .account-name { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .account-type-lbl { font-size: 13px; color: var(--slate); margin-top: 2px; }
+  .account-meta { text-align: right; flex-shrink: 0; }
+  .account-balance { font-size: 15px; font-weight: 800; color: var(--dark); }
+  .account-limit   { font-size: 12px; color: var(--slate); margin-top: 2px; }
+  .account-status  {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px;
+  }
+  .account-status.ok { background: var(--green-light); color: var(--green); }
+  .account-status.closed { background: #F5F5F5; color: #999; }
+  .status-dot-sm { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* ─── REPORT: INQUIRIES ─── */
+  .inquiry-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 24px; border-bottom: 1px solid #f5f5f5;
+  }
+  .inquiry-row:last-child { border-bottom: none; }
+  .inquiry-icon {
+    width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--amber-light);
+  }
+  .inquiry-icon svg { width: 16px; height: 16px; }
+  .inquiry-info { flex: 1; min-width: 0; }
+  .inquiry-creditor { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .inquiry-reason   { font-size: 13px; color: var(--slate); margin-top: 2px; }
+  .inquiry-date     { font-size: 13px; color: #aaa; flex-shrink: 0; }
+  .inquiry-type {
+    font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: .4px;
+    background: #FFF3E0; color: var(--amber); flex-shrink: 0;
+  }
+  .inquiry-type.soft { background: var(--light); color: var(--slate); }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar { position: sticky; top: 120px; display: flex; flex-direction: column; gap: 20px; }
+
+  .tips-card { background: var(--slate); border-radius: 14px; padding: 28px; }
+  .tips-card h3 { font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .tips-lead { font-size: 15px; color: rgba(255,255,255,.75); line-height: 1.6; margin-bottom: 20px; }
+  .tip-item { display: flex; gap: 12px; margin-bottom: 14px; }
+  .tip-item:last-child { margin-bottom: 0; }
+  .tip-bullet {
+    width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.15);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; color: var(--gold); margin-top: 1px;
+  }
+  .tip-item p { font-size: 14px; color: rgba(255,255,255,.8); line-height: 1.55; }
+  .tip-item p strong { color: var(--white); }
+
+  .sidebar-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .sidebar-card-head {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sc-icon {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sc-icon svg { width: 17px; height: 17px; }
+  .sidebar-card-head h4 { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .sidebar-card-body { padding: 16px 20px; }
+  .sidebar-card-body p { font-size: 14px; color: var(--body); line-height: 1.6; margin-bottom: 14px; }
+
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px;
+    text-decoration: none; font-size: 14px; font-weight: 700; color: var(--dark);
+    background: var(--light); transition: background .15s; margin-bottom: 8px;
+  }
+  .sidebar-link:last-child { margin-bottom: 0; }
+  .sidebar-link:hover { background: #e5e5e5; }
+  .sidebar-link svg { width: 17px; height: 17px; color: var(--slate); flex-shrink: 0; }
+
+  .bureau-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid #f5f5f5;
+  }
+  .bureau-row:last-child { border-bottom: none; }
+  .bureau-status-indicator {
+    width: 10px; height: 10px; border-radius: 50%; background: var(--green); flex-shrink: 0;
+  }
+  .bureau-row-name  { font-size: 14px; font-weight: 700; color: var(--dark); flex: 1; }
+  .bureau-row-sub   { font-size: 12px; color: var(--slate); }
+  .bureau-row-badge {
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+    background: var(--green-light); color: var(--green);
+  }
+
+  /* Buttons */
+  .btn-gold {
+    background: var(--gold); color: var(--dark);
+    padding: 11px 20px; border-radius: 8px;
+    font-size: 15px; font-weight: 700;
+    text-align: center; text-decoration: none; display: block;
+    border: none; cursor: pointer; transition: background .2s; font-family: inherit;
+  }
+  .btn-gold:hover { background: var(--gold-hover); }
+  .btn-outline-gold {
+    background: var(--white); color: var(--dark);
+    padding: 9px 20px; border-radius: 8px;
+    font-size: 15px; font-weight: 700;
+    border: 2px solid var(--gold); text-align: center;
+    text-decoration: none; display: block;
+    cursor: pointer; transition: all .15s; font-family: inherit;
+  }
+  .btn-outline-gold:hover { background: #FFF8E7; }
+  /* Empty state */
+  .empty-state {
+    padding: 40px 24px; text-align: center;
+  }
+  .empty-icon {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--green-light);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
+  }
+  .empty-icon svg { width: 26px; height: 26px; }
+  .empty-state h4 { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .empty-state p  { font-size: 14px; color: var(--slate); line-height: 1.6; }
+
+  /* Refresh notices (score 30-day and report 90-day) */
+  .refresh-notice {
+    display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;
+    padding: 11px 24px; background: #FFFBEB; border-bottom: 1px solid #FDE68A;
+  }
+  .refresh-notice svg { width: 16px; height: 16px; flex-shrink: 0; color: #B45309; }
+  .refresh-notice p { font-size: 13px; color: #78350F; line-height: 1.5; margin: 0; flex: 1; }
+  .refresh-notice strong { color: #92400E; }
+  .refresh-chip {
+    display: inline-flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0;
+    background: #FEF3C7; border: 1px solid #FDE68A; border-radius: 6px;
+    padding: 3px 10px; font-size: 12px; font-weight: 700; color: #92400E; white-space: nowrap;
+  }
+
+  /* ─── FOOTER ─── */
+  footer { background: #000; color: #ccc; font-size: 15px; line-height: 1.7; }
+  .footer-main {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; padding: 56px 48px 48px; border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .footer-contact h4 {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+  .footer-contact table { border-collapse: collapse; margin-bottom: 12px; }
+  .footer-contact td { padding: 2px 24px 2px 0; color: #ccc; font-size: 15px; }
+  .footer-contact td:last-child { color: #fff; font-weight: 600; padding-right: 0; }
+  .footer-contact a { color: #ccc; text-decoration: none; }
+  .footer-contact a:hover { color: var(--gold); }
+  .footer-maple { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px; }
+  .footer-maple p { font-size: 15px; color: #ccc; margin: 0; line-height: 1.5; }
+  .footer-maple strong { color: #fff; }
+  .footer-hours { font-size: 15px; }
+  .footer-hours strong { color: #fff; display: block; margin-bottom: 2px; }
+  .footer-nav { padding-top: 4px; }
+  .footer-nav ul { list-style: none; }
+  .footer-nav ul li { margin-bottom: 14px; text-align: right; }
+  .footer-nav ul li a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; }
+  .footer-nav ul li a:hover { color: var(--gold); }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; padding: 28px 48px 36px; }
+  .footer-bottom p { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 8px; }
+  .footer-bottom p:first-child { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 12px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1100px) {
+    .score-gauge-section { flex-direction: column; align-items: center; }
+    .large-gauge-wrap { width: 240px; }
+  }
+  @media (max-width: 1024px) {
+    .page-layout { grid-template-columns: 1fr; padding: 28px 32px 60px; gap: 0; }
+    .tab-panel.active { display: block; }
+    .sidebar { position: static; margin-top: 24px; }
+    .status-hero { padding: 32px 32px 28px; }
+  }
+  @media (max-width: 768px) {
+    .top-nav { padding: 0 16px; }
+    .status-hero { padding: 24px 16px 28px; }
+    .status-hero h1 { font-size: 26px; }
+    .status-hero-inner { flex-direction: column; align-items: stretch; gap: 16px; }
+    .tab-inner { padding: 0 16px; }
+    .tab-btn { padding: 12px 16px; font-size: 15px; }
+    .page-layout { padding: 20px 16px 48px; }
+    .score-gauge-section { padding: 20px 16px; gap: 24px; }
+    .large-gauge-wrap { width: 200px; }
+    .large-score-num { font-size: 40px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .info-row:nth-child(odd) { border-right: none; }
+    .account-summary-bar { flex-wrap: wrap; gap: 12px; }
+    .card-head { padding: 16px 20px 14px; }
+    .account-row, .factor-row { padding: 14px 16px; }
+    .factor-row { flex-wrap: wrap; align-items: center; }
+    .factor-icon { flex-shrink: 0; }
+    /* flex-basis fills the remainder of line 1 so bar+badge are pushed to line 2 */
+    .factor-info { flex: 1 1 calc(100% - 50px); min-width: 0; }
+    .factor-bar-wrap { flex: 1; min-width: 0; margin-left: 50px; margin-top: 10px; }
+    .factor-badge { flex-shrink: 0; margin-left: 10px; margin-top: 10px; align-self: center; }
+    .slide-menu { width: 100%; }
+    .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
+    .footer-nav ul li { text-align: left; }
+    .footer-bottom { padding: 24px 24px 32px; }
+    /* Refresh notice chip wraps below text on mobile */
+    .refresh-notice { flex-wrap: wrap; padding: 12px 16px; gap: 8px; }
+    .refresh-chip { margin-left: 0; width: 100%; justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP NAV ═══════ -->
+<header class="top-nav">
+  <div class="top-nav-left">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">
+      <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist" style="height:50px;">
+    </a>
+  </div>
+  <div class="top-nav-right">
+    <button class="nav-bell" aria-label="Notifications" onclick="window.location.href='https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="bell-badge">2</span>
+    </button>
+    <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════ SLIDE MENU ═══════ -->
+<div class="menu-overlay" id="menu-overlay"></div>
+<nav class="slide-menu" id="slide-menu">
+  <div class="menu-header">
+    <div class="menu-avatar">GT</div>
+    <div>
+      <div class="menu-user-name">Geoffrey Thomas</div>
+      <div class="menu-user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="711605191e1c1002311e04051d1e1e1a5f121e1c">[email&#160;protected]</a></div>
+    </div>
+  </div>
+  <div class="menu-section">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+      Scan &amp; Score
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/credit" class="menu-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Credit Score &amp; Report
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/darkweb" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Dark Web Monitoring
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Alerts<span class="menu-badge">2</span>
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Resources</div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
+      Help
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/identity" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Identity Theft &amp; Recovery
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/risk" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Risk Assessment
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Settings</div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scansettings" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Scan &amp; Score Settings
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/info" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Personal Info
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/account" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.24,5.35 L10.51,2.62 L13.49,2.62 L14.76,5.35 L17.58,4.31 L19.69,6.42 L18.65,9.24 L21.38,10.51 L21.38,13.49 L18.65,14.76 L19.69,17.58 L17.58,19.69 L14.76,18.65 L13.49,21.38 L10.51,21.38 L9.24,18.65 L6.42,19.69 L4.31,17.58 L5.35,14.76 L2.62,13.49 L2.62,10.51 L5.35,9.24 L4.31,6.42 L6.42,4.31 Z"/><circle cx="12" cy="12" r="3"/></svg>
+      Account &amp; Security
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/billing" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+      Billing
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/" class="menu-link logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<div class="status-hero">
+  <div class="status-hero-inner">
+    <div>
+      <div class="status-breadcrumb">
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">Dashboard</a>
+        <span>›</span>
+        <span>Credit Score &amp; Report</span>
+      </div>
+      <h1>Credit Score &amp; Report</h1>
+      <div class="status-pill">
+        <div class="status-pill-dot"></div>
+        Monitoring Active
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB BAR ═══════ -->
+<div class="tab-bar">
+  <div class="tab-inner">
+    <button class="tab-btn active" data-tab="score" id="tab-score-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Credit Score
+    </button>
+    <button class="tab-btn" data-tab="report" id="tab-report-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Credit Report
+    </button>
+  </div>
+</div>
+
+<!-- ═══════ PAGE LAYOUT ═══════ -->
+<div class="page-layout">
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- SCORE TAB                                          -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-score">
+
+    <!-- ── SCORE MAIN COLUMN ── -->
+    <div class="main-col">
+
+      <!-- Score Display Card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon" style="background:var(--blue-light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div>
+            <div class="card-title">Your Credit Score</div>
+            <div class="card-subtitle">Powered by Equifax &bull; Updated Jan 31, 2026</div>
+          </div>
+        </div>
+        <div class="refresh-notice">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <p>Your credit score is refreshed every 30 days.</p>
+          <span class="refresh-chip">Next available: Mar 2, 2026</span>
+        </div>
+
+        <!-- Gauge + Zone Legend -->
+        <div class="score-gauge-section">
+
+          <!-- Large Gauge SVG -->
+          <!-- Arc: M 20 155 A 130 130 0 0 1 280 155 | cx=150 cy=155 r=130 | len≈408.41 -->
+          <div class="large-gauge-wrap">
+            <svg class="large-gauge-svg" viewBox="0 0 300 170" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="lgCreditGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%"   stop-color="#E8292F"/>
+                  <stop offset="35%"  stop-color="#F57C00"/>
+                  <stop offset="60%"  stop-color="#FAAF42"/>
+                  <stop offset="100%" stop-color="#2E7D32"/>
+                </linearGradient>
+              </defs>
+              <!-- Background arc -->
+              <path d="M 20 155 A 130 130 0 0 1 280 155" fill="none" stroke="#F2F2F2" stroke-width="18" stroke-linecap="round" class="lg-arc-bg"/>
+              <!-- Fill arc (animated by JS) -->
+              <path d="M 20 155 A 130 130 0 0 1 280 155" fill="none" stroke="url(#lgCreditGrad)" stroke-width="18" stroke-linecap="butt" class="lg-arc-fill" id="lg-credit-arc" style="stroke-dasharray:0 408"/>
+              <!-- Start cap (red dot at left) -->
+              <circle cx="20" cy="155" r="9" fill="#E8292F" class="lg-arc-cap" id="lg-credit-arc-cap"/>
+              <!-- Needle dot (JS will position) -->
+              <circle cx="280" cy="155" r="11" fill="white" stroke="#2E7D32" stroke-width="3.5" class="lg-needle" id="lg-credit-needle"/>
+            </svg>
+            <!-- Score number overlay -->
+            <div class="large-score-overlay" id="lg-score-num" data-score="858">
+              <div class="large-score-num" id="lg-score-value"></div>
+              <div class="large-score-lbl" id="lg-score-label"></div>
+            </div>
+            <div class="large-gauge-sub">Range: 300 – 900</div>
+          </div>
+
+          <!-- Creditworthiness Panel -->
+          <div class="creditworthiness">
+            <div class="cw-title">Your Credit Standing</div>
+
+            <div class="cw-standing">
+              <div class="cw-standing-dot"></div>
+              <div>
+                <div class="cw-standing-label">Excellent</div>
+                <div class="cw-standing-range">760 – 900 &bull; Top tier</div>
+              </div>
+            </div>
+
+            <div class="cw-perks">
+              <div class="cw-perk">
+                <div class="cw-perk-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <div class="cw-perk-text"><strong>Best available interest rates</strong> on mortgages, auto loans, and lines of credit.</div>
+              </div>
+              <div class="cw-perk">
+                <div class="cw-perk-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div class="cw-perk-text"><strong>Highest approval likelihood</strong> for premium credit cards and large loan amounts.</div>
+              </div>
+              <div class="cw-perk">
+                <div class="cw-perk-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+                </div>
+                <div class="cw-perk-text"><strong>Highest credit limits</strong> and access to exclusive financial products.</div>
+              </div>
+              <div class="cw-perk">
+                <div class="cw-perk-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div class="cw-perk-text"><strong>Lowest insurance premiums</strong> — many insurers factor credit scores into pricing.</div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /score-gauge-section -->
+
+      </div><!-- /score display card -->
+
+      <!-- Score Factors Card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon" style="background:#F0FDF4;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <div class="card-title">What's Affecting Your Score</div>
+            <div class="card-subtitle">Key factors and their impact</div>
+          </div>
+        </div>
+        <div class="factors-list">
+
+          <!-- Payment History -->
+          <div class="factor-row">
+            <div class="factor-icon" style="background:#F0FDF4;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Payment History <span style="font-size:12px;color:#aaa;font-weight:600;">(35%)</span></div>
+              <div class="factor-detail">100% on-time over 7 years &bull; No missed payments</div>
+            </div>
+            <div class="factor-bar-wrap">
+              <div class="factor-bar-track"><div class="factor-bar-marker" style="left:100%;"></div></div>
+            </div>
+            <span class="factor-badge excellent">Excellent</span>
+          </div>
+
+          <!-- Credit Utilization -->
+          <div class="factor-row">
+            <div class="factor-icon" style="background:#F0FDF4;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Credit Utilization <span style="font-size:12px;color:#aaa;font-weight:600;">(30%)</span></div>
+              <div class="factor-detail">6% of total available credit used ($1,240 / $20,500)</div>
+            </div>
+            <div class="factor-bar-wrap">
+              <div class="factor-bar-track"><div class="factor-bar-marker" style="left:96%;"></div></div>
+            </div>
+            <span class="factor-badge excellent">Excellent</span>
+          </div>
+
+          <!-- Length of History -->
+          <div class="factor-row">
+            <div class="factor-icon" style="background:#E0F2F1;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#00695C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Length of History <span style="font-size:12px;color:#aaa;font-weight:600;">(15%)</span></div>
+              <div class="factor-detail">15-year average account age &bull; Oldest: 2009</div>
+            </div>
+            <div class="factor-bar-wrap">
+              <div class="factor-bar-track"><div class="factor-bar-marker" style="left:82%;"></div></div>
+            </div>
+            <span class="factor-badge very-good">Very Good</span>
+          </div>
+
+          <!-- Credit Mix -->
+          <div class="factor-row">
+            <div class="factor-icon" style="background:var(--blue-light);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Credit Mix <span style="font-size:12px;color:#aaa;font-weight:600;">(10%)</span></div>
+              <div class="factor-detail">4 account types: Mortgage, Auto, Credit Cards, LOC</div>
+            </div>
+            <div class="factor-bar-wrap">
+              <div class="factor-bar-track"><div class="factor-bar-marker" style="left:72%;"></div></div>
+            </div>
+            <span class="factor-badge good">Good</span>
+          </div>
+
+          <!-- New Credit -->
+          <div class="factor-row">
+            <div class="factor-icon" style="background:var(--amber-light);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">New Credit <span style="font-size:12px;color:#aaa;font-weight:600;">(10%)</span></div>
+              <div class="factor-detail">1 hard inquiry in the past 12 months (Feb 2026)</div>
+            </div>
+            <div class="factor-bar-wrap">
+              <div class="factor-bar-track"><div class="factor-bar-marker" style="left:48%;"></div></div>
+            </div>
+            <span class="factor-badge fair">Fair</span>
+          </div>
+
+          <!-- Derogatory Marks -->
+          <div class="factor-row">
+            <div class="factor-icon" style="background:#F0FDF4;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Derogatory Marks</div>
+              <div class="factor-detail">No collections, bankruptcies, or public records</div>
+            </div>
+            <div class="factor-bar-wrap">
+              <div class="factor-bar-track"><div class="factor-bar-marker" style="left:100%;"></div></div>
+            </div>
+            <span class="factor-badge excellent">Excellent</span>
+          </div>
+
+        </div>
+      </div><!-- /factors card -->
+
+    </div><!-- /score main-col -->
+
+    <!-- ── SCORE SIDEBAR ── -->
+    <div class="sidebar">
+
+      <!-- Tips card -->
+      <div class="tips-card">
+        <h3>Keep Your Score Strong</h3>
+        <p class="tips-lead">You're in excellent shape. Here's how to maintain and protect your score.</p>
+        <div class="tip-item">
+          <div class="tip-bullet">1</div>
+          <p><strong>Never miss a payment.</strong> Payment history is the single largest factor at 35%. Set up automatic payments for at least the minimum.</p>
+        </div>
+        <div class="tip-item">
+          <div class="tip-bullet">2</div>
+          <p><strong>Keep utilization below 10%.</strong> Your current 6% is excellent. Try not to carry balances that push this above 30%.</p>
+        </div>
+        <div class="tip-item">
+          <div class="tip-bullet">3</div>
+          <p><strong>Avoid unnecessary hard inquiries.</strong> You have one recent inquiry — wait 12 months before applying for new credit.</p>
+        </div>
+      </div>
+
+      <!-- Bureau Status -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-head">
+          <div class="sc-icon" style="background:var(--green-light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <h4>Bureau Monitoring</h4>
+        </div>
+        <div class="sidebar-card-body">
+          <div class="bureau-row">
+            <div class="bureau-status-indicator"></div>
+            <div style="flex:1;">
+              <div class="bureau-row-name">Equifax</div>
+              <div class="bureau-row-sub">Daily monitoring</div>
+            </div>
+            <span class="bureau-row-badge">Active</span>
+          </div>
+          <div class="bureau-row">
+            <div class="bureau-status-indicator"></div>
+            <div style="flex:1;">
+              <div class="bureau-row-name">TransUnion</div>
+              <div class="bureau-row-sub">Daily monitoring</div>
+            </div>
+            <span class="bureau-row-badge">Active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dispute card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-head">
+          <div class="sc-icon" style="background:#FEECEC;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E8292F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h4>Dispute an Error</h4>
+        </div>
+        <div class="sidebar-card-body">
+          <p>Found something on your report that doesn't look right? You have the right to dispute inaccurate information with the credit bureaus.</p>
+          <a href="https://www.equifax.ca/personal/dispute-credit-report/options/" target="_blank" rel="noopener" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Dispute with Equifax
+          </a>
+          <a href="https://secure-ocs.transunion.ca/secureocs/home.html?lang=en" target="_blank" rel="noopener" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Dispute with TransUnion
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /score sidebar -->
+
+  </div><!-- /panel-score -->
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- REPORT TAB                                         -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-report">
+
+    <!-- ── REPORT MAIN COLUMN ── -->
+    <div class="main-col">
+
+      <!-- Personal Information Card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon" style="background:#EDE7F6;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#5E35B1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <div class="card-title">Personal Information</div>
+            <div class="card-subtitle">As it appears on your Equifax credit file</div>
+          </div>
+        </div>
+        <div class="report-refresh-notice refresh-notice">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <p>Credit reports can be refreshed every 90 days. This report was pulled <strong>Jan 31, 2026</strong>.</p>
+          <span class="refresh-chip">Next available: May 1, 2026</span>
+        </div>
+        <div class="info-grid">
+          <div class="info-row">
+            <span class="info-label">Full Name</span>
+            <span class="info-value">Geoffrey M. Thomas</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Date of Birth</span>
+            <span class="info-value">••/••/1981</span>
+            <span class="info-secondary">Partial for security</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Current Address</span>
+            <span class="info-value">42 Birchwood Drive</span>
+            <span class="info-secondary">Toronto, ON M4P 2G4</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Previous Address</span>
+            <span class="info-value">180 Dundas St W</span>
+            <span class="info-secondary">Toronto, ON M5G 1Z8</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Current Employer</span>
+            <span class="info-value">Meridian Capital Group</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">SIN (partial)</span>
+            <span class="info-value">•••-•••-985</span>
+          </div>
+        </div>
+        <div style="padding:14px 24px; background:#FAFAFA; border-top:1px solid var(--border);">
+          <p style="font-size:13px;color:var(--slate);line-height:1.6;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            If any of this information is incorrect, <a href="https://www.equifax.ca/personal/dispute-credit-report/options/" target="_blank" rel="noopener" style="color:var(--teal);font-weight:700;text-decoration:none;">contact Equifax</a> to submit a correction.
+          </p>
+        </div>
+      </div><!-- /personal info card -->
+
+      <!-- Accounts Card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon" style="background:var(--blue-light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+          </div>
+          <div>
+            <div class="card-title">Accounts &amp; Tradelines</div>
+            <div class="card-subtitle">4 open &bull; 1 closed</div>
+          </div>
+        </div>
+
+        <!-- Summary bar -->
+        <div class="account-summary-bar">
+          <div class="acct-summary-stat">
+            <div class="acct-summary-num">5</div>
+            <div class="acct-summary-lbl">Total Accounts</div>
+          </div>
+          <div class="acct-divider"></div>
+          <div class="acct-summary-stat">
+            <div class="acct-summary-num">4</div>
+            <div class="acct-summary-lbl">Open</div>
+          </div>
+          <div class="acct-divider"></div>
+          <div class="acct-summary-stat">
+            <div class="acct-summary-num" style="color:var(--slate);">1</div>
+            <div class="acct-summary-lbl">Closed</div>
+          </div>
+          <div class="acct-divider"></div>
+          <div class="acct-summary-stat">
+            <div class="acct-summary-num">$301,280</div>
+            <div class="acct-summary-lbl">Total Balances</div>
+          </div>
+          <div class="acct-divider"></div>
+          <div class="acct-summary-stat">
+            <div class="acct-summary-num" style="color:var(--green);">100%</div>
+            <div class="acct-summary-lbl">On Time</div>
+          </div>
+        </div>
+
+        <!-- Mortgage -->
+        <div class="account-row">
+          <div class="account-type-icon" style="background:#E8F5E9;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="account-info">
+            <div class="account-name">TD Canada Trust</div>
+            <div class="account-type-lbl">Mortgage &bull; Opened Mar 2014 &bull; Last rpt: Jan 2026</div>
+          </div>
+          <div class="account-meta">
+            <div class="account-status ok"><span class="status-dot-sm"></span>Current</div>
+            <div class="account-balance">$287,400</div>
+            <div class="account-limit">of $365,000 original</div>
+          </div>
+        </div>
+
+        <!-- TD Visa -->
+        <div class="account-row">
+          <div class="account-type-icon" style="background:var(--blue-light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <div class="account-info">
+            <div class="account-name">TD Visa Infinite</div>
+            <div class="account-type-lbl">Credit Card &bull; Opened Sep 2016 &bull; Last rpt: Jan 2026</div>
+          </div>
+          <div class="account-meta">
+            <div class="account-status ok"><span class="status-dot-sm"></span>Current</div>
+            <div class="account-balance">$1,240</div>
+            <div class="account-limit">of $12,000 limit</div>
+          </div>
+        </div>
+
+        <!-- RBC Visa -->
+        <div class="account-row">
+          <div class="account-type-icon" style="background:#FFF3E0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <div class="account-info">
+            <div class="account-name">RBC Avion Visa Infinite</div>
+            <div class="account-type-lbl">Credit Card &bull; Opened Jan 2018 &bull; Last rpt: Jan 2026</div>
+          </div>
+          <div class="account-meta">
+            <div class="account-status ok"><span class="status-dot-sm"></span>Current</div>
+            <div class="account-balance">$0</div>
+            <div class="account-limit">of $8,500 limit</div>
+          </div>
+        </div>
+
+        <!-- Auto Loan -->
+        <div class="account-row">
+          <div class="account-type-icon" style="background:#EDE7F6;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#5E35B1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>
+          </div>
+          <div class="account-info">
+            <div class="account-name">Scotiabank Auto Loan</div>
+            <div class="account-type-lbl">Installment Loan &bull; Opened Feb 2022 &bull; Last rpt: Jan 2026</div>
+          </div>
+          <div class="account-meta">
+            <div class="account-status ok"><span class="status-dot-sm"></span>Current</div>
+            <div class="account-balance">$12,640</div>
+            <div class="account-limit">of $24,500 original</div>
+          </div>
+        </div>
+
+        <!-- Closed Rogers -->
+        <div class="account-row">
+          <div class="account-type-icon" style="background:#F5F5F5;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <div class="account-info" style="opacity:.7;">
+            <div class="account-name">Rogers Bank Mastercard</div>
+            <div class="account-type-lbl">Credit Card &bull; Opened Jun 2019 &bull; Closed Apr 2023</div>
+          </div>
+          <div class="account-meta">
+            <div class="account-status closed"><span class="status-dot-sm"></span>Closed</div>
+            <div class="account-balance" style="color:var(--slate);">$0</div>
+            <div class="account-limit">$5,000 limit</div>
+          </div>
+        </div>
+
+      </div><!-- /accounts card -->
+
+      <!-- Credit Inquiries Card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon" style="background:var(--amber-light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div>
+            <div class="card-title">Credit Inquiries</div>
+            <div class="card-subtitle">1 hard &bull; 2 soft &bull; Past 24 months</div>
+          </div>
+        </div>
+
+        <!-- Hard inquiries label -->
+        <div style="padding:10px 24px 4px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#aaa;">Hard Inquiries — affect your score</div>
+
+        <div class="inquiry-row">
+          <div class="inquiry-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="inquiry-info">
+            <div class="inquiry-creditor">TD Canada Trust</div>
+            <div class="inquiry-reason">Auto financing — TransUnion</div>
+          </div>
+          <div class="inquiry-date">Feb 27, 2026</div>
+          <span class="inquiry-type">Hard</span>
+        </div>
+
+        <!-- Soft inquiries label -->
+        <div style="padding:10px 24px 4px; border-top:1px solid var(--border); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#aaa;">Soft Inquiries — do not affect your score</div>
+
+        <div class="inquiry-row">
+          <div class="inquiry-icon" style="background:var(--light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="inquiry-info">
+            <div class="inquiry-creditor">ID Assist (Sigma Loyalty Group)</div>
+            <div class="inquiry-reason">Credit monitoring — Equifax</div>
+          </div>
+          <div class="inquiry-date">Mar 1, 2026</div>
+          <span class="inquiry-type soft">Soft</span>
+        </div>
+
+        <div class="inquiry-row">
+          <div class="inquiry-icon" style="background:var(--light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="inquiry-info">
+            <div class="inquiry-creditor">Capital One</div>
+            <div class="inquiry-reason">Pre-approval offer — TransUnion</div>
+          </div>
+          <div class="inquiry-date">Nov 15, 2025</div>
+          <span class="inquiry-type soft">Soft</span>
+        </div>
+
+        <div style="padding:12px 24px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--slate);line-height:1.55;">
+          Hard inquiries remain on your report for 3 years and may affect your score for 12 months. You have <strong style="color:var(--green);">1 hard inquiry</strong> in the past 12 months — well below the threshold that would significantly impact your score.
+        </div>
+      </div><!-- /inquiries card -->
+
+      <!-- Public Records Card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon" style="background:#F0FDF4;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div>
+            <div class="card-title">Public Records</div>
+            <div class="card-subtitle">Bankruptcies, judgments, and collections</div>
+          </div>
+        </div>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <h4>No Public Records Found</h4>
+          <p>Your file contains no bankruptcies, collections, consumer proposals, or court judgments. This is a strong positive signal for lenders.</p>
+        </div>
+      </div><!-- /public records card -->
+
+    </div><!-- /report main-col -->
+
+    <!-- ── REPORT SIDEBAR ── -->
+    <div class="sidebar">
+
+      <!-- Tips card -->
+      <div class="tips-card">
+        <h3>Understanding Your Report</h3>
+        <p class="tips-lead">Your credit report is a detailed record of your borrowing history. Here's what to know.</p>
+        <div class="tip-item">
+          <div class="tip-bullet">1</div>
+          <p><strong>Review it regularly.</strong> Check for accounts you don't recognize — these can be an early sign of identity fraud.</p>
+        </div>
+        <div class="tip-item">
+          <div class="tip-bullet">2</div>
+          <p><strong>Check for errors.</strong> Even minor mistakes — wrong address, incorrect account status — can be disputed and corrected for free.</p>
+        </div>
+        <div class="tip-item">
+          <div class="tip-bullet">3</div>
+          <p><strong>Closed accounts still matter.</strong> Positive closed accounts continue helping your history length for up to 10 years.</p>
+        </div>
+      </div>
+
+      <!-- Switch to Score tab -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-head">
+          <div class="sc-icon" style="background:var(--blue-light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h4>Your Credit Score</h4>
+        </div>
+        <div class="sidebar-card-body">
+          <p>Your current score is <strong style="color:var(--green);font-size:18px;">858</strong> — Excellent. View your score breakdown and score factors.</p>
+          <a href="#score" class="btn-gold" onclick="switchTab('score');return false;" style="text-align:center;">View Credit Score</a>
+        </div>
+      </div>
+
+      <!-- Dispute card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-head">
+          <div class="sc-icon" style="background:#FEECEC;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E8292F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h4>Dispute an Error</h4>
+        </div>
+        <div class="sidebar-card-body">
+          <p>Found incorrect information on your report? Contact the bureau directly to dispute any item.</p>
+          <a href="https://www.equifax.ca/personal/dispute-credit-report/options/" target="_blank" rel="noopener" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Dispute with Equifax
+          </a>
+          <a href="https://secure-ocs.transunion.ca/secureocs/home.html?lang=en" target="_blank" rel="noopener" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Dispute with TransUnion
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /report sidebar -->
+
+  </div><!-- /panel-report -->
+
+</div><!-- /page-layout -->
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4>
+        <img src="https://www.idassist.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">
+        24/7 Emergency Assistance
+      </h4>
+      <table>
+        <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
+        <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
+      </table>
+      <p><a href="/cdn-cgi/l/email-protection#e784929493888a8295948295918e8482a78e838694948e9493c984888a"><span class="__cf_email__" data-cfemail="f5968086819a989087869087839c9690b59c919486869c8681db969a98">[email&#160;protected]</span></a></p>
+      <div class="footer-maple">
+        <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
+        <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
+      </div>
+      <div class="footer-hours">
+        <strong>Our regular hours of operation are</strong>
+        9:00am – 9:00pm EST, Monday to Friday
+      </div>
+    </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/identity">Identity Theft &amp; Recovery</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/plans">Plans &amp; Pricing</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/help">Help</a></li>
+        <li><a href="https://www.idassist.com/en/terms-conditions">Terms &amp; Conditions</a></li>
+        <li><a href="https://www.idassist.com/en/privacy-policy">Privacy Policy</a></li>
+        <li><a href="https://www.idassist.com/en/cancellation-policy">Cancellation Policy</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/fr/dashboard">FR</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>ID&nbsp;Assist is an early warning system that helps you look after your identity.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. All rights reserved. ID&nbsp;Assist®, Sigma Loyalty Group Inc. and all associated marks and logos are trademarks owned or used under license. ID&nbsp;Assist® is provided by Sigma Loyalty Group Inc.</p>
+    <p>iPhone and App Store are trademarks of Apple Inc., registered in the U.S. and other countries. Android, Google Play and Play Store are trademarks of Google Inc., registered in the U.S. and other countries.</p>
+    <p>All product names, logos, and brands are property of their respective owners. All company, product, and service names used on this website are for identification purposes only. Use of these names does not imply endorsement.</p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ── Hamburger / Slide Menu ───────────────────────────────────────────────────
+  const hamburger   = document.getElementById('hamburger');
+  const slideMenu   = document.getElementById('slide-menu');
+  const menuOverlay = document.getElementById('menu-overlay');
+  function toggleMenu() {
+    const isOpen = slideMenu.classList.contains('open');
+    slideMenu.classList.toggle('open');
+    menuOverlay.classList.toggle('open');
+    hamburger.classList.toggle('open');
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  menuOverlay.addEventListener('click', toggleMenu);
+
+  // ── Tab Switching ────────────────────────────────────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('[data-tab="' + name + '"]').classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+    history.replaceState(null, '', '#' + name);
+    // Trigger gauge animation if switching to score
+    if (name === 'score') initLargeGauge();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchTab(this.dataset.tab); });
+  });
+
+  // Load tab from URL hash
+  (function() {
+    var hash = window.location.hash.replace('#','');
+    if (hash === 'report' || hash === 'creditreport') { switchTab('report'); }
+  })();
+
+  // ── Score label helper ───────────────────────────────────────────────────────
+  function scoreLabel(s) {
+    if (s >= 760) return { text: 'Excellent',  color: '#2E7D32' };
+    if (s >= 725) return { text: 'Very Good',  color: '#287292' };
+    if (s >= 660) return { text: 'Good',       color: '#F57C00' };
+    if (s >= 560) return { text: 'Fair',       color: '#F57C00' };
+    return              { text: 'Poor',        color: '#E8292F' };
+  }
+
+  // ── Large Gauge Animation ─────────────────────────────────────────────────────
+  // Arc: M 20 155 A 130 130 0 0 1 280 155
+  // cx=150, cy=155, r=130. Total arc length = π×130 ≈ 408.41
+  var LG_R    = 130;
+  var LG_CX   = 150;
+  var LG_CY   = 155;
+  var LG_LEN  = Math.PI * LG_R;  // ≈ 408.41
+
+  var lgArc      = document.getElementById('lg-credit-arc');
+  var lgArcCap   = document.getElementById('lg-credit-arc-cap');
+  var lgNeedle   = document.getElementById('lg-credit-needle');
+  var lgScoreNum = document.getElementById('lg-score-num');
+  var lgScoreVal = document.getElementById('lg-score-value');
+  var lgScoreLbl = document.getElementById('lg-score-label');
+
+  var lgAnimated = false;
+
+  function getPointOnLgArc(len) {
+    var t     = len / LG_LEN;
+    var angle = Math.PI * (1 - t);
+    return {
+      x: LG_CX + LG_R * Math.cos(angle),
+      y: LG_CY - LG_R * Math.sin(angle)
+    };
+  }
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function initLargeGauge() {
+    if (!lgArc || lgAnimated) return;
+    lgAnimated = true;
+
+    var raw        = parseInt(lgScoreNum.getAttribute('data-score'), 10);
+    var score      = Math.min(900, Math.max(300, isNaN(raw) ? 300 : raw));
+    var fillRatio  = (score - 300) / 600;
+    var targetLen  = LG_LEN * fillRatio;
+    var duration   = 1400;
+
+    var lbl = scoreLabel(score);
+    lgScoreVal.textContent       = score;
+    lgScoreLbl.textContent       = lbl.text;
+    lgScoreLbl.style.color       = lbl.color;
+
+    // Mobile: skip animation
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      var pt = getPointOnLgArc(targetLen);
+      lgArc.style.strokeDasharray = targetLen + ' ' + (LG_LEN - targetLen);
+      lgNeedle.setAttribute('cx', pt.x);
+      lgNeedle.setAttribute('cy', pt.y);
+      lgArcCap.style.opacity   = '1';
+      lgNeedle.style.opacity   = '1';
+      lgScoreNum.classList.add('show');
+      return;
+    }
+
+    // Desktop: animated
+    var scoreShown = false;
+    lgArcCap.classList.add('animate');
+    lgNeedle.classList.add('animate');
+
+    function animate(startTime) {
+      var elapsed  = performance.now() - startTime;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased    = easeOutCubic(progress);
+      var currentLen = Math.max(0.1, eased * targetLen);
+
+      lgArc.style.strokeDasharray = currentLen + ' ' + (LG_LEN - currentLen);
+      var pt = getPointOnLgArc(currentLen);
+      lgNeedle.setAttribute('cx', pt.x);
+      lgNeedle.setAttribute('cy', pt.y);
+
+      if (!scoreShown && progress > 0.7) {
+        lgScoreNum.classList.add('show');
+        scoreShown = true;
+      }
+      if (progress < 1) {
+        requestAnimationFrame(function() { animate(startTime); });
+      } else if (!scoreShown) {
+        lgScoreNum.classList.add('show');
+      }
+    }
+
+    if ('IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) { animate(performance.now()); obs.disconnect(); }
+        });
+      }, { threshold: 0 });
+      obs.observe(lgArc);
+    } else {
+      setTimeout(function() { animate(performance.now()); }, 300);
+    }
+
+    // Safety net: fire if card already visible on load
+    setTimeout(function() {
+      if (lgAnimated) return;
+      var rect = lgArc.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        animate(performance.now());
+      }
+    }, 600);
+  }
+
+  // Trigger gauge if score tab is active on load
+  if (document.getElementById('panel-score').classList.contains('active')) {
+    setTimeout(initLargeGauge, 100);
+  }
+</script>
+</body>
+</html>
