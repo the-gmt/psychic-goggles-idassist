@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID Assist – Alerts</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --red:#E8292F; --red-light:#FEF2F2; --gold:#FAAF42; --gold-hover:#e89e2e;
+    --dark:#212529; --body:#4B3F34; --slate:#495057; --teal:#287292; --teal-light:#E3F2F8;
+    --light:#F2F2F2; --green:#2E7D32; --green-light:#E8F5E9; --amber:#F57C00;
+    --amber-light:#FFF3E0; --border:#E0E0E0; --white:#fff;
+  }
+  body { font-family:'Source Sans Pro','Trebuchet MS',-apple-system,sans-serif; color:var(--body); background:#F5F5F5; -webkit-font-smoothing:antialiased; min-height:100vh; padding-top:64px; overflow-x:hidden; max-width:100vw; }
+  /* NAV */
+  .top-nav { display:flex; align-items:center; justify-content:space-between; padding:0 32px; height:64px; background:var(--white); border-bottom:1px solid var(--border); position:fixed; top:0; left:0; right:0; z-index:400; }
+  .top-nav-left a { display:flex; align-items:center; }
+  .top-nav-left img { height:50px; }
+  .top-nav-right { display:flex; align-items:center; gap:12px; }
+  .nav-bell { position:relative; background:none; border:none; cursor:pointer; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+  .nav-bell:hover { background:var(--light); }
+  .nav-bell svg { width:20px; height:20px; color:var(--body); }
+  .bell-badge { position:absolute; top:2px; right:2px; width:17px; height:17px; border-radius:50%; background:var(--red); color:var(--white); font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid var(--white); }
+  /* HAMBURGER */
+  .hamburger-btn { background:none; border:none; cursor:pointer; width:40px; height:40px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0; position:relative; transition:background .15s; }
+  .hamburger-btn:hover { background:var(--light); }
+  .hamburger-btn.open:hover { background:transparent; }
+  .hamburger-btn span { display:block; width:22px; height:2px; background:var(--body); border-radius:2px; position:absolute; transition:transform .3s ease,opacity .2s ease; }
+  .hamburger-btn span:nth-child(1) { transform:translateY(-7px); }
+  .hamburger-btn span:nth-child(2) { transform:translateY(0); }
+  .hamburger-btn span:nth-child(3) { transform:translateY(7px); }
+  .hamburger-btn.open span:nth-child(1) { transform:rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity:0; }
+  .hamburger-btn.open span:nth-child(3) { transform:rotate(-45deg); }
+  /* SLIDE MENU */
+  .menu-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.3); z-index:250; opacity:0; transition:opacity .25s ease; }
+  .menu-overlay.open { display:block; opacity:1; }
+  .slide-menu { position:fixed; top:64px; right:0; bottom:0; width:300px; background:var(--white); z-index:300; transform:translateX(100%); transition:transform .3s cubic-bezier(.4,0,.2,1); box-shadow:-4px 0 24px rgba(0,0,0,.1); display:flex; flex-direction:column; overflow-y:auto; }
+  .slide-menu.open { transform:translateX(0); }
+  .menu-header { padding:18px 24px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:12px; }
+  .menu-avatar { width:38px; height:38px; border-radius:50%; background:var(--slate); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; }
+  .menu-user-name { font-size:16px; font-weight:700; color:var(--dark); }
+  .menu-user-email { font-size:13px; color:#888; }
+  .menu-section { padding:12px 0; }
+  .menu-section + .menu-section { border-top:1px solid #eee; }
+  .menu-section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:#999; padding:4px 24px 8px; }
+  .menu-link { display:flex; align-items:center; gap:12px; padding:12px 24px; text-decoration:none; color:var(--body); font-size:15px; font-weight:600; transition:background .12s; }
+  .menu-link:hover { background:var(--light); }
+  .menu-link.active { background:#FFF5E0; color:var(--dark); }
+  .menu-link svg { width:20px; height:20px; color:#888; flex-shrink:0; }
+  .menu-link.active svg { color:var(--gold); }
+  .menu-link .menu-badge { margin-left:auto; background:var(--red); color:var(--white); font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px; }
+  .menu-link.logout { color:var(--red); }
+  .menu-link.logout svg { color:var(--red); }
+  /* HERO */
+  .status-hero { background:linear-gradient(135deg,#8B0000 0%,#B71C1C 40%,#C62828 70%,#8B1A1A 100%); padding:44px 48px 40px; position:relative; overflow:hidden; }
+  .status-hero::before { content:''; position:absolute; inset:0; pointer-events:none; background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M30 5 L55 50 L5 50 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat; }
+  .status-hero-inner { max-width:1200px; margin:0 auto; position:relative; z-index:1; display:flex; align-items:flex-start; justify-content:space-between; gap:32px; flex-wrap:wrap; }
+  .status-breadcrumb { font-size:13px; color:rgba(255,255,255,0.65); font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .status-breadcrumb a { color:rgba(255,255,255,0.65); text-decoration:none; }
+  .status-breadcrumb a:hover { color:rgba(255,255,255,0.9); }
+  .status-breadcrumb span { color:rgba(255,255,255,0.35); }
+  .status-hero h1 { font-size:32px; font-weight:800; color:var(--white); line-height:1.2; margin-bottom:14px; }
+  .status-pill { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:var(--white); font-size:14px; font-weight:700; padding:6px 14px; border-radius:20px; backdrop-filter:blur(4px); }
+  .status-pill-dot { width:8px; height:8px; border-radius:50%; background:#FCA5A5; box-shadow:0 0 0 3px rgba(252,165,165,0.3); animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { box-shadow:0 0 0 3px rgba(252,165,165,0.3); } 50% { box-shadow:0 0 0 6px rgba(252,165,165,0.1); } }
+  .hero-stats { display:flex; gap:12px; flex-wrap:wrap; margin-top:4px; }
+  .hero-stat { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:12px 20px; text-align:center; min-width:88px; backdrop-filter:blur(4px); }
+  .hero-stat-num { font-size:26px; font-weight:800; color:var(--white); line-height:1; }
+  .hero-stat-label { font-size:12px; font-weight:600; color:rgba(255,255,255,0.7); margin-top:4px; }
+  .hero-stat.unread .hero-stat-num { color:#FCA5A5; }
+  /* PAGE LAYOUT */
+  .page-layout { max-width:1200px; margin:0 auto; padding:36px 48px 80px; display:grid; grid-template-columns:1fr 300px; gap:32px; align-items:start; }
+  /* FILTER BAR */
+  .filter-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-tabs { display:flex; background:var(--white); border:1px solid var(--border); border-radius:9px; padding:3px; gap:2px; }
+  .filter-tab { padding:7px 16px; border-radius:7px; font-size:14px; font-weight:700; cursor:pointer; color:var(--slate); border:none; background:none; font-family:inherit; transition:all .15s; white-space:nowrap; }
+  .filter-tab:hover { color:var(--dark); background:var(--light); }
+  .filter-tab.active { background:var(--dark); color:var(--white); }
+  .filter-tab .tab-count { display:inline-block; margin-left:6px; background:rgba(255,255,255,0.25); padding:1px 7px; border-radius:10px; font-size:11px; font-weight:800; }
+  .filter-tab:not(.active) .tab-count { background:var(--light); color:var(--slate); }
+  .filter-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+  .filter-btn { display:inline-flex; align-items:center; gap:5px; padding:0 4px; border:none; background:none; font-size:13px; font-weight:600; color:var(--slate); cursor:pointer; transition:color .15s; font-family:inherit; }
+  .filter-btn:hover { color:var(--dark); }
+  .filter-btn svg { width:14px; height:14px; }
+  .filter-btn.active { color:var(--teal); }
+  .filter-panel { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:20px 24px; margin-bottom:16px; display:none; animation:slideDown .2s ease; }
+  .filter-panel.open { display:block; }
+  @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .filter-panel-inner { display:grid; grid-template-columns:1fr 1fr auto; gap:20px; align-items:end; }
+  .fp-group label { font-size:13px; font-weight:700; color:var(--slate); display:block; margin-bottom:6px; }
+  .fp-input { width:100%; border:1px solid var(--border); border-radius:7px; padding:8px 12px; font-size:14px; font-family:inherit; color:var(--dark); background:var(--white); transition:border-color .15s; }
+  .fp-input:focus { outline:none; border-color:var(--teal); }
+  .fp-actions { display:flex; gap:10px; align-items:center; }
+  .btn-gold { background:var(--gold); color:var(--dark); padding:9px 20px; border-radius:8px; font-size:14px; font-weight:700; border:none; cursor:pointer; transition:background .2s; font-family:inherit; }
+  .btn-gold:hover { background:var(--gold-hover); }
+  .btn-text { background:none; border:none; font-size:14px; font-weight:600; color:var(--slate); cursor:pointer; font-family:inherit; padding:9px 4px; }
+  .btn-text:hover { color:var(--dark); }
+  /* ALERT CARDS */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .alerts-group { margin-bottom:28px; }
+  .alerts-group:last-child { margin-bottom:0; }
+  .group-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#999; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .group-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .alert-card { background:var(--white); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:10px; transition:box-shadow .2s; animation:fadeUp .3s ease both; }
+  .alert-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.08); }
+  .alert-card:nth-child(2) { animation-delay:.04s; } .alert-card:nth-child(3) { animation-delay:.08s; } .alert-card:nth-child(4) { animation-delay:.12s; } .alert-card:nth-child(5) { animation-delay:.16s; } .alert-card:nth-child(6) { animation-delay:.20s; } .alert-card:nth-child(7) { animation-delay:.24s; } .alert-card:nth-child(8) { animation-delay:.28s; } .alert-card:nth-child(9) { animation-delay:.32s; }
+  .alert-card:last-child { margin-bottom:0; }
+  .alert-card-inner { display:flex; }
+  .alert-stripe { width:4px; flex-shrink:0; }
+  .alert-stripe.credit { background:var(--teal); }
+  .alert-stripe.darkweb { background:var(--red); }
+  .alert-stripe.archived { background:#ccc; }
+  .alert-card-content { flex:1; min-width:0; }
+  .alert-card-head { display:flex; align-items:center; gap:14px; padding:16px 20px; cursor:pointer; transition:background .1s; }
+  .alert-card-head:hover { background:#FAFAFA; }
+  .alert-card.open .alert-card-head { background:#F7F7F7; }
+  .alert-card-lead { display:flex; align-items:center; gap:8px; width:196px; flex-shrink:0; }
+  .alert-type-badge { flex:1; min-width:0; padding:4px 10px; border-radius:5px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap; text-align:center; overflow:hidden; text-overflow:ellipsis; }
+  .alert-type-badge.credit { background:var(--teal-light); color:var(--teal); }
+  .alert-type-badge.darkweb { background:var(--red-light); color:var(--red); }
+  .alert-type-badge.archived { background:var(--light); color:var(--slate); }
+  .alert-card-info { flex:1; min-width:0; }
+  .alert-card-title { font-size:15px; font-weight:700; color:var(--dark); line-height:1.3; }
+  .alert-card-sub { font-size:13px; color:var(--slate); margin-top:3px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .alert-source-chip { display:inline-flex; align-items:center; gap:5px; background:var(--light); border-radius:4px; padding:2px 8px; font-size:12px; font-weight:700; color:var(--slate); white-space:nowrap; }
+  .alert-source-chip svg { width:11px; height:11px; }
+  .alert-card-date { font-size:13px; color:#aaa; white-space:nowrap; flex-shrink:0; }
+  .alert-chevron { flex-shrink:0; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--light); transition:transform .2s,background .15s; }
+  .alert-chevron svg { width:15px; height:15px; color:var(--slate); transition:transform .25s; }
+  .alert-card.open .alert-chevron { background:var(--dark); }
+  .alert-card.open .alert-chevron svg { color:var(--white); transform:rotate(180deg); }
+  .unread-dot { width:8px; height:8px; border-radius:50%; background:var(--red); flex-shrink:0; }
+  /* DETAIL DRAWER */
+  .alert-detail { display:none; border-top:1px solid var(--border); padding:20px 24px 22px; background:#FAFAFA; animation:detailIn .2s ease both; }
+  .alert-card.open .alert-detail { display:block; }
+  @keyframes detailIn { from { opacity:0; } to { opacity:1; } }
+  .detail-cols { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px; }
+  .detail-section-head { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:var(--slate); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  .detail-section-head::after { content:''; flex:1; height:1px; background:var(--border); }
+  .detail-kv { margin-bottom:6px; }
+  .detail-kv-label { font-size:12px; font-weight:700; color:var(--dark); margin-bottom:2px; }
+  .detail-kv-value { font-size:13px; color:var(--body); line-height:1.55; }
+  .pii-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .pii-tag { display:inline-flex; align-items:center; gap:5px; background:var(--red-light); border:1px solid #FECACA; color:#991B1B; border-radius:5px; padding:3px 9px; font-size:12px; font-weight:700; }
+  .pii-tag.no-pw { background:var(--amber-light); border-color:#FED7AA; color:#92400E; }
+  .action-list { display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
+  .action-item { display:flex; align-items:flex-start; gap:10px; }
+  .action-item-icon { width:20px; height:20px; border-radius:50%; background:var(--teal-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .action-item-icon svg { width:11px; height:11px; color:var(--teal); }
+  .action-item p { font-size:14px; color:var(--body); line-height:1.6; }
+  .action-item p a { color:var(--teal); font-weight:600; text-decoration:none; }
+  .action-item p a:hover { text-decoration:underline; }
+  .detail-actions { display:flex; align-items:center; gap:10px; padding-top:14px; border-top:1px solid var(--border); }
+  .btn-archive-sm { padding:8px 20px; background:var(--gold); color:var(--dark); border-radius:7px; font-size:14px; font-weight:700; border:none; cursor:pointer; font-family:inherit; transition:background .15s; }
+  .btn-archive-sm:hover { background:var(--gold-hover); }
+  .btn-restore-sm { padding:8px 20px; background:var(--white); color:var(--dark); border-radius:7px; font-size:14px; font-weight:700; border:1px solid var(--border); cursor:pointer; font-family:inherit; transition:background .15s; }
+  .btn-restore-sm:hover { background:var(--light); }
+  .detail-help { margin-left:auto; font-size:13px; color:var(--teal); font-weight:600; text-decoration:none; }
+  .detail-help:hover { text-decoration:underline; }
+  /* EMPTY STATE */
+  .empty-state { text-align:center; padding:60px 24px; background:var(--white); border:1px solid var(--border); border-radius:12px; }
+  .empty-icon { width:52px; height:52px; border-radius:50%; background:var(--light); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+  .empty-icon svg { width:24px; height:24px; color:#bbb; }
+  .empty-state h3 { font-size:17px; font-weight:700; color:var(--dark); margin-bottom:6px; }
+  .empty-state p { font-size:14px; color:var(--slate); }
+  /* SIDEBAR */
+  .sidebar { position:sticky; top:88px; display:flex; flex-direction:column; gap:20px; }
+  .sidebar-card { background:var(--white); border:1px solid var(--border); border-radius:12px; overflow:hidden; animation:fadeUp .3s ease both; }
+  .sidebar-card:nth-child(2) { animation-delay:.08s; }
+  .sc-head { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+  .sc-icon { width:34px; height:34px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .sc-icon svg { width:16px; height:16px; }
+  .sc-head h4 { font-size:15px; font-weight:700; color:var(--dark); }
+  .sc-body { padding:16px 20px; }
+  .sc-body p { font-size:14px; color:var(--body); line-height:1.65; margin-bottom:12px; }
+  .sc-link { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; text-decoration:none; font-size:14px; font-weight:700; color:var(--dark); background:var(--light); transition:background .15s; margin-bottom:8px; }
+  .sc-link:last-child { margin-bottom:0; }
+  .sc-link:hover { background:#e5e5e5; }
+  .sc-link svg { width:16px; height:16px; color:var(--slate); flex-shrink:0; }
+  .tips-card { background:var(--slate); border-radius:12px; padding:24px; animation:fadeUp .35s ease both; }
+  .tips-card h3 { font-size:16px; font-weight:700; color:var(--white); margin-bottom:14px; }
+  .tip-item { display:flex; align-items:flex-start; gap:10px; margin-bottom:12px; }
+  .tip-item:last-child { margin-bottom:0; }
+  .tip-bullet { width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,0.15); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:var(--gold); margin-top:2px; }
+  .tip-item p { font-size:13px; color:rgba(255,255,255,0.8); line-height:1.6; }
+  .tip-item p strong { color:var(--white); }
+  /* FOOTER */
+  footer { background:#000; color:#ccc; font-size:15px; line-height:1.7; }
+  .footer-main { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:60px; padding:56px 48px 48px; }
+  .footer-contact h4 { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; color:#fff; margin-bottom:20px; font-family:'Trebuchet MS',sans-serif; }
+  .footer-contact table { border-collapse:collapse; margin-bottom:12px; }
+  .footer-contact td { padding:2px 24px 2px 0; color:#ccc; font-size:15px; }
+  .footer-contact td:last-child { color:#fff; font-weight:600; padding-right:0; }
+  .footer-contact a { color:#ccc; text-decoration:none; }
+  .footer-contact a:hover { color:var(--gold); }
+  .footer-maple { display:flex; align-items:flex-start; gap:10px; margin:16px 0 20px; }
+  .footer-maple p { font-size:15px; color:#ccc; margin:0; line-height:1.5; }
+  .footer-maple strong { color:#fff; }
+  .footer-hours { font-size:15px; }
+  .footer-hours strong { color:#fff; display:block; margin-bottom:2px; }
+  .footer-nav { padding-top:4px; }
+  .footer-nav ul { list-style:none; }
+  .footer-nav ul li { margin-bottom:14px; text-align:right; }
+  .footer-nav ul li a { color:#ccc; text-decoration:none; font-size:16px; font-weight:500; }
+  .footer-nav ul li a:hover { color:var(--gold); }
+  .footer-bottom { border-top:1px solid rgba(255,255,255,0.12); padding:28px 48px 36px; max-width:1200px; margin:0 auto; }
+  .footer-bottom p { font-size:13px; color:#999; line-height:1.7; margin-bottom:8px; }
+  .footer-bottom p:first-child { font-size:14px; font-weight:700; color:#ccc; margin-bottom:12px; }
+  /* RESPONSIVE */
+  @media (max-width:1024px) { .page-layout { grid-template-columns:1fr; padding:28px 32px 60px; } .sidebar { position:static; } .status-hero { padding:32px 32px 28px; } }
+  @media (max-width:768px) {
+    .top-nav { padding:0 16px; }
+    .slide-menu { width:100%; }
+
+    /* Hero */
+    .status-hero { padding:24px 16px 24px; }
+    .status-hero h1 { font-size:26px; }
+    .hero-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; width:100%; }
+    .hero-stat { min-width:0; padding:10px 12px; }
+    .hero-stat-num { font-size:22px; }
+
+    /* Page */
+    .page-layout { padding:16px 12px 48px; }
+
+    /* Filter bar: tabs fill first row, filter link sits below right-aligned */
+    .filter-bar { flex-wrap:wrap; gap:8px 0; }
+    .filter-tabs { flex:1; min-width:0; }
+    .filter-tab { padding:6px 10px; font-size:13px; }
+    .filter-tab .tab-count { margin-left:4px; padding:1px 5px; font-size:10px; }
+    .filter-right { width:100%; display:flex; justify-content:flex-end; padding:0 2px; }
+    .filter-btn { font-size:12px; }
+
+    /* Alert card: grid two-row layout */
+    .alert-card-head {
+      display: grid;
+      grid-template-areas: "lead date chevron" "info info info";
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto;
+      padding: 12px 12px;
+      gap: 8px 8px;
+      align-items: center;
+    }
+    .alert-card-lead { grid-area:lead; width:auto; }
+    .alert-card-info { grid-area:info; min-width:0; }
+    .alert-card-date { grid-area:date; text-align:right; font-size:12px; }
+    .alert-chevron   { grid-area:chevron; }
+    .alert-type-badge { width:auto; flex:none; font-size:10px; padding:3px 7px; letter-spacing:0.4px; }
+    .alert-card-title { font-size:14px; }
+    .alert-card-sub { font-size:12px; gap:5px; }
+    .alert-source-chip { font-size:11px; max-width:160px; overflow:hidden; text-overflow:ellipsis; }
+
+    /* Detail drawer */
+    .detail-cols { grid-template-columns:1fr; }
+    .detail-actions { flex-wrap:wrap; gap:8px; }
+    .detail-help { margin-left:0; }
+
+    /* Footer */
+    .footer-main { grid-template-columns:1fr; gap:32px; padding:40px 20px 32px; }
+    .footer-nav ul li { text-align:left; }
+    .footer-bottom { padding:20px 20px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top-nav">
+  <div class="top-nav-left">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">
+      <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist">
+    </a>
+  </div>
+  <div class="top-nav-right">
+    <button class="nav-bell" aria-label="Notifications" onclick="window.location.href='https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="bell-badge">2</span>
+    </button>
+    <button class="hamburger-btn" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="menu-overlay" id="menu-overlay"></div>
+<nav class="slide-menu" id="slide-menu">
+  <div class="menu-header">
+    <div class="menu-avatar">GT</div>
+    <div><div class="menu-user-name">Geoffrey Thomas</div><div class="menu-user-email">gthomas@outlook.com</div></div>
+  </div>
+  <div class="menu-section">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>Scan &amp; Score</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/credit" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Credit Score &amp; Report</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/darkweb" class="menu-link">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>Dark Web Monitoring</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts" class="menu-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Alerts<span class="menu-badge">2</span></a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Resources</div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>Help</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/identity" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>Identity Theft &amp; Recovery</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/risk" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Risk Assessment</a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Settings</div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scansettings" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Scan &amp; Score Settings</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/info" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>Personal Info</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/account" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.24,5.35 L10.51,2.62 L13.49,2.62 L14.76,5.35 L17.58,4.31 L19.69,6.42 L18.65,9.24 L21.38,10.51 L21.38,13.49 L18.65,14.76 L19.69,17.58 L17.58,19.69 L14.76,18.65 L13.49,21.38 L10.51,21.38 L9.24,18.65 L6.42,19.69 L4.31,17.58 L5.35,14.76 L2.62,13.49 L2.62,10.51 L5.35,9.24 L4.31,6.42 L6.42,4.31 Z"/><circle cx="12" cy="12" r="3"/></svg>Account &amp; Security</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/billing" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>Billing</a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/" class="menu-link logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</a>
+  </div>
+</nav>
+
+<div class="status-hero">
+  <div class="status-hero-inner">
+    <div>
+      <div class="status-breadcrumb">
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">Dashboard</a>
+        <span>›</span><span>Alerts</span>
+      </div>
+      <h1>Alerts</h1>
+      <div class="status-pill"><div class="status-pill-dot"></div>2 alerts need your attention</div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat unread"><div class="hero-stat-num">2</div><div class="hero-stat-label">Unread</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">1</div><div class="hero-stat-label">Credit</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">8</div><div class="hero-stat-label">Dark Web</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">81</div><div class="hero-stat-label">Total</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="page-layout">
+  <div>
+    <div class="filter-bar">
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All <span class="tab-count" id="count-all">9</span></button>
+        <button class="filter-tab" data-filter="credit">Credit <span class="tab-count" id="count-credit">1</span></button>
+        <button class="filter-tab" data-filter="darkweb">Dark Web <span class="tab-count" id="count-darkweb">8</span></button>
+        <button class="filter-tab" data-filter="archived">Archived <span class="tab-count" id="count-archived">0</span></button>
+      </div>
+      <div class="filter-right">
+        <button class="filter-btn" id="filterToggleBtn" onclick="toggleFilterPanel()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          Filter by date
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-panel" id="filterPanel">
+      <div class="filter-panel-inner">
+        <div class="fp-group"><label>From</label><input type="date" class="fp-input" value="2021-05-27"></div>
+        <div class="fp-group"><label>To</label><input type="date" class="fp-input" value="2026-03-25"></div>
+        <div class="fp-actions"><button class="btn-text" onclick="toggleFilterPanel()">Cancel</button><button class="btn-gold">Apply</button></div>
+      </div>
+    </div>
+
+    <div id="alerts-container">
+      <div class="alerts-group" id="group-unread">
+        <div class="group-label">Requires your attention</div>
+
+        <div class="alert-card" id="card-1" data-type="credit" data-orig="credit">
+          <div class="alert-card-inner"><div class="alert-stripe credit"></div>
+          <div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-1')">
+              <div class="alert-card-lead"><div class="unread-dot"></div><span class="alert-type-badge credit">Credit · Equifax</span></div>
+              <div class="alert-card-info">
+                <div class="alert-card-title">New Credit Inquiry Detected</div>
+                <div class="alert-card-sub">
+                  <span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>Presidents Choice MC</span>
+                  Equifax is reporting a new inquiry on your credit file
+                </div>
+              </div>
+              <div class="alert-card-date">Apr 4, 2025</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols">
+                <div>
+                  <div class="detail-section-head">Inquiry Details</div>
+                  <div class="detail-kv"><div class="detail-kv-label">Creditor</div><div class="detail-kv-value">Presidents Choice MC</div></div>
+                  <div class="detail-kv"><div class="detail-kv-label">Bureau</div><div class="detail-kv-value">Equifax</div></div>
+                  <div class="detail-kv"><div class="detail-kv-label">Date Detected</div><div class="detail-kv-value">April 4, 2025</div></div>
+                </div>
+                <div>
+                  <div class="detail-section-head">What this means</div>
+                  <div class="detail-kv"><div class="detail-kv-value">A new inquiry means someone checked your Equifax credit file — usually when you apply for credit. If you didn't initiate this, it may indicate unauthorized use of your information.</div></div>
+                </div>
+              </div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list">
+                <div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>If you don't recognize this inquiry, contact Equifax directly at <a href="tel:18668285961">1 (866) 828-5961</a>.</p></div>
+                <div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> to activate our Identity Restoration Services — we can place a fraud alert, guide you through every step, and help switch pre-authorized payments.</p></div>
+              </div>
+              <div class="detail-actions">
+                <button class="btn-archive-sm" onclick="archiveCard('card-1')">Archive</button>
+                <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="detail-help">Learn more about credit inquiries →</a>
+              </div>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="alert-card" id="card-2" data-type="darkweb" data-orig="darkweb">
+          <div class="alert-card-inner"><div class="alert-stripe darkweb"></div>
+          <div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-2')">
+              <div class="alert-card-lead"><div class="unread-dot"></div><span class="alert-type-badge darkweb">Dark Web · Trello</span></div>
+              <div class="alert-card-info">
+                <div class="alert-card-title">Email Address Found in Data Breach</div>
+                <div class="alert-card-sub">
+                  <span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>the.***@gmail.com</span>
+                  No associated password exposed
+                </div>
+              </div>
+              <div class="alert-card-date">Jul 23, 2024</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols">
+                <div>
+                  <div class="detail-section-head">Breach Details</div>
+                  <div class="detail-kv"><div class="detail-kv-label">Source</div><div class="detail-kv-value">Trello (trello.com)</div></div>
+                  <div class="detail-kv"><div class="detail-kv-label">Date of Breach</div><div class="detail-kv-value">January 15, 2024</div></div>
+                  <div class="detail-kv"><div class="detail-kv-label">Found Online</div><div class="detail-kv-value">July 15, 2024</div></div>
+                  <div class="detail-kv"><div class="detail-kv-label">Based in</div><div class="detail-kv-value">United States</div></div>
+                </div>
+                <div>
+                  <div class="detail-section-head">Exposed Information</div>
+                  <div class="pii-tags"><span class="pii-tag no-pw">Email Address</span><span class="pii-tag no-pw">Name</span><span class="pii-tag no-pw">Username</span><span class="pii-tag no-pw">Domain</span></div>
+                  <div class="detail-kv"><div class="detail-kv-value">Data exfiltrated from Trello in January 2024. Includes usernames, phone numbers, full names, and API tokens. No password was confirmed in this dataset.</div></div>
+                </div>
+              </div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list">
+                <div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Change the password for your Gmail account as a precaution, and update any accounts where you reuse it.</p></div>
+                <div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Update passwords for services that use your Gmail address as a login ID (e.g. Google, Facebook).</p></div>
+                <div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> for guided Identity Restoration support.</p></div>
+              </div>
+              <div class="detail-actions">
+                <button class="btn-archive-sm" onclick="archiveCard('card-2')">Archive</button>
+                <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="detail-help">What to do after a breach →</a>
+              </div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="alerts-group" id="group-read">
+        <div class="group-label">Previously reviewed</div>
+
+        <div class="alert-card" id="card-3" data-type="darkweb" data-orig="darkweb">
+          <div class="alert-card-inner"><div class="alert-stripe darkweb"></div><div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-3')">
+              <div class="alert-card-lead"><span class="alert-type-badge darkweb">Dark Web · AT&amp;T</span></div>
+              <div class="alert-card-info"><div class="alert-card-title">Email Address Found in Data Breach</div><div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>thom*****@hotmail.com</span>No associated password exposed</div></div>
+              <div class="alert-card-date">Jul 4, 2024</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols"><div><div class="detail-section-head">Breach Details</div><div class="detail-kv"><div class="detail-kv-label">Source</div><div class="detail-kv-value">AT&amp;T (att.com)</div></div><div class="detail-kv"><div class="detail-kv-label">Date of Breach</div><div class="detail-kv-value">January 1, 2024</div></div><div class="detail-kv"><div class="detail-kv-label">Based in</div><div class="detail-kv-value">United States</div></div></div><div><div class="detail-section-head">Exposed Information</div><div class="pii-tags"><span class="pii-tag no-pw">Email Address</span><span class="pii-tag no-pw">Name</span><span class="pii-tag no-pw">Phone Number</span></div><div class="detail-kv"><div class="detail-kv-value">A large AT&amp;T dataset published online containing email addresses, names, and account information from millions of accounts. No passwords confirmed.</div></div></div></div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list"><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Be alert to phishing using your name or phone number. Do not respond to unsolicited requests for personal details.</p></div><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> for guided Identity Restoration support.</p></div></div>
+              <div class="detail-actions"><button class="btn-archive-sm" onclick="archiveCard('card-3')">Archive</button></div>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="alert-card" id="card-4" data-type="darkweb" data-orig="darkweb">
+          <div class="alert-card-inner"><div class="alert-stripe darkweb"></div><div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-4')">
+              <div class="alert-card-lead"><span class="alert-type-badge darkweb">Dark Web · Ticketmaster</span></div>
+              <div class="alert-card-info"><div class="alert-card-title">Email &amp; Password Found in Data Breach</div><div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>thom*****@hotmail.com</span>Password hash exposed</div></div>
+              <div class="alert-card-date">Jul 4, 2024</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols"><div><div class="detail-section-head">Breach Details</div><div class="detail-kv"><div class="detail-kv-label">Source</div><div class="detail-kv-value">Ticketmaster (ticketmaster.com)</div></div><div class="detail-kv"><div class="detail-kv-label">Date of Breach</div><div class="detail-kv-value">March 20, 2024</div></div><div class="detail-kv"><div class="detail-kv-label">Based in</div><div class="detail-kv-value">United States</div></div></div><div><div class="detail-section-head">Exposed Information</div><div class="pii-tags"><span class="pii-tag">Email Address</span><span class="pii-tag">Password (hashed)</span><span class="pii-tag">Name</span><span class="pii-tag">Partial Payment Card</span></div></div></div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list"><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Change your Ticketmaster and Hotmail passwords immediately, and update any accounts using the same password.</p></div><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> for guided Identity Restoration support.</p></div></div>
+              <div class="detail-actions"><button class="btn-archive-sm" onclick="archiveCard('card-4')">Archive</button></div>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="alert-card" id="card-5" data-type="darkweb" data-orig="darkweb">
+          <div class="alert-card-inner"><div class="alert-stripe darkweb"></div><div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-5')">
+              <div class="alert-card-lead"><span class="alert-type-badge darkweb">Dark Web · Combolists</span></div>
+              <div class="alert-card-info"><div class="alert-card-title">Email &amp; Password in Aggregated Credential Dump</div><div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>thom*****@hotmail.com</span>Password exposed in plaintext</div></div>
+              <div class="alert-card-date">Jul 4, 2024</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols"><div><div class="detail-section-head">Breach Details</div><div class="detail-kv"><div class="detail-kv-label">Source</div><div class="detail-kv-value">naz.api aggregated combolist</div></div><div class="detail-kv"><div class="detail-kv-label">Type</div><div class="detail-kv-value">Multi-source credential aggregation and stealer logs</div></div></div><div><div class="detail-section-head">Exposed Information</div><div class="pii-tags"><span class="pii-tag">Email Address</span><span class="pii-tag">Password (plaintext)</span></div><div class="detail-kv"><div class="detail-kv-value">Widely circulated among threat actors. Plaintext exposure means this password must be changed everywhere it is used — immediately.</div></div></div></div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list"><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Change your Hotmail password immediately, and every other account where you use the same password.</p></div><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Enable two-factor authentication on all accounts that support it.</p></div><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> for guided Identity Restoration support.</p></div></div>
+              <div class="detail-actions"><button class="btn-archive-sm" onclick="archiveCard('card-5')">Archive</button></div>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="alert-card" id="card-6" data-type="darkweb" data-orig="darkweb">
+          <div class="alert-card-inner"><div class="alert-stripe darkweb"></div><div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-6')">
+              <div class="alert-card-lead"><span class="alert-type-badge darkweb">Dark Web · Dropbox</span></div>
+              <div class="alert-card-info"><div class="alert-card-title">Email &amp; Password Found in Data Breach</div><div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>thom*****@hotmail.com</span>Password hash, Name, Phone number exposed</div></div>
+              <div class="alert-card-date">Jul 4, 2024</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols"><div><div class="detail-section-head">Breach Details</div><div class="detail-kv"><div class="detail-kv-label">Source</div><div class="detail-kv-value">Dropbox Sign (dropbox.com)</div></div><div class="detail-kv"><div class="detail-kv-label">Date of Breach</div><div class="detail-kv-value">March 1, 2024</div></div><div class="detail-kv"><div class="detail-kv-label">Based in</div><div class="detail-kv-value">United States</div></div></div><div><div class="detail-section-head">Exposed Information</div><div class="pii-tags"><span class="pii-tag">Email Address</span><span class="pii-tag">Password (hashed)</span><span class="pii-tag">Name</span><span class="pii-tag">Phone Number</span></div></div></div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list"><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Change your Dropbox and Hotmail passwords and update any accounts using the same password.</p></div><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> for guided Identity Restoration support.</p></div></div>
+              <div class="detail-actions"><button class="btn-archive-sm" onclick="archiveCard('card-6')">Archive</button></div>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="alert-card" id="card-7" data-type="darkweb" data-orig="darkweb">
+          <div class="alert-card-inner"><div class="alert-stripe darkweb"></div><div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-7')">
+              <div class="alert-card-lead"><span class="alert-type-badge darkweb">Dark Web · Adobe</span></div>
+              <div class="alert-card-info"><div class="alert-card-title">Email &amp; Password Found in Data Breach</div><div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>thom*****@hotmail.com</span>Password hash, Username exposed</div></div>
+              <div class="alert-card-date">Jul 4, 2024</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols"><div><div class="detail-section-head">Breach Details</div><div class="detail-kv"><div class="detail-kv-label">Source</div><div class="detail-kv-value">Adobe (adobe.com)</div></div><div class="detail-kv"><div class="detail-kv-label">Date of Breach</div><div class="detail-kv-value">November 1, 2023</div></div><div class="detail-kv"><div class="detail-kv-label">Based in</div><div class="detail-kv-value">United States</div></div></div><div><div class="detail-section-head">Exposed Information</div><div class="pii-tags"><span class="pii-tag">Email Address</span><span class="pii-tag">Password (hashed)</span><span class="pii-tag">Username</span></div></div></div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list"><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Change your Adobe and Hotmail passwords immediately and update any accounts using the same password.</p></div><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> for guided Identity Restoration support.</p></div></div>
+              <div class="detail-actions"><button class="btn-archive-sm" onclick="archiveCard('card-7')">Archive</button></div>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="alert-card" id="card-8" data-type="darkweb" data-orig="darkweb">
+          <div class="alert-card-inner"><div class="alert-stripe darkweb"></div><div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-8')">
+              <div class="alert-card-lead"><span class="alert-type-badge darkweb">Dark Web · LinkedIn</span></div>
+              <div class="alert-card-info"><div class="alert-card-title">Email &amp; Password Found in Data Breach</div><div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>thom*****@hotmail.com</span>Password, Professional information exposed</div></div>
+              <div class="alert-card-date">Jul 4, 2024</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols"><div><div class="detail-section-head">Breach Details</div><div class="detail-kv"><div class="detail-kv-label">Source</div><div class="detail-kv-value">LinkedIn (linkedin.com)</div></div><div class="detail-kv"><div class="detail-kv-label">Date of Breach</div><div class="detail-kv-value">April 1, 2024</div></div><div class="detail-kv"><div class="detail-kv-label">Based in</div><div class="detail-kv-value">United States</div></div></div><div><div class="detail-section-head">Exposed Information</div><div class="pii-tags"><span class="pii-tag">Email Address</span><span class="pii-tag">Password</span><span class="pii-tag">Name</span><span class="pii-tag">Professional Info</span></div></div></div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list"><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Change your LinkedIn password and enable two-step verification on your account.</p></div><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> for guided Identity Restoration support.</p></div></div>
+              <div class="detail-actions"><button class="btn-archive-sm" onclick="archiveCard('card-8')">Archive</button></div>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="alert-card" id="card-9" data-type="darkweb" data-orig="darkweb">
+          <div class="alert-card-inner"><div class="alert-stripe darkweb"></div><div class="alert-card-content">
+            <div class="alert-card-head" onclick="toggleCard('card-9')">
+              <div class="alert-card-lead"><span class="alert-type-badge darkweb">Dark Web · Canva</span></div>
+              <div class="alert-card-info"><div class="alert-card-title">Email &amp; Password Found in Data Breach</div><div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>thom*****@hotmail.com</span>Password hash, Username, Name exposed</div></div>
+              <div class="alert-card-date">Jul 4, 2024</div>
+              <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="alert-detail">
+              <div class="detail-cols"><div><div class="detail-section-head">Breach Details</div><div class="detail-kv"><div class="detail-kv-label">Source</div><div class="detail-kv-value">Canva (canva.com, Australia)</div></div><div class="detail-kv"><div class="detail-kv-label">Date of Breach</div><div class="detail-kv-value">May 24, 2019</div></div><div class="detail-kv"><div class="detail-kv-label">Found Online</div><div class="detail-kv-value">July 4, 2024</div></div></div><div><div class="detail-section-head">Exposed Information</div><div class="pii-tags"><span class="pii-tag">Email Address</span><span class="pii-tag">Password (hashed)</span><span class="pii-tag">Username</span><span class="pii-tag">Name</span></div><div class="detail-kv"><div class="detail-kv-value">The 2019 Canva breach (137M users) re-emerged in a 2024 aggregated dump. Includes bcrypt-hashed passwords, usernames, names, and locations.</div></div></div></div>
+              <div class="detail-section-head">Steps to take</div>
+              <div class="action-list"><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Change your Canva and Hotmail passwords and update any accounts using the same password.</p></div><div class="action-item"><div class="action-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><p>Call us at <a href="tel:18779001837">1-877-900-1837</a> for guided Identity Restoration support.</p></div></div>
+              <div class="detail-actions"><button class="btn-archive-sm" onclick="archiveCard('card-9')">Archive</button></div>
+            </div>
+          </div></div>
+        </div>
+
+      </div>
+
+      <div class="alerts-group" id="group-archived" style="display:none;">
+        <div class="group-label">Archived</div>
+        <div id="archived-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sc-head">
+        <div class="sc-icon" style="background:#FDECEA;"><svg viewBox="0 0 24 24" fill="none" stroke="#E8292F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h4>Identity Restoration</h4>
+      </div>
+      <div class="sc-body">
+        <p>Our Canadian specialists are available 24/7 to guide you through any breach — from fraud alerts to replacing compromised documents.</p>
+        <a href="tel:18779001837" class="sc-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.38a2 2 0 0 1 2-2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>1-877-900-1837</a>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/identity" class="sc-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>Identity Theft &amp; Recovery Guide</a>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="sc-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Help &amp; FAQs</a>
+      </div>
+    </div>
+
+    <div class="tips-card">
+      <h3>Stay protected</h3>
+      <div class="tip-item"><div class="tip-bullet">1</div><p><strong>Use unique passwords</strong> for every account. A password manager makes this effortless.</p></div>
+      <div class="tip-item"><div class="tip-bullet">2</div><p><strong>Enable two-factor authentication</strong> wherever possible — it blocks most account takeover attempts.</p></div>
+      <div class="tip-item"><div class="tip-bullet">3</div><p><strong>Monitor your credit regularly.</strong> Unexpected inquiries are an early signal of fraud.</p></div>
+      <div class="tip-item"><div class="tip-bullet">4</div><p><strong>Act quickly</strong> on breach notifications — the sooner you change credentials, the less exposure you face.</p></div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sc-head">
+        <div class="sc-icon" style="background:#E8F5E9;"><svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>
+        <h4>Monitoring Settings</h4>
+      </div>
+      <div class="sc-body">
+        <p>Manage what personal information we monitor for you on the dark web.</p>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/darkweb" class="sc-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>Dark Web Monitoring</a>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/credit" class="sc-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Credit Score &amp; Report</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4><img src="https://www.idassist.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">24/7 Emergency Assistance</h4>
+      <table><tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr><tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr></table>
+      <p><a href="mailto:customerservice@idassist.com">customerservice@idassist.com</a></p>
+      <div class="footer-maple"><img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20"><p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p></div>
+      <div class="footer-hours"><strong>Our regular hours of operation are</strong>9:00am – 9:00pm EST, Monday to Friday</div>
+    </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/identity">Identity Theft &amp; Recovery</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/plans">Plans &amp; Pricing</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/help">Help</a></li>
+        <li><a href="https://www.idassist.com/en/terms-conditions">Terms &amp; Conditions</a></li>
+        <li><a href="https://www.idassist.com/en/privacy-policy">Privacy Policy</a></li>
+        <li><a href="https://www.idassist.com/en/cancellation-policy">Cancellation Policy</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/fr/dashboard/alerts">FR</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>ID&nbsp;Assist is an early warning system that helps you look after your identity.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. All rights reserved. ID&nbsp;Assist®, Sigma Loyalty Group Inc. and all associated marks and logos are trademarks owned or used under license. ID&nbsp;Assist® is provided by Sigma Loyalty Group Inc.</p>
+    <p>iPhone and App Store are trademarks of Apple Inc., registered in the U.S. and other countries. Android, Google Play and Play Store are trademarks of Google Inc., registered in the U.S. and other countries.</p>
+    <p>All product names, logos, and brands are property of their respective owners. All company, product, and service names used on this website are for identification purposes only. Use of these names does not imply endorsement.</p>
+  </div>
+</footer>
+
+<script>
+  const hamburger=document.getElementById('hamburger'),slideMenu=document.getElementById('slide-menu'),menuOverlay=document.getElementById('menu-overlay');
+  function toggleMenu(){const o=slideMenu.classList.contains('open');slideMenu.classList.toggle('open');menuOverlay.classList.toggle('open');hamburger.classList.toggle('open');document.body.style.overflow=o?'':'hidden';}
+  hamburger.addEventListener('click',toggleMenu);menuOverlay.addEventListener('click',toggleMenu);
+
+  document.querySelectorAll('.filter-tab').forEach(t=>t.addEventListener('click',function(){document.querySelectorAll('.filter-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');applyFilter(t.dataset.filter);}));
+
+  function applyFilter(f){
+    var allCards=document.querySelectorAll('#group-unread .alert-card, #group-read .alert-card');
+    var archivedCards=document.querySelectorAll('#archived-list .alert-card');
+    var showEmptyArchive=false;
+    allCards.forEach(function(c){
+      if(f==='all') c.style.display='';
+      else if(f==='archived') c.style.display='none';
+      else c.style.display=(c.dataset.type===f)?'':'none';
+    });
+    archivedCards.forEach(function(c){ c.style.display=(f==='archived')?'':'none'; });
+    document.getElementById('group-unread').style.display=(f==='archived')?'none':'';
+    document.getElementById('group-read').style.display=(f==='archived')?'none':'';
+    var archGrp=document.getElementById('group-archived');
+    if(f==='archived'){
+      archGrp.style.display=archivedCards.length>0?'':'none';
+      if(archivedCards.length===0) showEmptyArchive=true;
+    } else { archGrp.style.display='none'; }
+    var ec=document.getElementById('empty-archived');
+    if(showEmptyArchive && !ec){
+      var div=document.createElement('div'); div.id='empty-archived'; div.className='empty-state';
+      div.innerHTML='<div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div><h3>Archive is empty</h3><p>Alerts you archive will appear here.</p>';
+      document.getElementById('alerts-container').appendChild(div);
+    } else if(!showEmptyArchive && ec){ ec.remove(); }
+  }
+
+  function toggleCard(id){document.getElementById(id).classList.toggle('open');}
+
+  function toggleFilterPanel(){document.getElementById('filterPanel').classList.toggle('open');document.getElementById('filterToggleBtn').classList.toggle('active');}
+
+  function archiveCard(id){
+    var card=document.getElementById(id),list=document.getElementById('archived-list'),grp=document.getElementById('group-archived');
+    if(!card)return;
+    card.classList.remove('open');
+    var stripe=card.querySelector('.alert-stripe'); if(stripe){stripe.className='alert-stripe archived';}
+    var badge=card.querySelector('.alert-type-badge'); if(badge){badge.className='alert-type-badge archived';}
+    var dot=card.querySelector('.unread-dot'); if(dot)dot.remove();
+    var ab=card.querySelector('.btn-archive-sm');
+    if(ab){ab.textContent='Restore';ab.className='btn-restore-sm';ab.onclick=function(){restoreCard(id);};}
+    card.style.transition='opacity .25s ease';card.style.opacity='0';
+    setTimeout(function(){list.appendChild(card);card.style.opacity='1';card.dataset.type='archived';grp.style.display='';updateCounts();},250);
+  }
+
+  function restoreCard(id){
+    var card=document.getElementById(id),readGrp=document.getElementById('group-read');
+    if(!card)return;
+    card.classList.remove('open');
+    var orig=card.dataset.orig||'darkweb';
+    var stripe=card.querySelector('.alert-stripe'); if(stripe)stripe.className='alert-stripe '+orig;
+    var badge=card.querySelector('.alert-type-badge'); if(badge)badge.className='alert-type-badge '+orig;
+    var rb=card.querySelector('.btn-restore-sm');
+    if(rb){rb.textContent='Archive';rb.className='btn-archive-sm';rb.onclick=function(){archiveCard(id);};}
+    card.style.opacity='0';
+    setTimeout(function(){readGrp.appendChild(card);card.style.opacity='1';card.dataset.type=orig;
+      var list=document.getElementById('archived-list'),grp=document.getElementById('group-archived');
+      if(list.children.length===0)grp.style.display='none';updateCounts();},250);
+  }
+
+  function updateCounts(){
+    var all=document.querySelectorAll('#group-unread .alert-card, #group-read .alert-card').length;
+    var credit=document.querySelectorAll('#group-unread .alert-card[data-type="credit"], #group-read .alert-card[data-type="credit"]').length;
+    var dw=document.querySelectorAll('#group-unread .alert-card[data-type="darkweb"], #group-read .alert-card[data-type="darkweb"]').length;
+    var arch=document.getElementById('archived-list').children.length;
+    document.getElementById('count-all').textContent=all;
+    document.getElementById('count-credit').textContent=credit;
+    document.getElementById('count-darkweb').textContent=dw;
+    document.getElementById('count-archived').textContent=arch;
+  }
+</script>
+</body>
+</html>
