@@ -67,11 +67,7 @@
   .status-pill { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:var(--white); font-size:14px; font-weight:700; padding:6px 14px; border-radius:20px; backdrop-filter:blur(4px); }
   .status-pill-dot { width:8px; height:8px; border-radius:50%; background:#FCA5A5; box-shadow:0 0 0 3px rgba(252,165,165,0.3); animation:pulse 2s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { box-shadow:0 0 0 3px rgba(252,165,165,0.3); } 50% { box-shadow:0 0 0 6px rgba(252,165,165,0.1); } }
-  .hero-stats { display:flex; gap:12px; flex-wrap:wrap; margin-top:4px; }
-  .hero-stat { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:12px 20px; text-align:center; min-width:88px; backdrop-filter:blur(4px); }
-  .hero-stat-num { font-size:26px; font-weight:800; color:var(--white); line-height:1; }
-  .hero-stat-label { font-size:12px; font-weight:600; color:rgba(255,255,255,0.7); margin-top:4px; }
-  .hero-stat.unread .hero-stat-num { color:#FCA5A5; }
+  .hero-stats { display:none; }
   /* PAGE LAYOUT */
   .page-layout { max-width:1200px; margin:0 auto; padding:36px 48px 80px; display:grid; grid-template-columns:1fr 300px; gap:32px; align-items:start; }
   /* FILTER BAR */
@@ -219,9 +215,7 @@
     /* Hero */
     .status-hero { padding:24px 16px 24px; }
     .status-hero h1 { font-size:26px; }
-    .hero-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; width:100%; }
-    .hero-stat { min-width:0; padding:10px 12px; }
-    .hero-stat-num { font-size:22px; }
+    .hero-stats { display:none; }
 
     /* Page */
     .page-layout { padding:16px 12px 48px; }
@@ -333,12 +327,7 @@
       </div>
       <h1>Alerts</h1>
       <div class="status-pill"><div class="status-pill-dot"></div>2 alerts need your attention</div>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat unread"><div class="hero-stat-num">2</div><div class="hero-stat-label">Unread</div></div>
-      <div class="hero-stat"><div class="hero-stat-num">1</div><div class="hero-stat-label">Credit</div></div>
-      <div class="hero-stat"><div class="hero-stat-num">8</div><div class="hero-stat-label">Dark Web</div></div>
-      <div class="hero-stat"><div class="hero-stat-num">81</div><div class="hero-stat-label">Total</div></div>
+    </div></div>
     </div>
   </div>
 </div>
@@ -379,10 +368,7 @@
               <div class="alert-card-lead"><div class="unread-dot"></div><span class="alert-type-badge credit">Credit · Equifax</span></div>
               <div class="alert-card-info">
                 <div class="alert-card-title">New Credit Inquiry Detected</div>
-                <div class="alert-card-sub">
-                  <span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>Presidents Choice MC</span>
-                  Equifax is reporting a new inquiry on your credit file
-                </div>
+                <div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>Presidents Choice MC</span>Equifax is reporting a new inquiry on your credit file</div>
               </div>
               <div class="alert-card-date">Apr 4, 2025</div>
               <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
@@ -420,10 +406,7 @@
               <div class="alert-card-lead"><div class="unread-dot"></div><span class="alert-type-badge darkweb">Dark Web · Trello</span></div>
               <div class="alert-card-info">
                 <div class="alert-card-title">Email Address Found in Data Breach</div>
-                <div class="alert-card-sub">
-                  <span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>the.***@gmail.com</span>
-                  No associated password exposed
-                </div>
+                <div class="alert-card-sub"><span class="alert-source-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>the.***@gmail.com</span>No associated password exposed</div>
               </div>
               <div class="alert-card-date">Jul 23, 2024</div>
               <div class="alert-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
