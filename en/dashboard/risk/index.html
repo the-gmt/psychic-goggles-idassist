@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID Assist – Risk Assessment</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/the-gmt/expert-octo-garbanzo/faf8b0f57a69db3d551bf99fccea3d31dcf12b82/IDAssist_button.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans Pro', 'Trebuchet MS', -apple-system, sans-serif;
+    color: #4B3F34; line-height: 1.6; background: #F5F5F5;
+    -webkit-font-smoothing: antialiased;
+    padding-top: 64px;
+  }
+
+  :root {
+    --red: #E8292F;
+    --gold: #FAAF42;
+    --gold-hover: #e89e2e;
+    --dark: #212529;
+    --body: #4B3F34;
+    --slate: #495057;
+    --teal: #287292;
+    --light: #F2F2F2;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
+    --amber: #F57C00;
+    --amber-light: #FFF3E0;
+    --border: #E0E0E0;
+    --white: #fff;
+    --emerald: #10B981;
+  }
+
+  /* ─── TOP NAV ─── */
+  .top-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 64px; background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+  }
+  .top-nav-left a { display: flex; align-items: center; }
+  .top-nav-left img { height: 50px; }
+  .top-nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-bell {
+    position: relative; background: none; border: none; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; transition: background .15s;
+  }
+  .nav-bell:hover { background: var(--light); }
+  .nav-bell svg { width: 20px; height: 20px; color: var(--body); }
+  .bell-badge {
+    position: absolute; top: 2px; right: 2px; width: 17px; height: 17px; border-radius: 50%;
+    background: var(--red); color: var(--white); font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; border: 2px solid var(--white);
+  }
+
+  /* ─── HAMBURGER ─── */
+  .hamburger-btn {
+    background: none; border: none; cursor: pointer; width: 40px; height: 40px;
+    border-radius: 8px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 0; position: relative; transition: background .15s;
+  }
+  .hamburger-btn:hover { background: var(--light); }
+  .hamburger-btn.open:hover { background: transparent; }
+  .hamburger-btn span {
+    display: block; width: 22px; height: 2px; background: var(--dark);
+    border-radius: 2px; position: absolute;
+    transition: transform .3s ease, opacity .2s ease;
+  }
+  .hamburger-btn span:nth-child(1) { transform: translateY(-7px); }
+  .hamburger-btn span:nth-child(2) { transform: translateY(0); }
+  .hamburger-btn span:nth-child(3) { transform: translateY(7px); }
+  .hamburger-btn.open span:nth-child(1) { transform: rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg); }
+
+  /* ─── SLIDE MENU ─── */
+  .menu-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.3); z-index: 250; opacity: 0; transition: opacity .25s ease;
+  }
+  .menu-overlay.open { display: block; opacity: 1; }
+  .slide-menu {
+    position: fixed; top: 64px; right: 0; bottom: 0; width: 300px;
+    background: var(--white); z-index: 300;
+    transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+    box-shadow: -4px 0 24px rgba(0,0,0,.1);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .slide-menu.open { transform: translateX(0); }
+  .menu-header {
+    padding: 18px 24px; border-bottom: 1px solid #eee;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .menu-avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--slate); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .menu-user-name { font-size: 16px; font-weight: 700; color: var(--dark); }
+  .menu-user-email { font-size: 13px; color: #888; }
+  .menu-section { padding: 12px 0; }
+  .menu-section + .menu-section { border-top: 1px solid #eee; }
+  .menu-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: #999; padding: 4px 24px 8px;
+  }
+  .menu-link {
+    display: flex; align-items: center; gap: 12px; padding: 12px 24px;
+    text-decoration: none; color: var(--body); font-size: 15px; font-weight: 600;
+    transition: background .12s;
+  }
+  .menu-link:hover { background: var(--light); }
+  .menu-link.active { background: #FFF5E0; color: var(--dark); }
+  .menu-link svg { width: 20px; height: 20px; color: #888; flex-shrink: 0; }
+  .menu-link.active svg { color: var(--gold); }
+  .menu-link .menu-badge {
+    margin-left: auto; background: var(--red); color: var(--white);
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  }
+  .menu-link.logout { color: var(--red); }
+  .menu-link.logout svg { color: var(--red); }
+
+  /* ─── HERO ─── */
+  .status-hero {
+    background: linear-gradient(135deg, #6e3500 0%, #9b4a00 45%, #c76300 100%);
+    padding: 40px 48px 36px; position: relative; overflow: hidden;
+  }
+  .status-hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M30 5 L55 18 L55 42 L30 55 L5 42 L5 18 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  }
+  .status-hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+  .status-breadcrumb {
+    font-size: 13px; color: rgba(255,255,255,0.65); font-weight: 600;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+  .status-breadcrumb a { color: rgba(255,255,255,0.65); text-decoration: none; }
+  .status-breadcrumb a:hover { color: rgba(255,255,255,0.9); text-decoration: underline; }
+  .status-breadcrumb span { color: rgba(255,255,255,0.35); }
+  .status-hero h1 {
+    font-size: 32px; font-weight: 800; color: var(--white); line-height: 1.2; margin-bottom: 16px;
+  }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: var(--white); font-size: 14px; font-weight: 600;
+    padding: 6px 14px; border-radius: 20px; backdrop-filter: blur(4px);
+  }
+  .status-pill svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  /* ─── PAGE LAYOUT ─── */
+  .page-layout {
+    max-width: 1200px; margin: 0 auto;
+    padding: 48px 48px 80px;
+    display: grid; grid-template-columns: 1fr 320px;
+    gap: 40px; align-items: start;
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--white); border-radius: 14px; border: 1px solid var(--border);
+    overflow: hidden; animation: fadeUp .3s ease both; margin-bottom: 24px;
+  }
+  .card:last-child { margin-bottom: 0; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card:nth-child(2) { animation-delay: .07s; }
+  .card:nth-child(3) { animation-delay: .14s; }
+
+  .card-head {
+    padding: 20px 24px 18px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .card-icon {
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-icon svg { width: 20px; height: 20px; }
+  .card-title    { font-size: 18px; font-weight: 700; color: var(--dark); line-height: 1.2; }
+  .card-subtitle { font-size: 14px; color: var(--slate); margin-top: 1px; }
+
+  /* ─── OVERALL SCORE ─── */
+  .score-display {
+    padding: 32px 28px 24px; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .score-eyebrow {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px;
+    color: var(--slate); margin-bottom: 8px;
+  }
+  .score-headline {
+    font-size: 48px; font-weight: 800; color: var(--amber); line-height: 1; margin-bottom: 6px; letter-spacing: -1px;
+  }
+  .score-sub { font-size: 16px; color: var(--slate); margin-bottom: 32px; }
+  .score-bar {
+    width: 100%; height: 14px; border-radius: 7px;
+    background: linear-gradient(90deg, var(--emerald), var(--gold), var(--red)); position: relative;
+  }
+  .score-marker {
+    position: absolute; top: -8px; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--white); border: 4px solid var(--amber);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.18); transform: translateX(-50%);
+  }
+  .score-scale {
+    display: flex;
+    font-size: 11px; color: #aaa; font-weight: 600; margin-top: 12px;
+  }
+  .score-scale span { flex: 1; text-align: center; }
+  .score-meta {
+    padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 14px; color: var(--slate); border-bottom: 1px solid var(--border); background: #FAFAFA;
+  }
+  .score-meta strong { color: var(--dark); font-weight: 700; }
+  .score-meta-link { font-size: 14px; font-weight: 600; color: var(--teal); text-decoration: none; }
+  .score-meta-link:hover { text-decoration: underline; }
+  .score-description { padding: 22px 24px; font-size: 16px; color: var(--body); line-height: 1.65; }
+  .score-description p { margin-bottom: 12px; }
+  .score-description p:last-child { margin-bottom: 0; }
+
+  /* ─── FACTOR ROWS ─── */
+  .factor-row { border-bottom: 1px solid var(--border); }
+  .factor-row:last-child { border-bottom: none; }
+
+  .factor-summary { padding: 22px 24px 0; }
+  .factor-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+  .factor-icon {
+    width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .factor-icon svg { width: 19px; height: 19px; }
+  .factor-info { flex: 1; min-width: 0; }
+  .factor-name  { font-size: 16px; font-weight: 700; color: var(--dark); line-height: 1.2; }
+  .factor-desc  { font-size: 14px; color: var(--slate); margin-top: 3px; line-height: 1.45; }
+  .factor-chip {
+    flex-shrink: 0; font-size: 12px; font-weight: 700; padding: 5px 11px;
+    border-radius: 6px; white-space: nowrap; margin-top: 1px;
+  }
+  .factor-chip.low           { background: #E8F5E9; color: #1B6B33; }
+  .factor-chip.below-average { background: #E3F9EE; color: #1A7A40; }
+  .factor-chip.average       { background: var(--amber-light); color: var(--amber); }
+  .factor-chip.above-average { background: #FBE9E7; color: #C62828; }
+  .factor-chip.high          { background: #FFEBEE; color: var(--red); }
+
+  .factor-bar {
+    width: 100%; height: 10px; border-radius: 5px;
+    background: linear-gradient(90deg, var(--emerald), var(--gold), var(--red));
+    position: relative; margin-bottom: 9px;
+  }
+  .factor-marker {
+    position: absolute; top: -5px; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--white); box-shadow: 0 2px 7px rgba(0,0,0,0.16);
+    transform: translateX(-50%); border: 3px solid var(--slate);
+  }
+  .factor-marker.low           { border-color: #1B6B33; }
+  .factor-marker.below-average { border-color: #1A7A40; }
+  .factor-marker.average       { border-color: var(--amber); }
+  .factor-marker.above-average { border-color: #C62828; }
+  .factor-marker.high          { border-color: var(--red); }
+  .factor-scale {
+    display: flex;
+    font-size: 10px; color: #bbb; font-weight: 600; letter-spacing: 0.2px;
+  }
+  .factor-scale span { flex: 1; text-align: center; }
+
+  /* Toggle button */
+  .factor-toggle {
+    display: flex; align-items: center; gap: 7px;
+    background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 700; color: var(--teal);
+    padding: 13px 24px; width: 100%; text-align: left;
+    border-top: 1px solid #f0f0f0; margin-top: 4px;
+    transition: background .12s, color .12s;
+  }
+  .factor-toggle:hover { background: #F7FBFD; }
+  .factor-toggle svg { width: 16px; height: 16px; flex-shrink: 0; transition: transform .28s ease; }
+  .factor-toggle.open svg { transform: rotate(180deg); }
+  .factor-toggle.open { color: var(--slate); }
+  .factor-toggle-label { flex: 1; }
+
+  /* Accordion panel */
+  .factor-detail {
+    overflow: hidden; max-height: 0;
+    transition: max-height .42s cubic-bezier(.4,0,.2,1);
+  }
+  .factor-detail.open { max-height: 2800px; }
+
+  .factor-detail-inner {
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border);
+    background: #FAFAFA;
+  }
+  .detail-summary {
+    font-size: 15px; color: var(--body); line-height: 1.6;
+    padding: 16px 0 18px; border-bottom: 1px solid #ebebeb;
+  }
+
+  /* Sub-factors */
+  .sub-factor { padding: 18px 0; border-bottom: 1px solid #ebebeb; }
+  .sub-factor:last-child { border-bottom: none; padding-bottom: 4px; }
+  .sub-factor-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+  .sub-badge {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .sub-badge svg { width: 14px; height: 14px; }
+  .sub-badge.red    { background: var(--red); }
+  .sub-badge.orange { background: var(--amber); }
+  .sub-badge.green  { background: var(--green); }
+  .sub-factor-title { font-size: 15px; font-weight: 700; color: var(--dark); line-height: 1.35; padding-top: 3px; }
+  .sub-factor-body  { font-size: 14px; color: var(--body); line-height: 1.65; padding-left: 40px; }
+
+  /* ─── ABOUT CARD ─── */
+  .about-body { padding: 22px 24px; }
+  .about-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-top: 1px solid var(--border); }
+  .about-row:first-of-type { border-top: none; padding-top: 0; }
+  .about-bullet {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    background: var(--amber-light); border: 1.5px solid #f0c070;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: var(--amber);
+  }
+  .about-row-text h4 { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+  .about-row-text p  { font-size: 14px; color: var(--slate); line-height: 1.5; }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar { position: sticky; top: 88px; }
+  .sidebar-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden; margin-bottom: 20px; animation: fadeUp .3s ease both;
+  }
+  .sidebar-card:nth-child(2) { animation-delay: .08s; }
+  .sidebar-card:nth-child(3) { animation-delay: .16s; }
+  .sidebar-card:last-child { margin-bottom: 0; }
+  .sidebar-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .sc-icon { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .sc-icon svg { width: 17px; height: 17px; }
+  .sidebar-head h4 { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .sidebar-body { padding: 18px 20px; }
+
+  .sg-stat {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px;
+  }
+  .sg-stat:last-child { border-bottom: none; }
+  .sg-stat-label { color: var(--slate); }
+  .sg-stat-val { font-weight: 700; color: var(--dark); }
+  .sg-stat-val.green { color: var(--green); }
+  .sg-stat-val.amber { color: var(--amber); }
+  .sg-stat-val.red   { color: var(--red); }
+
+  .action-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+  .action-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .action-icon { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+  .action-icon svg { width: 15px; height: 15px; }
+  .action-title { font-size: 14px; font-weight: 700; color: var(--dark); line-height: 1.3; margin-bottom: 2px; }
+  .action-desc  { font-size: 13px; color: var(--slate); line-height: 1.45; }
+  .action-link  { font-size: 13px; font-weight: 600; color: var(--teal); text-decoration: none; display: inline-block; margin-top: 3px; }
+  .action-link:hover { text-decoration: underline; }
+
+  .retake-body { padding: 20px; text-align: center; }
+  .retake-icon-wrap {
+    width: 52px; height: 52px; border-radius: 14px; margin: 0 auto 14px;
+    background: var(--amber-light); border: 1.5px solid #f0c070;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .retake-icon-wrap svg { width: 24px; height: 24px; }
+  .retake-body h4 { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .retake-body p  { font-size: 14px; color: var(--slate); line-height: 1.55; margin-bottom: 16px; }
+  .retake-meta { font-size: 12px; color: #aaa; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .retake-meta svg { width: 12px; height: 12px; }
+
+  .btn-gold {
+    background: var(--gold); color: var(--dark); padding: 11px 20px; border-radius: 8px;
+    font-size: 16px; font-weight: 700; text-decoration: none; display: block; text-align: center;
+    border: none; cursor: pointer; transition: background .2s; font-family: inherit;
+  }
+  .btn-gold:hover { background: var(--gold-hover); }
+
+  /* ─── FOOTER ─── */
+  footer { background: #000; color: #ccc; font-size: 15px; line-height: 1.7; }
+  .footer-main { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 56px 48px 48px; }
+  .footer-contact h4 { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; font-family: 'Trebuchet MS', sans-serif; }
+  .footer-contact table { border-collapse: collapse; margin-bottom: 12px; }
+  .footer-contact td { padding: 2px 24px 2px 0; color: #ccc; font-size: 15px; }
+  .footer-contact td:last-child { color: #fff; font-weight: 600; padding-right: 0; }
+  .footer-contact a { color: #ccc; text-decoration: none; }
+  .footer-contact a:hover { color: var(--gold); }
+  .footer-maple { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px; }
+  .footer-maple p { font-size: 15px; color: #ccc; margin: 0; line-height: 1.5; }
+  .footer-maple strong { color: #fff; }
+  .footer-hours { font-size: 15px; }
+  .footer-hours strong { color: #fff; display: block; margin-bottom: 2px; }
+  .footer-nav { padding-top: 4px; }
+  .footer-nav ul { list-style: none; }
+  .footer-nav ul li { margin-bottom: 14px; text-align: right; }
+  .footer-nav ul li a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; }
+  .footer-nav ul li a:hover { color: var(--gold); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.12); padding: 28px 48px 36px; max-width: 1200px; margin: 0 auto; }
+  .footer-bottom p { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 8px; }
+  .footer-bottom p:first-child { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 12px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .page-layout { grid-template-columns: 1fr; padding: 36px 32px 60px; gap: 24px; }
+    .sidebar { position: static; }
+    .status-hero { padding: 32px 32px 28px; }
+  }
+  @media (max-width: 768px) {
+    .top-nav { padding: 0 16px; }
+    .status-hero { padding: 24px 16px 28px; }
+    .status-hero h1 { font-size: 26px; }
+    .page-layout { padding: 20px 16px 48px; }
+    .score-headline { font-size: 38px; }
+    .factor-summary { padding-left: 16px; padding-right: 16px; }
+    .factor-toggle { padding-left: 16px; padding-right: 16px; }
+    .factor-detail-inner { padding: 0 16px 20px; }
+    .sub-factor-body { padding-left: 40px; }
+    .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 24px 32px; }
+    .footer-nav ul li { text-align: left; }
+    .footer-bottom { padding: 24px 24px 32px; }
+    .slide-menu { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP NAV ═══════ -->
+<header class="top-nav">
+  <div class="top-nav-left">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">
+      <img src="https://www.idassist.com/assets/images/id-assist-en.svg" alt="ID Assist" style="height: 50px;">
+    </a>
+  </div>
+  <div class="top-nav-right">
+    <button class="nav-bell" aria-label="Notifications" onclick="window.location.href='https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="bell-badge">2</span>
+    </button>
+    <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════ SLIDE MENU ═══════ -->
+<div class="menu-overlay" id="menu-overlay"></div>
+<nav class="slide-menu" id="slide-menu">
+  <div class="menu-header">
+    <div class="menu-avatar">GT</div>
+    <div>
+      <div class="menu-user-name">Geoffrey Thomas</div>
+      <div class="menu-user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2e495a4641434f5d6e415b5a42414145004d4143">[email&#160;protected]</a></div>
+    </div>
+  </div>
+  <div class="menu-section">
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scan" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+      Scan &amp; Score
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/credit" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Credit Score &amp; Report
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/darkweb" class="menu-link">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+      </svg>
+      Dark Web Monitoring
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/alerts" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Alerts<span class="menu-badge">2</span>
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Resources</div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+      Help
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/identity" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      Identity Theft &amp; Recovery
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/risk" class="menu-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Risk Assessment
+    </a>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section-label">Settings</div>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/scansettings" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Scan &amp; Score Settings
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/info" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Personal Info
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/account" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9.24,5.35 L10.51,2.62 L13.49,2.62 L14.76,5.35 L17.58,4.31 L19.69,6.42 L18.65,9.24 L21.38,10.51 L21.38,13.49 L18.65,14.76 L19.69,17.58 L17.58,19.69 L14.76,18.65 L13.49,21.38 L10.51,21.38 L9.24,18.65 L6.42,19.69 L4.31,17.58 L5.35,14.76 L2.62,13.49 L2.62,10.51 L5.35,9.24 L4.31,6.42 L6.42,4.31 Z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      Account &amp; Security
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/billing" class="menu-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+      Billing
+    </a>
+    <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/" class="menu-link logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<div class="status-hero">
+  <div class="status-hero-inner">
+    <div class="status-breadcrumb">
+      <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/">Dashboard</a>
+      <span>›</span> Risk Assessment
+    </div>
+    <h1>Risk Assessment</h1>
+    <div class="hero-pills">
+      <span class="status-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Assessed March 19, 2026
+      </span>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ CONTENT ═══════ -->
+<div class="page-layout">
+
+  <!-- ══ MAIN COLUMN ══ -->
+  <div>
+
+    <!-- OVERALL SCORE -->
+    <div class="card" data-risk="average">
+      <div class="card-head">
+        <div class="card-icon" style="background:#FFF8E1;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Your Overall Risk Score</div>
+          <div class="card-subtitle">Based on your assessment responses</div>
+        </div>
+      </div>
+      <div class="score-display">
+        <div class="score-eyebrow">Overall Risk Level</div>
+        <div class="score-headline" id="overall-label">Average</div>
+        <div class="score-sub">Your risk is in line with the typical Canadian adult</div>
+        <div>
+          <div class="score-bar"><div class="score-marker" id="overall-marker" style="left:50%;"></div></div>
+          <div class="score-scale">
+            <span>Low</span><span>Below Average</span><span>Average</span><span>Above Average</span><span>High</span>
+          </div>
+        </div>
+      </div>
+      <div class="score-meta">
+        <span>Assessed <strong>March 19, 2026</strong></span>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/risksurvey" class="score-meta-link">Retake assessment →</a>
+      </div>
+      <div class="score-description">
+        <p>Your assessment indicates an <strong>Average</strong> overall identity theft risk. While you have strong habits in some areas — particularly <strong>Online Security</strong> and <strong>Password Habits</strong> — your <strong>Demographics</strong> profile and <strong>Social Media</strong> exposure are currently raising your overall score.</p>
+        <p>Use the breakdown below to see exactly how we scored each category. Expand any section to see which specific factors influenced that score and what you can do about them.</p>
+      </div>
+    </div>
+
+    <!-- BREAKDOWN (accordion) -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#F3F4F6;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Risk Breakdown by Category</div>
+          <div class="card-subtitle">Expand any category to see what's driving your score</div>
+        </div>
+      </div>
+
+      <!-- ── DEMOGRAPHICS ── -->
+      <div class="factor-row" data-risk="average">
+        <div class="factor-summary">
+          <div class="factor-header">
+            <div class="factor-icon" style="background:#FFF3E0;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Demographics</div>
+              <div class="factor-desc">Age, marital status, income, education, and household profile</div>
+            </div>
+            <span class="factor-chip average">Average</span>
+          </div>
+          <div class="factor-bar"><div class="factor-marker average" style="left:50%;"></div></div>
+          <div class="factor-scale"><span>Low</span><span>Below Avg</span><span>Average</span><span>Above Avg</span><span>High</span></div>
+        </div>
+        <button class="factor-toggle" aria-expanded="false" data-target="detail-demographics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="factor-toggle-label">View details</span>
+        </button>
+        <div class="factor-detail" id="detail-demographics">
+          <div class="factor-detail-inner">
+            <p class="detail-summary">Your overall risk of identity theft is <strong>average</strong> in this section.</p>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge orange"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                <div class="sub-factor-title">Your age group has an above average risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">Identity theft is a real problem and, unfortunately for people your age, you have a greater than average risk. A popular method for targeting people in your age group is recorded phone calls with messages related to the Canada Revenue Agency, your Social Insurance Number, and immigration scams. If you receive a threatening call demanding payment related to fines or unpaid taxes, hang up — look up the number yourself and call back to confirm.</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge orange"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                <div class="sub-factor-title">Married individuals have an above average risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">Identity theft is something that married people especially need to be aware of. Your spouse knows a lot of sensitive information about you and could accidentally disclose it to scammers — putting you both at risk. Online monitoring of your personal information and financial accounts can help protect you from becoming a victim.</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge red"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                <div class="sub-factor-title">Your income indicates you have a high risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">Identity theft is more likely to affect individuals in higher-income households. The more money you make, the more likely you are to become a target for identity thieves. A product like ID&nbsp;Assist that offers both online monitoring and credit bureau monitoring can alert you to threats so you can take action as quickly as possible.</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge red"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                <div class="sub-factor-title">Your education level indicates a high risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">Congratulations on the advanced degree! Unfortunately, individuals with higher levels of education are at a statistically higher risk of identity theft. Enrolling in a product like ID&nbsp;Assist that monitors both your personal information and your credit bureau files can alert you to threats so you can act as quickly as possible.</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge green"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <div class="sub-factor-title">Not having children puts you at a lower risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">Children under 18 don't have credit reports, which can make them attractive targets for criminals who open accounts in their name — fraud that often goes undetected for years. Since this doesn't apply to your household, this factor works in your favour.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PASSWORD HABITS ── -->
+      <div class="factor-row" data-risk="below-average">
+        <div class="factor-summary">
+          <div class="factor-header">
+            <div class="factor-icon" style="background:#E8F5E9;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Password Habits</div>
+              <div class="factor-desc">Strength, uniqueness, and management of passwords across accounts</div>
+            </div>
+            <span class="factor-chip below-average">Below Average</span>
+          </div>
+          <div class="factor-bar"><div class="factor-marker below-average" style="left:30%;"></div></div>
+          <div class="factor-scale"><span>Low</span><span>Below Avg</span><span>Average</span><span>Above Avg</span><span>High</span></div>
+        </div>
+        <button class="factor-toggle" aria-expanded="false" data-target="detail-passwords">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="factor-toggle-label">View details</span>
+        </button>
+        <div class="factor-detail" id="detail-passwords">
+          <div class="factor-detail-inner">
+            <p class="detail-summary">Your overall risk of identity theft is <strong>below average</strong> in this section.</p>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge green"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <div class="sub-factor-title">You use a password manager — a great habit</div>
+              </div>
+              <div class="sub-factor-body">Using a password manager means you're far more likely to have unique, complex passwords across all of your accounts. This is one of the single most effective protections against credential-based attacks. Keep it up!</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge orange"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                <div class="sub-factor-title">Your password habits put you at above average risk for some accounts</div>
+              </div>
+              <div class="sub-factor-body">Adding special characters to passwords is a good start — but using a limited number of password combinations puts you at above average risk for those accounts. You should always use complex passwords (letters, numbers, and special characters) or passphrases: four random words that make sense to you but are hard for criminals to guess. Add numbers and symbols to the passphrase and you'll be even more secure. Use a different password for every site.</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge green"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <div class="sub-factor-title">You change your passwords regularly</div>
+              </div>
+              <div class="sub-factor-body">Regularly rotating your passwords — especially after any breach notification — significantly reduces the window of opportunity for criminals. This is a strong habit that contributes to your below-average risk in this section.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SOCIAL MEDIA ── -->
+      <div class="factor-row" data-risk="above-average">
+        <div class="factor-summary">
+          <div class="factor-header">
+            <div class="factor-icon" style="background:#FFEBEE;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Social Media Use</div>
+              <div class="factor-desc">Public profile exposure, personal information sharing, and platform activity</div>
+            </div>
+            <span class="factor-chip above-average">Above Average</span>
+          </div>
+          <div class="factor-bar"><div class="factor-marker above-average" style="left:70%;"></div></div>
+          <div class="factor-scale"><span>Low</span><span>Below Avg</span><span>Average</span><span>Above Avg</span><span>High</span></div>
+        </div>
+        <button class="factor-toggle" aria-expanded="false" data-target="detail-social">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="factor-toggle-label">View details</span>
+        </button>
+        <div class="factor-detail" id="detail-social">
+          <div class="factor-detail-inner">
+            <p class="detail-summary">Your overall risk of identity theft is <strong>above average</strong> in this section.</p>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge red"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                <div class="sub-factor-title">Your social media privacy settings put you at high risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">Unfortunately, your social media privacy habits may be putting your identity at risk. Your personal information may be visible to anyone viewing your profile — and that information may be enough to cause serious damage to your identity and finances. Setting your privacy to the highest level will help ensure that only the people you trust can view that information, helping you avoid becoming the next victim of identity theft.</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge green"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <div class="sub-factor-title">Your social media sharing habits put you at low risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">We're glad to see that you take online sharing seriously! By limiting the information you share and only interacting with people in your social circles, you help protect your sensitive data from falling into the wrong hands — and prevent yourself from becoming the next victim of identity theft.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ONLINE SECURITY ── -->
+      <div class="factor-row" data-risk="low">
+        <div class="factor-summary">
+          <div class="factor-header">
+            <div class="factor-icon" style="background:#E8F5E9;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <div class="factor-info">
+              <div class="factor-name">Online Security Practices</div>
+              <div class="factor-desc">Use of two-factor authentication, VPN, secure browsing, and account hygiene</div>
+            </div>
+            <span class="factor-chip low">Low</span>
+          </div>
+          <div class="factor-bar"><div class="factor-marker low" style="left:10%;"></div></div>
+          <div class="factor-scale"><span>Low</span><span>Below Avg</span><span>Average</span><span>Above Avg</span><span>High</span></div>
+        </div>
+        <button class="factor-toggle" aria-expanded="false" data-target="detail-security">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="factor-toggle-label">View details</span>
+        </button>
+        <div class="factor-detail" id="detail-security">
+          <div class="factor-detail-inner">
+            <p class="detail-summary">Your overall risk of identity theft is <strong>low</strong> in this section. Excellent work!</p>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge green"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <div class="sub-factor-title">Your device security practices put you at low risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">It's a smart move to protect your devices with anti-virus and anti-malware software. While most devices have some level of built-in security these days, it doesn't hurt to have that extra layer of defence to ensure the private information on your devices stays private.</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge orange"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                <div class="sub-factor-title">Your public Wi-Fi usage puts you at average risk of identity theft</div>
+              </div>
+              <div class="sub-factor-body">Having access to public Wi-Fi is great — except for when your private information becomes public. Your most important websites will all have encrypted connections, which means your private information is much less likely to be intercepted. But it's still possible. If you use public Wi-Fi, be careful about the sites you access and the information you share. To reduce your risk further, invest in Virtual Private Network (VPN) software to keep your private information away from prying eyes.</div>
+            </div>
+            <div class="sub-factor">
+              <div class="sub-factor-header">
+                <div class="sub-badge green"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <div class="sub-factor-title">You have two-factor authentication enabled on key accounts</div>
+              </div>
+              <div class="sub-factor-body">Enabling two-factor authentication (2FA) on your email, banking, and social media accounts is one of the most effective safeguards available. Even if a criminal obtains your password, they still can't access your account without the second factor. This is a strong contributor to your low risk score in this section.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /breakdown card -->
+
+    <!-- ABOUT YOUR SCORE -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#E3F2FD;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Understanding Your Score</div>
+          <div class="card-subtitle">How the Risk Assessment works</div>
+        </div>
+      </div>
+      <div class="about-body">
+        <div class="about-row">
+          <div class="about-bullet">1</div>
+          <div class="about-row-text">
+            <h4>What the score measures</h4>
+            <p>Your Risk Assessment reflects your likelihood of becoming a victim of identity theft based on your personal habits, behaviours, and profile — not whether you've already been affected. A lower score means fewer risk factors in your profile.</p>
+          </div>
+        </div>
+        <div class="about-row">
+          <div class="about-bullet">2</div>
+          <div class="about-row-text">
+            <h4>How your score is calculated</h4>
+            <p>Scores are based on your responses across four categories: Demographics, Password Habits, Social Media Use, and Online Security Practices. Each category is weighted against Canadian identity theft patterns.</p>
+          </div>
+        </div>
+        <div class="about-row">
+          <div class="about-bullet">3</div>
+          <div class="about-row-text">
+            <h4>Keeping your score current</h4>
+            <p>Your risk profile changes as your habits and circumstances evolve. We recommend retaking the assessment every 6 months, or whenever you experience a significant life change — such as a new job, home, or social media account.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main column -->
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+
+    <!-- Priority Actions -->
+    <div class="sidebar-card">
+      <div class="sidebar-head">
+        <div class="sc-icon" style="background:#FFF3E0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h4>Priority Actions</h4>
+      </div>
+      <div class="sidebar-body">
+        <div class="action-item">
+          <div class="action-icon" style="background:#FFEBEE;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </div>
+          <div>
+            <div class="action-title">Review social media privacy settings</div>
+            <div class="action-desc">Set your profiles to private and limit what personal information is publicly visible.</div>
+            <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="action-link">Learn how →</a>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-icon" style="background:#E8F5E9;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <div>
+            <div class="action-title">Consider a VPN for public Wi-Fi</div>
+            <div class="action-desc">A VPN encrypts your connection and keeps your activity private on shared networks.</div>
+            <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/help" class="action-link">Learn how →</a>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-icon" style="background:#E3F2FD;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div>
+            <div class="action-title">Complete your dark web profile</div>
+            <div class="action-desc">You're at 25 of 50 items monitored. Add more for broader protection.</div>
+            <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/darkweb" class="action-link">Add items →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Retake -->
+    <div class="sidebar-card">
+      <div class="sidebar-head">
+        <div class="sc-icon" style="background:#F3F4F6;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        </div>
+        <h4>Update Your Score</h4>
+      </div>
+      <div class="retake-body">
+        <div class="retake-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <h4>Retake the Assessment</h4>
+        <p>Your habits and circumstances change over time. Retaking the assessment keeps your risk profile accurate and your recommendations up to date.</p>
+        <a href="https://the-gmt.github.io/psychic-goggles-idassist/en/dashboard/risksurvey" class="btn-gold">Start Assessment</a>
+        <div class="retake-meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Takes about 3 minutes &nbsp;·&nbsp; 12 questions
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+</div><!-- /page-layout -->
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-contact">
+      <h4>
+        <img src="https://www.idassist.com/assets/images/footer-headphones.svg" alt="" width="22" height="22">
+        24/7 Emergency Assistance
+      </h4>
+      <table>
+        <tr><td>North America</td><td><a href="tel:18779001837">1-877-900-1837</a></td></tr>
+        <tr><td>Toronto and collect</td><td><a href="tel:16478375412">1-647-837-5412</a></td></tr>
+      </table>
+      <p><a href="/cdn-cgi/l/email-protection#4b283e383f24262e39382e393d22282e0b222f2a383822383f65282426"><span class="__cf_email__" data-cfemail="1e7d6b6d6a71737b6c6d7b6c68777d7b5e777a7f6d6d776d6a307d7173">[email&#160;protected]</span></a></p>
+      <div class="footer-maple">
+        <img src="https://www.idassist.com/assets/images/footer-canada.svg" alt="" width="20" height="20">
+        <p><strong>Canadian representatives available 24/7</strong><br>for restoration services.</p>
+      </div>
+      <div class="footer-hours">
+        <strong>Our regular hours of operation are</strong>
+        9:00am – 9:00pm EST, Monday to Friday
+      </div>
+    </div>
+    <div class="footer-nav">
+      <ul>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/identity">Identity Theft &amp; Recovery</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/plans">Plans &amp; Pricing</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/en/help">Help</a></li>
+        <li><a href="https://www.idassist.com/en/terms-conditions">Terms &amp; Conditions</a></li>
+        <li><a href="https://www.idassist.com/en/privacy-policy">Privacy Policy</a></li>
+        <li><a href="https://www.idassist.com/en/cancellation-policy">Cancellation Policy</a></li>
+        <li><a href="https://the-gmt.github.io/psychic-goggles-idassist/fr/dashboard">FR</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>ID&nbsp;Assist is an early warning system that helps you look after your identity.</p>
+    <p>© 2026 Sigma Loyalty Group Inc. All rights reserved. ID&nbsp;Assist®, Sigma Loyalty Group Inc. and all associated marks and logos are trademarks owned or used under license. ID&nbsp;Assist® is provided by Sigma Loyalty Group Inc.</p>
+    <p>iPhone and App Store are trademarks of Apple Inc., registered in the U.S. and other countries. Android, Google Play and Play Store are trademarks of Google Inc., registered in the U.S. and other countries.</p>
+    <p>All product names, logos, and brands are property of their respective owners. All company, product, and service names used on this website are for identification purposes only. Use of these names does not imply endorsement.</p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ── Hamburger / slide menu ─────────────────────────────────────────────────
+  const hamburger   = document.getElementById('hamburger');
+  const slideMenu   = document.getElementById('slide-menu');
+  const menuOverlay = document.getElementById('menu-overlay');
+  function toggleMenu() {
+    const isOpen = slideMenu.classList.contains('open');
+    slideMenu.classList.toggle('open');
+    menuOverlay.classList.toggle('open');
+    hamburger.classList.toggle('open');
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  menuOverlay.addEventListener('click', toggleMenu);
+
+  // ── Risk level config ──────────────────────────────────────────────────────
+  var RISK = {
+    'low':           { label: 'Low',           left: '10%', markerColor: '#1B6B33', textColor: '#1B6B33' },
+    'below-average': { label: 'Below Average',  left: '30%', markerColor: '#1A7A40', textColor: '#1A7A40' },
+    'average':       { label: 'Average',        left: '50%', markerColor: '#F57C00', textColor: '#F57C00' },
+    'above-average': { label: 'Above Average',  left: '70%', markerColor: '#C62828', textColor: '#C62828' },
+    'high':          { label: 'High',           left: '90%', markerColor: '#E8292F', textColor: '#E8292F' }
+  };
+  function getRisk(key) { return RISK[(key || 'average').toLowerCase().trim()] || RISK['average']; }
+
+  // ── Overall score ──────────────────────────────────────────────────────────
+  var overallCard   = document.querySelector('.card[data-risk]');
+  var overallLabel  = document.getElementById('overall-label');
+  var overallMarker = document.getElementById('overall-marker');
+  if (overallCard) {
+    var cfg = getRisk(overallCard.getAttribute('data-risk'));
+    if (overallLabel)  { overallLabel.textContent = cfg.label; overallLabel.style.color = cfg.textColor; }
+    if (overallMarker) { overallMarker.style.left = cfg.left; overallMarker.style.borderColor = cfg.markerColor; }
+  }
+
+  // ── Factor markers ─────────────────────────────────────────────────────────
+  document.querySelectorAll('.factor-row[data-risk]').forEach(function(row) {
+    var key    = (row.getAttribute('data-risk') || 'average').toLowerCase().trim();
+    var cfg    = getRisk(key);
+    var marker = row.querySelector('.factor-marker');
+    if (marker) { marker.style.left = cfg.left; marker.style.borderColor = cfg.markerColor; }
+  });
+
+  // ── Accordion ─────────────────────────────────────────────────────────────
+  document.querySelectorAll('.factor-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var factorRow = btn.closest('.factor-row');
+      var targetId  = btn.getAttribute('data-target');
+      var panel     = document.getElementById(targetId);
+      var isOpen    = panel.classList.contains('open');
+
+      // 1. Close ALL panels and reset all toggles (synchronous DOM change)
+      document.querySelectorAll('.factor-detail.open').forEach(function(p) { p.classList.remove('open'); });
+      document.querySelectorAll('.factor-toggle.open').forEach(function(b) {
+        b.classList.remove('open');
+        b.setAttribute('aria-expanded', 'false');
+        b.querySelector('.factor-toggle-label').textContent = 'View details';
+      });
+
+      if (!isOpen) {
+        // 2. Open the new panel (synchronous DOM change)
+        panel.classList.add('open');
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.querySelector('.factor-toggle-label').textContent = 'Hide details';
+
+        // 3. NOW measure — getBoundingClientRect forces a reflow so it reflects
+        //    the final layout (old panel collapsed, new panel open) before any
+        //    visual transition has painted. The scroll target is therefore exact.
+        var rowTop = factorRow.getBoundingClientRect().top + window.scrollY - 88;
+        window.scrollTo({ top: rowTop, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
