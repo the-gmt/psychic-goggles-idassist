@@ -345,23 +345,7 @@
   .field-input::placeholder { color: #BBBBBB; }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-  /* Language selector */
-  .lang-row {
-    display: flex; align-items: center; gap: 12px;
-    padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
-  }
-  .lang-label { font-size: 14px; font-weight: 700; color: var(--dark); flex-shrink: 0; }
-  .lang-btn {
-    padding: 7px 18px; border-radius: 20px; border: 2px solid var(--border);
-    font-family: inherit; font-size: 14px; font-weight: 700; color: var(--slate);
-    background: var(--white); cursor: pointer; transition: all .15s;
-  }
-  .lang-btn.active {
-    background: var(--amber-light); border-color: var(--amber); color: var(--dark);
-  }
-  .lang-btn:hover:not(.active) { border-color: #ccc; background: #fafafa; }
-
-  /* Submit button */
+ /* Submit button */
   .submit-row { padding-top: 20px; border-top: 1px solid var(--border); margin-top: 8px; }
   .btn-scan {
     width: 100%; padding: 14px 24px; border-radius: 10px;
@@ -677,14 +661,7 @@
       <!-- Input body -->
       <div class="input-body">
 
-        <!-- Language row -->
-        <div class="lang-row">
-          <span class="lang-label">Content language:</span>
-          <button class="lang-btn active" id="lang-en" onclick="setLang('en')">English</button>
-          <button class="lang-btn" id="lang-fr" onclick="setLang('fr')">French</button>
-        </div>
-
-        <!-- PASTE PANEL -->
+      <!-- PASTE PANEL -->
         <div id="panel-paste">
           <div class="paste-area-wrap">
             <textarea class="paste-area" id="paste-input"
