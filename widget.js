@@ -56,6 +56,14 @@
     return (Date.now() - last) / (1000 * 60 * 60 * 24);
   }
 
+// Demo mode via URL parameter
+var urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('survey') === 'demo') {
+  options.subscriberEmail = options.subscriberEmail || 'demo@preview';
+  fetchConfigAndLaunch();
+  return;
+}
+  
   function shouldShowSurvey() {
     const visits = getVisitCount();
     const daysSince = daysSinceLastCompleted();
