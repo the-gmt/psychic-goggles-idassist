@@ -344,12 +344,15 @@
     // Fire and forget — don't block the thank-you screen
     if (options.apiBase) {
       fetch(options.apiBase + '/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }).catch(function (err) {
-        console.warn('[SigmaSurvey] Submission failed:', err);
-      });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Survey-Token': options.submitToken || '',  // CHANGED: pass token from init options
+  },
+  body: JSON.stringify(payload),
+}).catch(function (err) {
+  console.warn('[SigmaSurvey] Submission failed:', err);
+});
     }
   }
 
