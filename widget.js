@@ -450,6 +450,7 @@
         minVisits: opts.minVisits !== undefined ? opts.minVisits : DEFAULTS.minVisits,
         frequencyDays: opts.frequencyDays !== undefined ? opts.frequencyDays : DEFAULTS.frequencyDays,
         fallbackConfig: opts.fallbackConfig || null,
+        submitToken: opts.submitToken || '',  // ← add this line
       };
 
       // Track visit
